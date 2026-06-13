@@ -1,6 +1,7 @@
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
+import { reportWriteError } from "./writeError.ts";
 
 export interface WeekDoc {
   note: string;
@@ -47,7 +48,5 @@ export const setWeekNote = (
     weekRef(uid, weekId),
     { note, updatedAt: Date.now() },
     { merge: true },
-  ).catch((error: unknown) => {
-    console.error(error);
-  });
+  ).catch(reportWriteError);
 };

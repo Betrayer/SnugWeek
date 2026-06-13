@@ -10,10 +10,12 @@ interface WeekBoardProps {
 }
 
 const gridStyle = (columns: string): CSSProperties => ({
+  flex: 1,
+  minHeight: 0,
   display: "grid",
   gridTemplateColumns: columns,
+  gridTemplateRows: "minmax(0, 1fr)",
   gap: "var(--mantine-spacing-md)",
-  alignItems: "start",
 });
 
 export const WeekBoard = ({ days, daysOff, columnMode }: WeekBoardProps) => {

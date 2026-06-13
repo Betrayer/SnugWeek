@@ -10,7 +10,13 @@ import {
   subscribeLists,
 } from "../services/repos/listsRepo.ts";
 import type { List } from "../services/repos/listsRepo.ts";
-import { createTask, subscribeListTasks } from "../services/repos/tasksRepo.ts";
+import {
+  createTask,
+  deleteTask,
+  setStatus,
+  subscribeListTasks,
+  updateTitle,
+} from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
 
 const TASKS_LIST_ID = "tasks";
@@ -20,6 +26,9 @@ interface ListsState {
   tasksByList: Record<string, Task[]>;
   start: (uid: string) => void;
   addTask: (listId: string, title: string) => void;
+  toggleDone: (task: Task) => void;
+  renameTask: (taskId: string, title: string) => void;
+  removeTask: (taskId: string) => void;
   addList: (name: string) => void;
   renameList: (listId: string, name: string) => void;
   removeList: (listId: string) => void;
@@ -73,6 +82,20 @@ export const useListsStore = create<ListsState>()(
           listId,
           order,
         });
+      },
+      toggleDone: (task) => {
+        if (!activeUid) return;
+        const next = task.status === "done" ? "open" : "done";
+        setStatus(activeUid, task.id, next, next === "done" ? Date.now() : null);
+      },
+      renameTask: (taskId, title) => {
+        const trimmed = title.trim();
+        if (!activeUid || trimmed.length === 0) return;
+        updateTitle(activeUid, taskId, trimmed);
+      },
+      removeTask: (taskId) => {
+        if (!activeUid) return;
+        deleteTask(activeUid, taskId);
       },
       addList: (name) => {
         const trimmed = name.trim();

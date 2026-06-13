@@ -1,10 +1,12 @@
 import { MantineProvider, Stack, Text } from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
+import { Notifications, notifications } from "@mantine/notifications";
+import i18next from "i18next";
 import { useEffect, useMemo, useState } from "react";
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
+import { setWriteErrorHandler } from "./services/repos/writeError.ts";
 import {
   currentWeekId,
   isValidWeekId,
@@ -60,6 +62,20 @@ export const Root = () => {
   const mantineTheme = useMemo(() => buildMantineTheme(theme), [theme]);
 
   useEffect(() => {
+    setWriteErrorHandler((error) => {
+      console.error(error);
+      if (!navigator.onLine) return;
+      const code =
+        typeof error === "object" && error !== null && "code" in error
+          ? String((error as { code: unknown }).code)
+          : "";
+      if (code === "unavailable") return;
+      notifications.show({
+        message: i18next.t("common:saveError"),
+        withBorder: true,
+        styles: { root: { borderColor: "var(--sw-danger)" } },
+      });
+    });
     bootstrap();
     const { language } = useSettingsStore.getState();
     setTimeLocale(language);
