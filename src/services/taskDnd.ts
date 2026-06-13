@@ -1,9 +1,5 @@
 import { arrayMove } from "@dnd-kit/sortable";
-import {
-  needsRenormalize,
-  orderBetween,
-  renormalize,
-} from "./ordering.ts";
+import { needsRenormalize, orderBetween, renormalize } from "./ordering.ts";
 import { parseContainerId } from "../shell/components/tasks/dndIds.ts";
 import type { Task, TaskLocation } from "./repos/tasksRepo.ts";
 
@@ -21,7 +17,7 @@ export interface MoveResult {
   reorders: { id: string; order: number }[];
 }
 
-export const locationForContainer = (
+const locationForContainer = (
   containerId: string,
   weekId: string | null,
 ): TaskLocation | null => {
