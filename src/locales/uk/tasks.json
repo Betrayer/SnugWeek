@@ -1,7 +1,38 @@
 {
   "add": "Додати",
+  "composerPlaceholder": "Нова задача…",
+  "edit": "Редагувати",
+  "delete": "Видалити",
+  "move": "Перемістити…",
+  "done": "Позначити виконаною",
+  "reopen": "Відновити",
+  "emptyDay": "вільний день",
+  "emptyList": "поки порожньо",
+  "emptyWeek": "спокійний тиждень попереду",
+  "charLimit": "{{n}}/500",
+  "count": {
+    "open_one": "{{count}} відкрита",
+    "open_few": "{{count}} відкриті",
+    "open_many": "{{count}} відкритих",
+    "open_other": "{{count}} відкритих"
+  },
   "lists": {
     "tasks": "Задачі",
-    "ideas": "Ідеї та мрії"
+    "ideas": "Ідеї та мрії",
+    "add": "Новий список",
+    "namePlaceholder": "Назва списку…",
+    "rename": "Перейменувати",
+    "renameTitle": "Перейменувати список",
+    "delete": "Видалити список",
+    "deleteTitle": "Видалити список?",
+    "deleteWarning": "Її задачі перемістяться до «{{target}}».",
+    "deleteConfirm": "Видалити",
+    "cancel": "Скасувати",
+    "open": "Списки"
+  },
+  "moveMenu": {
+    "title": "Перемістити до…",
+    "days": "Дні",
+    "lists": "Списки"
   }
 }

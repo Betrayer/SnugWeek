@@ -8,6 +8,7 @@
   },
   "offlinePill": "Offline — changes are saved locally",
   "comingSoon": "it will be cozy here soon",
+  "saveError": "Couldn't save — please try again",
   "languageNames": {
     "uk": "Українська",
     "en": "English"

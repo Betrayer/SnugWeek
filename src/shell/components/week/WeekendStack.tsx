@@ -1,4 +1,3 @@
-import { Stack } from "@mantine/core";
 import type { WeekDay } from "../../../services/time.ts";
 import { DayColumn } from "./DayColumn.tsx";
 
@@ -8,9 +7,19 @@ interface WeekendStackProps {
 }
 
 export const WeekendStack = ({ days, daysOff }: WeekendStackProps) => (
-  <Stack gap="md">
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "column",
+      gap: "var(--mantine-spacing-md)",
+      height: "100%",
+      minHeight: 0,
+    }}
+  >
     {days.map((day) => (
-      <DayColumn key={day.iso} day={day} isOff={daysOff.includes(day.iso)} />
+      <div key={day.iso} style={{ flex: 1, minHeight: 0 }}>
+        <DayColumn day={day} isOff={daysOff.includes(day.iso)} />
+      </div>
     ))}
-  </Stack>
+  </div>
 );

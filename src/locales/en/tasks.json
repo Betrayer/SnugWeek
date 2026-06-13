@@ -1,7 +1,36 @@
 {
   "add": "Add",
+  "composerPlaceholder": "New task…",
+  "edit": "Edit",
+  "delete": "Delete",
+  "move": "Move…",
+  "done": "Mark done",
+  "reopen": "Reopen",
+  "emptyDay": "a free day",
+  "emptyList": "nothing here yet",
+  "emptyWeek": "a quiet week ahead",
+  "charLimit": "{{n}}/500",
+  "count": {
+    "open_one": "{{count}} open",
+    "open_other": "{{count}} open"
+  },
   "lists": {
     "tasks": "Tasks",
-    "ideas": "Ideas & dreams"
+    "ideas": "Ideas & dreams",
+    "add": "New list",
+    "namePlaceholder": "List name…",
+    "rename": "Rename",
+    "renameTitle": "Rename list",
+    "delete": "Delete list",
+    "deleteTitle": "Delete list?",
+    "deleteWarning": "Its tasks will move to “{{target}}”.",
+    "deleteConfirm": "Delete",
+    "cancel": "Cancel",
+    "open": "Lists"
+  },
+  "moveMenu": {
+    "title": "Move to…",
+    "days": "Days",
+    "lists": "Lists"
   }
 }

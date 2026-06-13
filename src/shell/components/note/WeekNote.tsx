@@ -24,7 +24,8 @@ export const WeekNote = () => {
       <Textarea
         variant="unstyled"
         autosize
-        minRows={3}
+        minRows={2}
+        maxRows={4}
         placeholder={t("notePlaceholder")}
         value={value}
         onChange={(event) => {

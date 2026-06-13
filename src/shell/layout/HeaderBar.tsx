@@ -8,7 +8,9 @@ import {
   isValidWeekId,
   weekTitle,
 } from "../../services/time.ts";
+import { useListsStore } from "../../state/listsStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
+import { useUiStore } from "../../state/uiStore.ts";
 import { SyncBadge } from "./SyncBadge.tsx";
 
 const ChevronLeftIcon = () => (
@@ -41,12 +43,39 @@ const ChevronRightIcon = () => (
   </svg>
 );
 
+const ListsIcon = () => (
+  <svg
+    width="22"
+    height="22"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.8"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M9 6h11M9 12h11M9 18h11" />
+    <circle cx="4.5" cy="6" r="1" />
+    <circle cx="4.5" cy="12" r="1" />
+    <circle cx="4.5" cy="18" r="1" />
+  </svg>
+);
+
 export const HeaderBar = () => {
-  const { t } = useTranslation(["common", "week"]);
+  const { t } = useTranslation(["common", "week", "tasks"]);
   const language = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
+  const toggleSidebar = useUiStore((state) => state.toggleSidebar);
+  const listOpenCount = useListsStore((state) =>
+    Object.values(state.tasksByList).reduce(
+      (sum, tasks) =>
+        sum + tasks.filter((task) => task.status === "open").length,
+      0,
+    ),
+  );
   const weekMatch = useMatch("/w/:weekId");
   const weekId = weekMatch?.params.weekId;
+  const onWeek = weekId !== undefined && isValidWeekId(weekId);
 
   return (
     <Group h="100%" px="md" justify="space-between" wrap="nowrap">
@@ -123,6 +152,40 @@ export const HeaderBar = () => {
             {t("common:nav.settings")}
           </Anchor>
         </Group>
+        {onWeek && (
+          <ActionIcon
+            hiddenFrom="md"
+            variant="subtle"
+            color="var(--sw-ink-2)"
+            aria-label={t("tasks:lists.open")}
+            onClick={toggleSidebar}
+            style={{ position: "relative" }}
+          >
+            <ListsIcon />
+            {listOpenCount > 0 && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: -2,
+                  insetInlineEnd: -2,
+                  minWidth: 16,
+                  height: 16,
+                  paddingInline: 4,
+                  borderRadius: 8,
+                  backgroundColor: "var(--sw-accent)",
+                  color: "var(--sw-accent-ink)",
+                  fontSize: 10,
+                  fontWeight: 700,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                {listOpenCount}
+              </span>
+            )}
+          </ActionIcon>
+        )}
         <SyncBadge />
         <Menu position="bottom-end">
           <Menu.Target>

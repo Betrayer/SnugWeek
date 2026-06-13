@@ -1,6 +1,12 @@
-import { Box, Button, Stack } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useTranslation } from "react-i18next";
+import type { Task } from "../../../services/repos/tasksRepo.ts";
 import type { WeekDay } from "../../../services/time.ts";
+import { useUiStore } from "../../../state/uiStore.ts";
+import { useWeekStore } from "../../../state/weekStore.ts";
+import { dayContainerId } from "../tasks/dndIds.ts";
+import { TaskComposer } from "../tasks/TaskComposer.tsx";
+import { TaskList } from "../tasks/TaskList.tsx";
 import { DayHeader } from "./DayHeader.tsx";
 
 interface DayColumnProps {
@@ -8,8 +14,12 @@ interface DayColumnProps {
   isOff: boolean;
 }
 
+const EMPTY: Task[] = [];
+
 export const DayColumn = ({ day, isOff }: DayColumnProps) => {
   const { t } = useTranslation("tasks");
+  const tasks = useWeekStore((state) => state.tasksByDay[day.iso] ?? EMPTY);
+
   return (
     <Stack
       gap="xs"
@@ -19,14 +29,25 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
         borderRadius: "var(--mantine-radius-lg)",
         padding: "var(--mantine-spacing-sm)",
         boxShadow: "var(--sw-shadow)",
-        minHeight: 220,
+        height: "100%",
+        minHeight: 0,
+        overflow: "hidden",
       }}
     >
       <DayHeader day={day} isOff={isOff} />
-      <Box style={{ flex: 1, minHeight: 120 }} />
-      <Button variant="subtle" size="compact-sm" c="var(--sw-ink-3)" disabled>
-        + {t("add")}
-      </Button>
+      <TaskList
+        tasks={tasks}
+        containerId={dayContainerId(day.iso)}
+        emptyLabel={t("emptyDay")}
+        fill
+        onToggle={(task) => useWeekStore.getState().toggleDone(task)}
+        onRename={(id, title) => useWeekStore.getState().renameTask(id, title)}
+        onDelete={(id) => useWeekStore.getState().removeTask(id)}
+        onMove={(task) => useUiStore.getState().openMove(task)}
+      />
+      <TaskComposer
+        onAdd={(title) => useWeekStore.getState().addTask(day.iso, title)}
+      />
     </Stack>
   );
 };
