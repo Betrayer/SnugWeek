@@ -1,0 +1,181 @@
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  onSnapshot,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+  writeBatch,
+} from "firebase/firestore";
+import type { DocumentData } from "firebase/firestore";
+import { db } from "../firebase.ts";
+import { reportWriteError } from "./writeError.ts";
+
+export type TaskStatus = "open" | "done";
+export type TaskBucket = "day" | "list";
+
+export interface TaskLocation {
+  bucket: TaskBucket;
+  weekId: string | null;
+  day: number | null;
+  listId: string | null;
+}
+
+export interface Task extends TaskLocation {
+  id: string;
+  title: string;
+  status: TaskStatus;
+  order: number;
+  createdAt: number;
+  updatedAt: number;
+  completedAt: number | null;
+  carriedFrom: string | null;
+}
+
+export interface NewTaskFields extends TaskLocation {
+  title: string;
+  order: number;
+}
+
+const BATCH_LIMIT = 450;
+
+const asStringOrNull = (value: unknown): string | null =>
+  typeof value === "string" ? value : null;
+
+const asNumberOrNull = (value: unknown): number | null =>
+  typeof value === "number" ? value : null;
+
+const normalizeTask = (id: string, data: DocumentData): Task => ({
+  id,
+  title: typeof data.title === "string" ? data.title : "",
+  status: data.status === "done" ? "done" : "open",
+  bucket: data.bucket === "list" ? "list" : "day",
+  weekId: asStringOrNull(data.weekId),
+  day: asNumberOrNull(data.day),
+  listId: asStringOrNull(data.listId),
+  order: typeof data.order === "number" ? data.order : 0,
+  createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
+  updatedAt: typeof data.updatedAt === "number" ? data.updatedAt : 0,
+  completedAt: asNumberOrNull(data.completedAt),
+  carriedFrom: asStringOrNull(data.carriedFrom),
+});
+
+const tasksCol = (uid: string) => collection(db, "users", uid, "tasks");
+
+const taskRef = (uid: string, taskId: string) =>
+  doc(db, "users", uid, "tasks", taskId);
+
+export const subscribeWeekTasks = (
+  uid: string,
+  weekId: string,
+  cb: (tasks: Task[]) => void,
+): (() => void) =>
+  onSnapshot(
+    query(
+      tasksCol(uid),
+      where("bucket", "==", "day"),
+      where("weekId", "==", weekId),
+      orderBy("order"),
+    ),
+    (snap) => {
+      cb(snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data())));
+    },
+  );
+
+export const subscribeListTasks = (
+  uid: string,
+  cb: (tasks: Task[]) => void,
+): (() => void) =>
+  onSnapshot(
+    query(
+      tasksCol(uid),
+      where("bucket", "==", "list"),
+      orderBy("listId"),
+      orderBy("order"),
+    ),
+    (snap) => {
+      cb(snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data())));
+    },
+  );
+
+export const createTask = (uid: string, fields: NewTaskFields): void => {
+  const now = Date.now();
+  void addDoc(tasksCol(uid), {
+    title: fields.title,
+    status: "open",
+    bucket: fields.bucket,
+    weekId: fields.weekId,
+    day: fields.day,
+    listId: fields.listId,
+    order: fields.order,
+    createdAt: now,
+    updatedAt: now,
+    completedAt: null,
+    carriedFrom: null,
+  }).catch(reportWriteError);
+};
+
+export const updateTitle = (
+  uid: string,
+  taskId: string,
+  title: string,
+): void => {
+  void updateDoc(taskRef(uid, taskId), {
+    title,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setStatus = (
+  uid: string,
+  taskId: string,
+  status: TaskStatus,
+  completedAt: number | null,
+): void => {
+  void updateDoc(taskRef(uid, taskId), {
+    status,
+    completedAt,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const moveTask = (
+  uid: string,
+  taskId: string,
+  destination: TaskLocation & { order: number },
+): void => {
+  void updateDoc(taskRef(uid, taskId), {
+    bucket: destination.bucket,
+    weekId: destination.weekId,
+    day: destination.day,
+    listId: destination.listId,
+    order: destination.order,
+    carriedFrom: null,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const deleteTask = (uid: string, taskId: string): void => {
+  void deleteDoc(taskRef(uid, taskId)).catch(reportWriteError);
+};
+
+export const applyOrders = (
+  uid: string,
+  updates: { id: string; order: number }[],
+): void => {
+  const now = Date.now();
+  for (let start = 0; start < updates.length; start += BATCH_LIMIT) {
+    const chunk = updates.slice(start, start + BATCH_LIMIT);
+    const batch = writeBatch(db);
+    for (const update of chunk) {
+      batch.update(taskRef(uid, update.id), {
+        order: update.order,
+        updatedAt: now,
+      });
+    }
+    void batch.commit().catch(reportWriteError);
+  }
+};

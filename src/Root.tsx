@@ -11,6 +11,7 @@ import {
   setTimeLocale,
 } from "./services/time.ts";
 import { useAuthStore } from "./state/authStore.ts";
+import { useListsStore } from "./state/listsStore.ts";
 import { AppShell } from "./shell/layout/AppShell.tsx";
 import { MonthPage } from "./shell/pages/MonthPage.tsx";
 import { SettingsPage } from "./shell/pages/SettingsPage.tsx";
@@ -66,7 +67,10 @@ export const Root = () => {
   }, [bootstrap]);
 
   useEffect(() => {
-    if (authStatus === "ready" && uid) useProfileStore.getState().start(uid);
+    if (authStatus === "ready" && uid) {
+      useProfileStore.getState().start(uid);
+      useListsStore.getState().start(uid);
+    }
   }, [authStatus, uid]);
 
   useEffect(() => {
