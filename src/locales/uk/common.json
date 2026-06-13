@@ -1,0 +1,15 @@
+{
+  "appName": "SnugWeek",
+  "nav": {
+    "week": "Тиждень",
+    "month": "Місяць",
+    "stats": "Статистика",
+    "settings": "Налаштування"
+  },
+  "offlinePill": "Офлайн — зміни зберігаються локально",
+  "comingSoon": "скоро тут буде затишно",
+  "languageNames": {
+    "uk": "Українська",
+    "en": "English"
+  }
+}
