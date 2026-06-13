@@ -1,0 +1,15 @@
+{
+  "appName": "SnugWeek",
+  "nav": {
+    "week": "Week",
+    "month": "Month",
+    "stats": "Stats",
+    "settings": "Settings"
+  },
+  "offlinePill": "Offline — changes are saved locally",
+  "comingSoon": "it will be cozy here soon",
+  "languageNames": {
+    "uk": "Українська",
+    "en": "English"
+  }
+}

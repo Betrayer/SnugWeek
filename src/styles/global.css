@@ -1,0 +1,41 @@
+@import "@fontsource/nunito/400.css";
+@import "@fontsource/nunito/600.css";
+@import "@fontsource/nunito/700.css";
+@import "@fontsource/caveat/400.css";
+@import "@fontsource/caveat/600.css";
+
+body {
+  margin: 0;
+  background-color: var(--sw-paper);
+  background-image: var(--sw-paper-texture);
+  color: var(--sw-ink);
+  font-family: var(--sw-font-body);
+}
+
+::selection {
+  background-color: var(--sw-accent);
+  color: var(--sw-accent-ink);
+}
+
+html {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sw-line) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--sw-line);
+  border-radius: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sw-hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}

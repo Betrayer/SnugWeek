@@ -1,0 +1,39 @@
+:root {
+  --sw-paper: #faf6ef;
+  --sw-paper-2: #f3ecdf;
+  --sw-card: #fffdf8;
+  --sw-ink: #4a3f35;
+  --sw-ink-2: #7d6e5f;
+  --sw-ink-3: #ab9c8a;
+  --sw-line: #e8ddcc;
+  --sw-accent: #c47e8a;
+  --sw-accent-2: #a96371;
+  --sw-accent-ink: #fffaf7;
+  --sw-highlight: #f7e8cd;
+  --sw-done: #a4b494;
+  --sw-danger: #c4705f;
+  --sw-shadow: 0 2px 10px rgba(86, 70, 56, 0.08);
+  --sw-paper-texture: none;
+  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --sw-font-hand: "Caveat", cursive;
+}
+
+[data-snug-theme="milk"] {
+  --sw-paper: #faf6ef;
+  --sw-paper-2: #f3ecdf;
+  --sw-card: #fffdf8;
+  --sw-ink: #4a3f35;
+  --sw-ink-2: #7d6e5f;
+  --sw-ink-3: #ab9c8a;
+  --sw-line: #e8ddcc;
+  --sw-accent: #c47e8a;
+  --sw-accent-2: #a96371;
+  --sw-accent-ink: #fffaf7;
+  --sw-highlight: #f7e8cd;
+  --sw-done: #a4b494;
+  --sw-danger: #c4705f;
+  --sw-shadow: 0 2px 10px rgba(86, 70, 56, 0.08);
+  --sw-paper-texture: none;
+  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --sw-font-hand: "Caveat", cursive;
+}
