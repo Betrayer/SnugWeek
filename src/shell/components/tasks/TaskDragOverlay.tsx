@@ -1,5 +1,5 @@
 import { DragOverlay } from "@dnd-kit/core";
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 import { TaskCard } from "./TaskCard.tsx";
@@ -23,7 +23,7 @@ export const TaskDragOverlay = ({ task, list }: TaskDragOverlayProps) => {
   return (
     <DragOverlay dropAnimation={null}>
       {task ? (
-        <motion.div
+        <m.div
           initial={reduced ? false : { scale: 1, rotate: 0 }}
           animate={liftTarget}
           transition={lift}
@@ -39,9 +39,9 @@ export const TaskDragOverlay = ({ task, list }: TaskDragOverlayProps) => {
             onRename={noop}
             onDelete={noop}
           />
-        </motion.div>
+        </m.div>
       ) : list ? (
-        <motion.div
+        <m.div
           initial={reduced ? false : { scale: 1, rotate: 0 }}
           animate={liftTarget}
           transition={lift}
@@ -59,7 +59,7 @@ export const TaskDragOverlay = ({ task, list }: TaskDragOverlayProps) => {
           }}
         >
           {list.name}
-        </motion.div>
+        </m.div>
       ) : null}
     </DragOverlay>
   );

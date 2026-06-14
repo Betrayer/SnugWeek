@@ -13,6 +13,7 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
+import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type TrackerValue = number | string | boolean;
@@ -67,9 +68,13 @@ export const subscribeWeek = (
   weekId: string,
   cb: (week: WeekDoc | null) => void,
 ): (() => void) =>
-  onSnapshot(weekRef(uid, weekId), (snap) => {
-    cb(snap.exists() ? normalizeWeek(snap.data()) : null);
-  });
+  onSnapshot(
+    weekRef(uid, weekId),
+    (snap) => {
+      cb(snap.exists() ? normalizeWeek(snap.data()) : null);
+    },
+    reportReadError,
+  );
 
 export const subscribeWeeks = (
   uid: string,
@@ -90,6 +95,7 @@ export const subscribeWeeks = (
         })),
       );
     },
+    reportReadError,
   );
 };
 
@@ -113,6 +119,7 @@ export const subscribeWeeksRange = (
         })),
       );
     },
+    reportReadError,
   );
 
 export const fetchWeeks = async (

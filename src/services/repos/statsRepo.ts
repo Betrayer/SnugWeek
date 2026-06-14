@@ -15,6 +15,7 @@ import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
 import { isoDateKeyOf, monthIdOfKey, monthRangeMs } from "../time.ts";
+import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export interface MonthStats {
@@ -68,9 +69,13 @@ export const subscribeMonthStats = (
   monthId: string,
   cb: (stats: MonthStats | null) => void,
 ): (() => void) =>
-  onSnapshot(statsRef(uid, monthId), (snap) => {
-    cb(snap.exists() ? normalizeStats(snap.data()) : null);
-  });
+  onSnapshot(
+    statsRef(uid, monthId),
+    (snap) => {
+      cb(snap.exists() ? normalizeStats(snap.data()) : null);
+    },
+    reportReadError,
+  );
 
 export const subscribeYearStats = (
   uid: string,
@@ -90,6 +95,7 @@ export const subscribeYearStats = (
       }
       cb(result);
     },
+    reportReadError,
   );
 
 export const getCreatedCount = async (

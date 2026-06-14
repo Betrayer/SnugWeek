@@ -11,7 +11,7 @@ import {
 } from "@mantine/core";
 import { useDraggable } from "@dnd-kit/core";
 import { useDisclosure } from "@mantine/hooks";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
@@ -226,7 +226,7 @@ export const ListSection = ({
       {collapsible ? (
         <AnimatePresence initial={false}>
           {!collapsed && (
-            <motion.div
+            <m.div
               key="body"
               initial={{ height: 0, opacity: 0 }}
               animate={{ height: "auto", opacity: 1 }}
@@ -255,7 +255,7 @@ export const ListSection = ({
                   }
                 />
               </Stack>
-            </motion.div>
+            </m.div>
           )}
         </AnimatePresence>
       ) : (

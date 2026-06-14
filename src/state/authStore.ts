@@ -7,13 +7,14 @@ import {
 } from "../services/firebase.ts";
 
 interface AuthState {
-  status: "init" | "ready";
+  status: "init" | "ready" | "error";
   uid: string | null;
   isAnonymous: boolean;
   email: string | null;
   displayName: string | null;
   providerIds: string[];
   bootstrap: () => void;
+  retry: () => void;
   refresh: () => void;
 }
 
@@ -53,7 +54,15 @@ export const useAuthStore = create<AuthState>()(
           });
           signInAnonymouslyNow().catch((error: unknown) => {
             console.error(error);
+            set({ status: "error" });
           });
+        });
+      },
+      retry: () => {
+        set({ status: "init" });
+        signInAnonymouslyNow().catch((error: unknown) => {
+          console.error(error);
+          set({ status: "error" });
         });
       },
       refresh: () => {

@@ -11,6 +11,7 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
+import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export interface Habit {
@@ -40,9 +41,13 @@ export const subscribeHabits = (
   uid: string,
   cb: (habits: Habit[]) => void,
 ): (() => void) =>
-  onSnapshot(query(habitsCol(uid), orderBy("order")), (snap) => {
-    cb(snap.docs.map((docSnap) => normalizeHabit(docSnap.id, docSnap.data())));
-  });
+  onSnapshot(
+    query(habitsCol(uid), orderBy("order")),
+    (snap) => {
+      cb(snap.docs.map((docSnap) => normalizeHabit(docSnap.id, docSnap.data())));
+    },
+    reportReadError,
+  );
 
 export const createHabit = (
   uid: string,

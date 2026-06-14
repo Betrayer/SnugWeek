@@ -7,7 +7,7 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
-import { motion, useAnimationControls } from "motion/react";
+import { m, useAnimationControls } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
@@ -132,7 +132,7 @@ export const TaskCard = ({
 
   return (
     <Box ref={isOverlay ? undefined : ref} style={cardStyle(done, hovered, isOverlay)}>
-      <motion.div
+      <m.div
         animate={checkControls}
         style={{ marginTop: 2, flex: "0 0 auto", display: "inline-flex" }}
       >
@@ -155,7 +155,7 @@ export const TaskCard = ({
         >
           <CheckMark done={done} />
         </UnstyledButton>
-      </motion.div>
+      </m.div>
       <div
         style={{
           flex: 1,

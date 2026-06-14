@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { VariantTransition } from "./transitions.ts";
@@ -40,7 +40,7 @@ export const VariantTransitionHost = ({
       }}
     >
       <AnimatePresence custom={shown.direction} initial={false}>
-        <motion.div
+        <m.div
           key={shown.weekId}
           custom={shown.direction}
           variants={transition.page}
@@ -56,7 +56,7 @@ export const VariantTransitionHost = ({
         >
           {children}
           {transition.overlay && (
-            <motion.div
+            <m.div
               aria-hidden
               variants={transition.overlay}
               style={{
@@ -68,7 +68,7 @@ export const VariantTransitionHost = ({
               }}
             />
           )}
-        </motion.div>
+        </m.div>
       </AnimatePresence>
     </div>
   );
