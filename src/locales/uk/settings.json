@@ -22,5 +22,13 @@
   "modules": "Модулі",
   "moduleDayTrackers": "Показники дня",
   "moduleHabits": "Звички",
-  "moduleWeekNote": "Нотатки"
+  "moduleWeekNote": "Нотатки",
+  "dev": "Інструменти розробника",
+  "backfill": "Перерахувати статистику",
+  "backfillHint": "Перебудовує місячні агрегати з усіх виконаних справ.",
+  "backfillRunning": "Перерахунок…",
+  "backfillDone": "Статистику оновлено",
+  "backfillError": "Не вдалося перерахувати статистику",
+  "backfillNever": "ще не виконувалось",
+  "backfillAt": "Останній перерахунок: {{date}}"
 }

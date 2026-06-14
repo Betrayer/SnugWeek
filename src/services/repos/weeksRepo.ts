@@ -92,6 +92,28 @@ export const subscribeWeeks = (
   );
 };
 
+export const subscribeWeeksRange = (
+  uid: string,
+  startId: string,
+  endId: string,
+  cb: (weeks: WeekEntry[]) => void,
+): (() => void) =>
+  onSnapshot(
+    query(
+      weeksCol(uid),
+      where(documentId(), ">=", startId),
+      where(documentId(), "<=", endId),
+    ),
+    (snap) => {
+      cb(
+        snap.docs.map((docSnap) => ({
+          id: docSnap.id,
+          week: normalizeWeek(docSnap.data()),
+        })),
+      );
+    },
+  );
+
 export const fetchWeeks = async (
   uid: string,
   weekIds: string[],

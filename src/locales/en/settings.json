@@ -22,5 +22,13 @@
   "modules": "Modules",
   "moduleDayTrackers": "Day trackers",
   "moduleHabits": "Habits",
-  "moduleWeekNote": "Notes"
+  "moduleWeekNote": "Notes",
+  "dev": "Developer tools",
+  "backfill": "Rebuild statistics",
+  "backfillHint": "Recomputes monthly aggregates from all completed tasks.",
+  "backfillRunning": "Rebuilding…",
+  "backfillDone": "Statistics updated",
+  "backfillError": "Couldn't rebuild statistics",
+  "backfillNever": "not run yet",
+  "backfillAt": "Last rebuild: {{date}}"
 }

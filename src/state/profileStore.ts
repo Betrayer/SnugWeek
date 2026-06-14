@@ -20,6 +20,7 @@ interface ProfileState {
   weekend: number[];
   columnMode: "cozy" | "equal";
   moduleToggles: ModuleToggles;
+  statsBackfilledAt: number | null;
   start: (uid: string) => void;
   setThemeId: (themeId: string) => void;
   setWeekend: (weekend: number[]) => void;
@@ -38,6 +39,7 @@ export const useProfileStore = create<ProfileState>()(
       weekend: DEFAULT_WEEKEND,
       columnMode: "cozy",
       moduleToggles: DEFAULT_MODULE_TOGGLES,
+      statsBackfilledAt: null,
       start: (uid) => {
         if (activeUid === uid && unsubscribe) return;
         if (unsubscribe) unsubscribe();
@@ -58,6 +60,7 @@ export const useProfileStore = create<ProfileState>()(
             weekend: profile.weekend,
             columnMode: profile.columnMode,
             moduleToggles: profile.moduleToggles,
+            statsBackfilledAt: profile.statsBackfilledAt,
           });
         });
       },

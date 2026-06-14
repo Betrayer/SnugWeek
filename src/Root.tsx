@@ -1,7 +1,7 @@
-import { MantineProvider, Stack, Text } from "@mantine/core";
+import { Center, Loader, MantineProvider, Stack, Text } from "@mantine/core";
 import { Notifications, notifications } from "@mantine/notifications";
 import i18next from "i18next";
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useState } from "react";
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { themeById } from "./data/themes/registry.ts";
@@ -22,11 +22,22 @@ import { useTrackersStore } from "./state/trackersStore.ts";
 import { AppShell } from "./shell/layout/AppShell.tsx";
 import { MonthPage } from "./shell/pages/MonthPage.tsx";
 import { SettingsPage } from "./shell/pages/SettingsPage.tsx";
-import { StatsPage } from "./shell/pages/StatsPage.tsx";
 import { WeekPage } from "./shell/pages/WeekPage.tsx";
 import { buildMantineTheme } from "./shell/theme.ts";
 import { useProfileStore } from "./state/profileStore.ts";
 import { useSettingsStore } from "./state/settingsStore.ts";
+
+const StatsPage = lazy(() =>
+  import("./shell/pages/StatsPage.tsx").then((module) => ({
+    default: module.StatsPage,
+  })),
+);
+
+const StatsFallback = () => (
+  <Center mih="60vh">
+    <Loader color="var(--sw-accent)" />
+  </Center>
+);
 
 const router = createBrowserRouter([
   {
@@ -49,7 +60,14 @@ const router = createBrowserRouter([
             : redirect(`/month/${currentMonthId()}`),
         element: <MonthPage />,
       },
-      { path: "/stats", element: <StatsPage /> },
+      {
+        path: "/stats",
+        element: (
+          <Suspense fallback={<StatsFallback />}>
+            <StatsPage />
+          </Suspense>
+        ),
+      },
       { path: "/settings", element: <SettingsPage /> },
       { path: "*", loader: () => redirect(`/w/${currentWeekId()}`) },
     ],
