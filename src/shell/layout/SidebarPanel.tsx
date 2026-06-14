@@ -13,6 +13,7 @@ export const SidebarPanel = () => (
       backgroundColor: "var(--sw-paper-2)",
       borderInlineStart: "1px dashed var(--sw-line)",
       borderRadius: "var(--mantine-radius-lg)",
+      boxShadow: "inset 9px 0 12px -10px var(--sw-fold-shade)",
     }}
   >
     <Box
@@ -23,7 +24,7 @@ export const SidebarPanel = () => (
         insetInlineStart: 5,
         width: 12,
         backgroundImage:
-          "radial-gradient(circle at 6px 14px, var(--sw-paper) 4px, transparent 5px)",
+          "radial-gradient(circle at 6px 14px, var(--sw-paper) 3.5px, color-mix(in srgb, var(--sw-fold-shade) 45%, transparent) 4.2px, transparent 5.2px)",
         backgroundSize: "12px 28px",
         backgroundRepeat: "repeat-y",
       }}

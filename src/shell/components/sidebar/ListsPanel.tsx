@@ -1,5 +1,5 @@
 import { useDroppable } from "@dnd-kit/core";
-import { Stack, Text } from "@mantine/core";
+import { Box, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useListsStore } from "../../../state/listsStore.ts";
 import { useProfileStore } from "../../../state/profileStore.ts";
@@ -12,9 +12,28 @@ const TASKS_LIST_ID = "tasks";
 const IDEAS_LIST_ID = "ideas";
 
 const SectionTitle = ({ children }: { children: string }) => (
-  <Text ff="var(--sw-font-hand)" fz={28} fw={600} c="var(--sw-ink)" lh={1}>
-    {children}
-  </Text>
+  <Box style={{ position: "relative", width: "fit-content" }}>
+    <Text ff="var(--sw-font-hand)" fz={28} fw={600} c="var(--sw-ink)" lh={1}>
+      {children}
+    </Text>
+    <svg
+      aria-hidden
+      width="100%"
+      height="6"
+      viewBox="0 0 120 6"
+      preserveAspectRatio="none"
+      fill="none"
+      style={{ position: "absolute", insetInline: 0, bottom: -5 }}
+    >
+      <path
+        d="M2 4.2 Q 32 1.4 60 3.4 T 118 2.8"
+        stroke="var(--sw-accent)"
+        strokeWidth="2"
+        strokeLinecap="round"
+        vectorEffect="non-scaling-stroke"
+      />
+    </svg>
+  </Box>
 );
 
 export const ListsPanel = () => {

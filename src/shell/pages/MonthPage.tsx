@@ -17,6 +17,8 @@ import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useTrackersStore } from "../../state/trackersStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
+import { EmptyState } from "../components/common/EmptyState.tsx";
+import { MoonDoodle } from "../components/common/doodles.tsx";
 import { MonthGrid } from "../components/month/MonthGrid.tsx";
 
 const EMPTY_MOODS: Record<string, string> = {};
@@ -132,15 +134,11 @@ export const MonthPage = () => {
         onOpenWeek={openWeek}
       />
       {isEmpty && (
-        <Text
-          ff="var(--sw-font-hand)"
-          fz="lg"
-          c="var(--sw-ink-3)"
-          ta="center"
-          mt="sm"
-        >
-          {t("month:empty")}
-        </Text>
+        <EmptyState
+          icon={<MoonDoodle size={40} />}
+          label={t("month:empty")}
+          minHeight={0}
+        />
       )}
     </Stack>
   );

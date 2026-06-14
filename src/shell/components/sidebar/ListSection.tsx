@@ -11,9 +11,12 @@ import {
 } from "@mantine/core";
 import { useDraggable } from "@dnd-kit/core";
 import { useDisclosure } from "@mantine/hooks";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
+import { LeafDoodle } from "../common/doodles.tsx";
 import { isBuiltinList } from "../../../services/repos/listsRepo.ts";
 import type { List } from "../../../services/repos/listsRepo.ts";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
@@ -79,6 +82,7 @@ export const ListSection = ({
   collapsible = false,
 }: ListSectionProps) => {
   const { t } = useTranslation("tasks");
+  const reduced = useReducedMotionPref();
   const tasks = useListsStore((state) => state.tasksByList[list.id] ?? EMPTY);
   const weekId = useWeekStore((state) => state.weekId);
   const language = useSettingsStore((state) => state.language);
@@ -107,7 +111,6 @@ export const ListSection = ({
       : list.kind === "tasks"
         ? t("emptyTasks")
         : t("emptyList");
-  const bodyVisible = !collapsible || !collapsed;
 
   const openRename = () => {
     setNameDraft(name);
@@ -220,12 +223,48 @@ export const ListSection = ({
         </Group>
       )}
 
-      {bodyVisible && (
+      {collapsible ? (
+        <AnimatePresence initial={false}>
+          {!collapsed && (
+            <motion.div
+              key="body"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={
+                reduced ? { duration: 0 } : { duration: 0.2, ease: "easeOut" }
+              }
+              style={{ overflow: "hidden" }}
+            >
+              <Stack gap="xs">
+                <TaskList
+                  tasks={tasks}
+                  containerId={listContainerId(list.id)}
+                  emptyLabel={emptyLabel}
+                  emptyIcon={<LeafDoodle />}
+                  onToggle={(task) => useListsStore.getState().toggleDone(task)}
+                  onRename={(id, title) =>
+                    useListsStore.getState().renameTask(id, title)
+                  }
+                  onDelete={(id) => useListsStore.getState().removeTask(id)}
+                  onMove={(task) => useUiStore.getState().openMove(task)}
+                />
+                <TaskComposer
+                  onAdd={(title) =>
+                    useListsStore.getState().addTask(list.id, title)
+                  }
+                />
+              </Stack>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      ) : (
         <>
           <TaskList
             tasks={tasks}
             containerId={listContainerId(list.id)}
             emptyLabel={emptyLabel}
+            emptyIcon={<LeafDoodle />}
             onToggle={(task) => useListsStore.getState().toggleDone(task)}
             onRename={(id, title) =>
               useListsStore.getState().renameTask(id, title)

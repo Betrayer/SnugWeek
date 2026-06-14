@@ -1,5 +1,5 @@
-import { useReducedMotion } from "motion/react";
 import type { ReactNode } from "react";
+import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useUiStore } from "../../../state/uiStore.ts";
 import { CurlTransitionHost } from "./CurlTransitionHost.tsx";
@@ -16,14 +16,10 @@ export const WeekTransitionHost = ({
   children,
 }: WeekTransitionHostProps) => {
   const setting = useSettingsStore((state) => state.transition);
-  const reduceMotion = useSettingsStore((state) => state.reduceMotion);
+  const reduced = useReducedMotionPref();
   const dragging = useUiStore((state) => state.dragging !== null);
-  const prefersReduced = useReducedMotion();
 
-  const transition = resolveTransition(
-    setting,
-    reduceMotion || prefersReduced === true || dragging,
-  );
+  const transition = resolveTransition(setting, reduced || dragging);
 
   if (transition.kind === "curl") {
     return <CurlTransitionHost weekId={weekId}>{children}</CurlTransitionHost>;

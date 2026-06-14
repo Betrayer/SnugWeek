@@ -1,13 +1,17 @@
-import { Stack, Text } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { useTranslation } from "react-i18next";
+import { EmptyState } from "../components/common/EmptyState.tsx";
+import { MugDoodle } from "../components/common/doodles.tsx";
 
 export const StatsPage = () => {
   const { t } = useTranslation("common");
   return (
     <Stack align="center" justify="center" mih="60vh">
-      <Text ff="var(--sw-font-hand)" fz={32} c="var(--sw-ink-3)">
-        {t("comingSoon")}
-      </Text>
+      <EmptyState
+        icon={<MugDoodle size={40} />}
+        label={t("comingSoon")}
+        minHeight={0}
+      />
     </Stack>
   );
 };

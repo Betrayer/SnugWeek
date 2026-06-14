@@ -1,5 +1,13 @@
 {
   "title": "Налаштування",
+  "theme": "Тема",
+  "themeNames": {
+    "milk": "Молоко",
+    "lavender": "Лаванда",
+    "sage": "Шавлія",
+    "peach": "Персик",
+    "midnight": "Північ"
+  },
   "language": "Мова",
   "animation": "Анімація",
   "transitionFold": "Перегортання",
