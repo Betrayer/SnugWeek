@@ -1,0 +1,115 @@
+import { UnstyledButton } from "@mantine/core";
+import { useTranslation } from "react-i18next";
+import type { DayCounts } from "../../../state/monthStore.ts";
+import type { MonthDayCellData } from "../../../services/time.ts";
+
+interface MonthDayCellProps {
+  day: MonthDayCellData;
+  weekId: string;
+  counts: DayCounts | undefined;
+  onOpen: (weekId: string, iso: number) => void;
+}
+
+const CheckMark = () => (
+  <svg
+    width="11"
+    height="11"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="var(--sw-done)"
+    strokeWidth="3.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <path d="M5 12l4.5 4.5L19 7" />
+  </svg>
+);
+
+export const MonthDayCell = ({
+  day,
+  weekId,
+  counts,
+  onOpen,
+}: MonthDayCellProps) => {
+  const { t } = useTranslation("month");
+  const open = counts?.open ?? 0;
+  const done = counts?.done ?? 0;
+
+  return (
+    <UnstyledButton
+      onClick={() => onOpen(weekId, day.iso)}
+      aria-label={t("dayCell", { date: day.dateKey, open, done })}
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+        minHeight: 58,
+        padding: "5px 6px",
+        borderRadius: "var(--mantine-radius-md)",
+        backgroundColor: day.isWeekend ? "var(--sw-paper-2)" : "var(--sw-card)",
+        border: day.isToday
+          ? "2px solid var(--sw-accent)"
+          : "1px solid var(--sw-line)",
+        opacity: day.inMonth ? 1 : 0.4,
+      }}
+    >
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 700,
+          textAlign: "right",
+          color: day.isToday ? "var(--sw-accent-2)" : "var(--sw-ink-2)",
+        }}
+      >
+        {day.date}
+      </span>
+      <div
+        style={{
+          display: "flex",
+          gap: 6,
+          alignItems: "center",
+          flexWrap: "wrap",
+          minHeight: 14,
+        }}
+      >
+        {open > 0 && (
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 3,
+              fontSize: 11,
+              fontWeight: 700,
+              color: "var(--sw-ink-2)",
+            }}
+          >
+            <span
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                backgroundColor: "var(--sw-accent)",
+              }}
+            />
+            {open}
+          </span>
+        )}
+        {done > 0 && (
+          <span
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 2,
+              fontSize: 11,
+              fontWeight: 700,
+              color: "var(--sw-done)",
+            }}
+          >
+            <CheckMark />
+            {done}
+          </span>
+        )}
+      </div>
+    </UnstyledButton>
+  );
+};

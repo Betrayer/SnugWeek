@@ -1,4 +1,9 @@
 {
   "title": "Settings",
-  "language": "Language"
+  "language": "Language",
+  "animation": "Animation",
+  "transitionFold": "Page flip",
+  "transitionCurl": "Page curl",
+  "transitionNone": "No animation",
+  "reduceMotion": "Reduce motion"
 }

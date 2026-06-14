@@ -9,6 +9,7 @@
   "emptyDay": "a free day",
   "emptyList": "nothing here yet",
   "emptyWeek": "a quiet week ahead",
+  "carriedFrom": "from {{week}}",
   "charLimit": "{{n}}/500",
   "count": {
     "open_one": "{{count}} open",

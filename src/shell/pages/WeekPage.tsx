@@ -8,6 +8,7 @@ import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
 import { WeekNote } from "../components/note/WeekNote.tsx";
 import { TaskDragOverlay } from "../components/tasks/TaskDragOverlay.tsx";
+import { WeekTransitionHost } from "../components/transitions/WeekTransitionHost.tsx";
 import { MobileDayPager } from "../components/week/MobileDayPager.tsx";
 import { WeekBoard } from "../components/week/WeekBoard.tsx";
 import { useIsMobile } from "../hooks/useIsMobile.ts";
@@ -19,6 +20,15 @@ const DESKTOP_HEIGHT =
 const MOBILE_HEIGHT =
   "calc(100vh - var(--app-shell-header-height, 56px) - var(--app-shell-footer-height, 64px) - var(--mantine-spacing-md) * 2)";
 
+const surfaceStyle = {
+  flex: 1,
+  minWidth: 0,
+  minHeight: 0,
+  display: "flex",
+  flexDirection: "column",
+  gap: "var(--mantine-spacing-md)",
+} as const;
+
 export const WeekPage = () => {
   const params = useParams();
   const weekId =
@@ -27,10 +37,10 @@ export const WeekPage = () => {
       : currentWeekId();
   const uid = useAuthStore((state) => state.uid);
   const language = useSettingsStore((state) => state.language);
-  const week = useWeekStore((state) => state.week);
   const columnMode = useProfileStore((state) => state.columnMode);
   const weekend = useProfileStore((state) => state.weekend);
   const showNote = useProfileStore((state) => state.moduleToggles.weekNote);
+  const week = useWeekStore((state) => state.week);
   const isMobile = useIsMobile();
   const dnd = useTaskDnd();
 
@@ -42,16 +52,13 @@ export const WeekPage = () => {
   const daysOff = week?.daysOff ?? weekend;
 
   const content = isMobile ? (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        gap: "var(--mantine-spacing-md)",
-        height: MOBILE_HEIGHT,
-      }}
-    >
-      <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
-      {showNote && <WeekNote />}
+    <div style={{ height: MOBILE_HEIGHT }}>
+      <WeekTransitionHost weekId={weekId}>
+        <div style={surfaceStyle}>
+          <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
+          {showNote && <WeekNote />}
+        </div>
+      </WeekTransitionHost>
     </div>
   ) : (
     <div
@@ -61,18 +68,13 @@ export const WeekPage = () => {
         height: DESKTOP_HEIGHT,
       }}
     >
-      <div
-        style={{
-          flex: 1,
-          minWidth: 0,
-          minHeight: 0,
-          display: "flex",
-          flexDirection: "column",
-          gap: "var(--mantine-spacing-md)",
-        }}
-      >
-        <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
-        {showNote && <WeekNote />}
+      <div style={{ flex: 1, minWidth: 0, minHeight: 0, position: "relative" }}>
+        <WeekTransitionHost weekId={weekId}>
+          <div style={surfaceStyle}>
+            <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
+            {showNote && <WeekNote />}
+          </div>
+        </WeekTransitionHost>
       </div>
       <div style={{ flex: "0 0 320px", minHeight: 0, display: "flex" }}>
         <SidebarPanel />

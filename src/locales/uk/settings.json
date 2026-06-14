@@ -1,4 +1,9 @@
 {
   "title": "Налаштування",
-  "language": "Мова"
+  "language": "Мова",
+  "animation": "Анімація",
+  "transitionFold": "Перегортання",
+  "transitionCurl": "Загинання",
+  "transitionNone": "Без анімації",
+  "reduceMotion": "Зменшити анімацію"
 }

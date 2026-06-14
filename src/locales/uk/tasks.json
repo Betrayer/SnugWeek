@@ -9,6 +9,7 @@
   "emptyDay": "вільний день",
   "emptyList": "поки порожньо",
   "emptyWeek": "спокійний тиждень попереду",
+  "carriedFrom": "з {{week}}",
   "charLimit": "{{n}}/500",
   "count": {
     "open_one": "{{count}} відкрита",

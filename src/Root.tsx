@@ -6,9 +6,12 @@ import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
+import { triggerCarryOver } from "./services/carryOver.ts";
 import { setWriteErrorHandler } from "./services/repos/writeError.ts";
 import {
+  currentMonthId,
   currentWeekId,
+  isValidMonthId,
   isValidWeekId,
   setTimeLocale,
 } from "./services/time.ts";
@@ -36,7 +39,14 @@ const router = createBrowserRouter([
             : redirect(`/w/${currentWeekId()}`),
         element: <WeekPage />,
       },
-      { path: "/month/:monthId", element: <MonthPage /> },
+      {
+        path: "/month/:monthId",
+        loader: ({ params }) =>
+          isValidMonthId(params.monthId ?? "")
+            ? null
+            : redirect(`/month/${currentMonthId()}`),
+        element: <MonthPage />,
+      },
       { path: "/stats", element: <StatsPage /> },
       { path: "/settings", element: <SettingsPage /> },
       { path: "*", loader: () => redirect(`/w/${currentWeekId()}`) },
@@ -83,10 +93,15 @@ export const Root = () => {
   }, [bootstrap]);
 
   useEffect(() => {
-    if (authStatus === "ready" && uid) {
-      useProfileStore.getState().start(uid);
-      useListsStore.getState().start(uid);
-    }
+    if (authStatus !== "ready" || !uid) return;
+    useProfileStore.getState().start(uid);
+    useListsStore.getState().start(uid);
+    triggerCarryOver(uid);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") triggerCarryOver(uid);
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => document.removeEventListener("visibilitychange", onVisible);
   }, [authStatus, uid]);
 
   useEffect(() => {

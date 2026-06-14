@@ -101,6 +101,27 @@ export const subscribeListTasks = (
     },
   );
 
+export const subscribeWeeksTasks = (
+  uid: string,
+  weekIds: string[],
+  cb: (tasks: Task[]) => void,
+): (() => void) => {
+  if (weekIds.length === 0) {
+    cb([]);
+    return () => {};
+  }
+  return onSnapshot(
+    query(
+      tasksCol(uid),
+      where("bucket", "==", "day"),
+      where("weekId", "in", weekIds),
+    ),
+    (snap) => {
+      cb(snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data())));
+    },
+  );
+};
+
 export const createTask = (uid: string, fields: NewTaskFields): void => {
   const now = Date.now();
   void addDoc(tasksCol(uid), {
@@ -139,6 +160,7 @@ export const setStatus = (
     status,
     completedAt,
     updatedAt: Date.now(),
+    ...(status === "done" ? { carriedFrom: null } : {}),
   }).catch(reportWriteError);
 };
 

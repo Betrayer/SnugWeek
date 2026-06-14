@@ -137,43 +137,69 @@ export const TaskCard = ({
       >
         <CheckMark done={done} />
       </UnstyledButton>
-      {editing ? (
-        <TextInput
-          autoFocus
-          variant="unstyled"
-          value={draft}
-          maxLength={MAX_TITLE}
-          onChange={(event) => setDraft(event.currentTarget.value)}
-          onKeyDown={handleKey}
-          onPointerDown={(event) => event.stopPropagation()}
-          onBlur={commit}
-          style={{ flex: 1 }}
-          styles={{
-            input: {
-              fontFamily: "var(--sw-font-body)",
-              color: "var(--sw-ink)",
-              minHeight: "unset",
-              height: "auto",
+      <div
+        style={{
+          flex: 1,
+          minWidth: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+        }}
+      >
+        {editing ? (
+          <TextInput
+            autoFocus
+            variant="unstyled"
+            value={draft}
+            maxLength={MAX_TITLE}
+            onChange={(event) => setDraft(event.currentTarget.value)}
+            onKeyDown={handleKey}
+            onPointerDown={(event) => event.stopPropagation()}
+            onBlur={commit}
+            styles={{
+              input: {
+                fontFamily: "var(--sw-font-body)",
+                color: "var(--sw-ink)",
+                minHeight: "unset",
+                height: "auto",
+                lineHeight: 1.4,
+                padding: 0,
+              },
+            }}
+          />
+        ) : (
+          <Text
+            onClick={isOverlay ? undefined : startEdit}
+            style={{
+              cursor: isOverlay ? "default" : "text",
+              color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
+              textDecoration: done ? "line-through" : "none",
               lineHeight: 1.4,
-              padding: 0,
-            },
-          }}
-        />
-      ) : (
-        <Text
-          onClick={isOverlay ? undefined : startEdit}
-          style={{
-            flex: 1,
-            cursor: isOverlay ? "default" : "text",
-            color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
-            textDecoration: done ? "line-through" : "none",
-            lineHeight: 1.4,
-            wordBreak: "break-word",
-          }}
-        >
-          {task.title}
-        </Text>
-      )}
+              wordBreak: "break-word",
+            }}
+          >
+            {task.title}
+          </Text>
+        )}
+        {!editing && task.carriedFrom && (
+          <span
+            style={{
+              alignSelf: "flex-start",
+              fontSize: 10,
+              fontWeight: 700,
+              lineHeight: 1.5,
+              color: "var(--sw-accent-2)",
+              backgroundColor:
+                "color-mix(in srgb, var(--sw-accent-2) 12%, transparent)",
+              padding: "0 6px",
+              borderRadius: 999,
+              whiteSpace: "nowrap",
+            }}
+          >
+            {t("carriedFrom", { week: task.carriedFrom.slice(5) })}
+          </span>
+        )}
+      </div>
       {!isOverlay && (
         <Menu position="bottom-end">
           <Menu.Target>

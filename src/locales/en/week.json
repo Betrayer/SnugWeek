@@ -2,5 +2,7 @@
   "notePlaceholder": "Notes, plans, dreams for the week…",
   "noteSaved": "saved",
   "prevWeek": "Previous week",
-  "nextWeek": "Next week"
+  "nextWeek": "Next week",
+  "jumpTitle": "Jump to week",
+  "jumpToMonth": "View month"
 }
