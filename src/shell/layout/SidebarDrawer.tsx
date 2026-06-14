@@ -37,7 +37,7 @@ export const SidebarDrawer = () => {
         onDragCancel={dnd.onDragCancel}
       >
         <ListsPanel />
-        <TaskDragOverlay task={dnd.activeTask} />
+        <TaskDragOverlay task={dnd.activeTask} list={dnd.activeList} />
       </DndContext>
     </Drawer>
   );

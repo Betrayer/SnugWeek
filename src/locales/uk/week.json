@@ -1,8 +1,11 @@
 {
-  "notePlaceholder": "Нотатки, плани, мрії на тиждень…",
+  "notePlaceholder": "Нотатки",
   "noteSaved": "збережено",
   "prevWeek": "Попередній тиждень",
   "nextWeek": "Наступний тиждень",
   "jumpTitle": "Перейти до тижня",
-  "jumpToMonth": "Переглянути місяць"
+  "jumpToMonth": "Переглянути місяць",
+  "makeDayOff": "Зробити вихідним",
+  "makeWorkday": "Зробити робочим",
+  "dayOptions": "Параметри дня: {{day}}"
 }

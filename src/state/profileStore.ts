@@ -5,6 +5,9 @@ import {
   DEFAULT_MODULE_TOGGLES,
   DEFAULT_WEEKEND,
   ensureProfile,
+  setColumnMode,
+  setModuleToggle,
+  setWeekend,
   subscribeProfile,
 } from "../services/repos/profileRepo.ts";
 import type { ModuleToggles } from "../services/repos/profileRepo.ts";
@@ -16,6 +19,9 @@ interface ProfileState {
   columnMode: "cozy" | "equal";
   moduleToggles: ModuleToggles;
   start: (uid: string) => void;
+  setWeekend: (weekend: number[]) => void;
+  setColumnMode: (columnMode: "cozy" | "equal") => void;
+  setModuleToggle: (key: keyof ModuleToggles, value: boolean) => void;
 }
 
 let unsubscribe: (() => void) | null = null;
@@ -49,6 +55,18 @@ export const useProfileStore = create<ProfileState>()(
             moduleToggles: profile.moduleToggles,
           });
         });
+      },
+      setWeekend: (weekend) => {
+        if (!activeUid) return;
+        setWeekend(activeUid, weekend);
+      },
+      setColumnMode: (columnMode) => {
+        if (!activeUid) return;
+        setColumnMode(activeUid, columnMode);
+      },
+      setModuleToggle: (key, value) => {
+        if (!activeUid) return;
+        setModuleToggle(activeUid, key, value);
       },
     }),
     { name: "profileStore" },

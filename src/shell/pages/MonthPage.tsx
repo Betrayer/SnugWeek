@@ -10,12 +10,16 @@ import {
   monthTitle,
   weekdayInitials,
 } from "../../services/time.ts";
+import { MOOD_TRACKER_ID } from "../../services/repos/trackersRepo.ts";
 import { useAuthStore } from "../../state/authStore.ts";
 import { useMonthStore } from "../../state/monthStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
+import { useTrackersStore } from "../../state/trackersStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { MonthGrid } from "../components/month/MonthGrid.tsx";
+
+const EMPTY_MOODS: Record<string, string> = {};
 
 const ChevronLeftIcon = () => (
   <svg
@@ -53,8 +57,17 @@ export const MonthPage = () => {
   const navigate = useNavigate();
   const uid = useAuthStore((state) => state.uid);
   const weekend = useProfileStore((state) => state.weekend);
+  const showTrackers = useProfileStore(
+    (state) => state.moduleToggles.dayTrackers,
+  );
   const language = useSettingsStore((state) => state.language);
   const countsByDate = useMonthStore((state) => state.countsByDate);
+  const moodByDate = useMonthStore((state) => state.moodByDate);
+  const moodEnabled = useTrackersStore((state) =>
+    state.trackers.some(
+      (tracker) => tracker.id === MOOD_TRACKER_ID && tracker.enabled,
+    ),
+  );
 
   const monthId =
     params.monthId && isValidMonthId(params.monthId)
@@ -69,6 +82,7 @@ export const MonthPage = () => {
   const rows = useMemo(() => buildMonthGrid(monthId, weekend), [monthId, weekend]);
   const initials = useMemo(() => weekdayInitials(language), [language]);
   const isEmpty = Object.keys(countsByDate).length === 0;
+  const moods = showTrackers && moodEnabled ? moodByDate : EMPTY_MOODS;
 
   const openWeek = (weekId: string, iso?: number) => {
     useUiStore.getState().setActiveMobileDay(iso ?? null);
@@ -114,6 +128,7 @@ export const MonthPage = () => {
         rows={rows}
         initials={initials}
         counts={countsByDate}
+        moods={moods}
         onOpenWeek={openWeek}
       />
       {isEmpty && (

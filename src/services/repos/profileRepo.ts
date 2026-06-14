@@ -1,7 +1,9 @@
-import { doc, getDoc, onSnapshot, setDoc } from "firebase/firestore";
+import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import { DEFAULT_THEME_ID } from "../../data/themes/registry.ts";
 import { db } from "../firebase.ts";
+import { reportWriteError } from "./writeError.ts";
+import { seedDefaultTrackers } from "./trackersRepo.ts";
 
 export interface ModuleToggles {
   dayTrackers: boolean;
@@ -59,7 +61,13 @@ const profileRef = (uid: string) => doc(db, "users", uid);
 export const ensureProfile = async (uid: string): Promise<void> => {
   const ref = profileRef(uid);
   const snap = await getDoc(ref);
-  if (snap.exists()) return;
+  if (snap.exists()) {
+    if (snap.data().trackersSeeded !== true) {
+      await seedDefaultTrackers(uid);
+      await updateDoc(ref, { trackersSeeded: true });
+    }
+    return;
+  }
   const now = Date.now();
   await setDoc(
     ref,
@@ -74,6 +82,36 @@ export const ensureProfile = async (uid: string): Promise<void> => {
     },
     { merge: true },
   );
+  await seedDefaultTrackers(uid);
+  await updateDoc(ref, { trackersSeeded: true });
+};
+
+export const setWeekend = (uid: string, weekend: number[]): void => {
+  void updateDoc(profileRef(uid), {
+    weekend,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setColumnMode = (
+  uid: string,
+  columnMode: "cozy" | "equal",
+): void => {
+  void updateDoc(profileRef(uid), {
+    columnMode,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setModuleToggle = (
+  uid: string,
+  key: keyof ModuleToggles,
+  value: boolean,
+): void => {
+  void updateDoc(profileRef(uid), {
+    [`moduleToggles.${key}`]: value,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
 };
 
 export const subscribeProfile = (

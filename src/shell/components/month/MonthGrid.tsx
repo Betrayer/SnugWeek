@@ -8,16 +8,18 @@ interface MonthGridProps {
   rows: MonthWeekRow[];
   initials: string[];
   counts: Record<string, DayCounts>;
+  moods: Record<string, string>;
   onOpenWeek: (weekId: string, iso?: number) => void;
 }
 
 interface RowProps {
   row: MonthWeekRow;
   counts: Record<string, DayCounts>;
+  moods: Record<string, string>;
   onOpenWeek: (weekId: string, iso?: number) => void;
 }
 
-const Row = ({ row, counts, onOpenWeek }: RowProps) => {
+const Row = ({ row, counts, moods, onOpenWeek }: RowProps) => {
   const { t } = useTranslation("month");
   return (
     <>
@@ -41,6 +43,7 @@ const Row = ({ row, counts, onOpenWeek }: RowProps) => {
           day={day}
           weekId={row.weekId}
           counts={counts[day.dateKey]}
+          mood={moods[day.dateKey]}
           onOpen={onOpenWeek}
         />
       ))}
@@ -52,6 +55,7 @@ export const MonthGrid = ({
   rows,
   initials,
   counts,
+  moods,
   onOpenWeek,
 }: MonthGridProps) => (
   <div
@@ -82,6 +86,7 @@ export const MonthGrid = ({
         key={row.weekId}
         row={row}
         counts={counts}
+        moods={moods}
         onOpenWeek={onOpenWeek}
       />
     ))}

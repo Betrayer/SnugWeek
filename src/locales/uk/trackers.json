@@ -1,0 +1,39 @@
+{
+  "set": "Вкажіть «{{name}}»",
+  "valueOf": "{{name}}: {{value}}",
+  "scaleStep": "{{name}}: {{value}} із 5",
+  "increase": "Збільшити «{{name}}»",
+  "decrease": "Зменшити «{{name}}»",
+  "clear": "Очистити",
+  "defaults": {
+    "mood": "Настрій",
+    "energy": "Енергія"
+  },
+  "settings": {
+    "title": "Показники дня",
+    "add": "Новий показник",
+    "addTitle": "Новий показник",
+    "editTitle": "Редагувати показник",
+    "name": "Назва",
+    "namePlaceholder": "Назва показника…",
+    "typeLabel": "Тип",
+    "type": {
+      "scale5": "Шкала 1–5",
+      "emoji": "Емодзі",
+      "number": "Число",
+      "checkbox": "Чекбокс"
+    },
+    "icon": "Іконка",
+    "enabledLabel": "Показувати «{{name}}»",
+    "edit": "Редагувати",
+    "delete": "Видалити",
+    "deleteTitle": "Видалити показник?",
+    "deleteWarning": "Значення, збережені в минулих тижнях, залишаться недоторканими.",
+    "deleteConfirm": "Видалити",
+    "cancel": "Скасувати",
+    "save": "Зберегти",
+    "empty": "Поки немає показників",
+    "reorder": "Перемістити",
+    "menu": "Меню «{{name}}»"
+  }
+}

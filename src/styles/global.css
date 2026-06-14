@@ -39,3 +39,8 @@ html {
 .sw-hide-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+:focus-visible {
+  outline: 2px solid var(--sw-accent);
+  outline-offset: 1px;
+}

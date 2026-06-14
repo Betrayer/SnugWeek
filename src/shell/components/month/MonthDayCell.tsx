@@ -7,6 +7,7 @@ interface MonthDayCellProps {
   day: MonthDayCellData;
   weekId: string;
   counts: DayCounts | undefined;
+  mood?: string;
   onOpen: (weekId: string, iso: number) => void;
 }
 
@@ -20,6 +21,7 @@ const CheckMark = () => (
     strokeWidth="3.5"
     strokeLinecap="round"
     strokeLinejoin="round"
+    aria-hidden
   >
     <path d="M5 12l4.5 4.5L19 7" />
   </svg>
@@ -29,6 +31,7 @@ export const MonthDayCell = ({
   day,
   weekId,
   counts,
+  mood,
   onOpen,
 }: MonthDayCellProps) => {
   const { t } = useTranslation("month");
@@ -53,16 +56,27 @@ export const MonthDayCell = ({
         opacity: day.inMonth ? 1 : 0.4,
       }}
     >
-      <span
+      <div
         style={{
-          fontSize: 12,
-          fontWeight: 700,
-          textAlign: "right",
-          color: day.isToday ? "var(--sw-accent-2)" : "var(--sw-ink-2)",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: 4,
         }}
       >
-        {day.date}
-      </span>
+        <span style={{ fontSize: 13, lineHeight: 1, minWidth: 0 }}>
+          {mood ?? ""}
+        </span>
+        <span
+          style={{
+            fontSize: 12,
+            fontWeight: 700,
+            color: day.isToday ? "var(--sw-accent-2)" : "var(--sw-ink-2)",
+          }}
+        >
+          {day.date}
+        </span>
+      </div>
       <div
         style={{
           display: "flex",

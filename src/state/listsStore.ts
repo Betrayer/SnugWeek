@@ -2,12 +2,14 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { ORDER_SPACING, orderForBottom } from "../services/ordering.ts";
 import {
+  assignListToDay,
   createList,
   deleteListAndRehomeTasks,
   ensureBuiltinLists,
   isBuiltinList,
   renameList as renameListDoc,
   subscribeLists,
+  unassignList,
 } from "../services/repos/listsRepo.ts";
 import type { List } from "../services/repos/listsRepo.ts";
 import {
@@ -32,6 +34,8 @@ interface ListsState {
   addList: (name: string) => void;
   renameList: (listId: string, name: string) => void;
   removeList: (listId: string) => void;
+  assignListToDay: (listId: string, day: number) => void;
+  unassignList: (listId: string) => void;
 }
 
 let listsUnsub: (() => void) | null = null;
@@ -120,6 +124,18 @@ export const useListsStore = create<ListsState>()(
           order: ceiling - (tasks.length - index) * ORDER_SPACING,
         }));
         deleteListAndRehomeTasks(activeUid, listId, rehomed);
+      },
+      assignListToDay: (listId, day) => {
+        if (!activeUid || isBuiltinList(listId)) return;
+        const list = get().lists.find((item) => item.id === listId);
+        if (list && list.day === day) return;
+        assignListToDay(activeUid, listId, day);
+      },
+      unassignList: (listId) => {
+        if (!activeUid || isBuiltinList(listId)) return;
+        const list = get().lists.find((item) => item.id === listId);
+        if (list && list.day === null) return;
+        unassignList(activeUid, listId);
       },
     }),
     { name: "listsStore" },

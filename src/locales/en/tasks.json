@@ -8,6 +8,8 @@
   "reopen": "Reopen",
   "emptyDay": "a free day",
   "emptyList": "nothing here yet",
+  "emptyTasks": "nothing to do yet",
+  "emptyIdeas": "ideas and dreams live here",
   "emptyWeek": "a quiet week ahead",
   "carriedFrom": "from {{week}}",
   "charLimit": "{{n}}/500",
@@ -27,7 +29,14 @@
     "deleteWarning": "Its tasks will move to “{{target}}”.",
     "deleteConfirm": "Delete",
     "cancel": "Cancel",
-    "open": "Lists"
+    "open": "Lists",
+    "noLists": "No lists yet — create one",
+    "moveToDay": "Move to a day…",
+    "moveToDayTitle": "Move “{{name}}” to a day",
+    "backToSidebar": "Back to sidebar",
+    "dragHandle": "Drag {{name}}",
+    "expand": "Expand",
+    "collapse": "Collapse"
   },
   "moveMenu": {
     "title": "Move to…",

@@ -20,8 +20,19 @@ import { useAuthStore } from "../../state/authStore.ts";
 import { useListsStore } from "../../state/listsStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
-import { dayContainerId, listContainerId } from "../components/tasks/dndIds.ts";
+import {
+  LIST_SIDEBAR_DROP_ID,
+  dayContainerId,
+  listContainerId,
+  parseDayColumnId,
+  parseListDragId,
+} from "../components/tasks/dndIds.ts";
 import { sortForDisplay } from "../components/tasks/taskSort.ts";
+
+interface ActiveList {
+  id: string;
+  name: string;
+}
 
 const findTask = (taskId: string): Task | null => {
   const byDay = useWeekStore.getState().tasksByDay;
@@ -52,6 +63,7 @@ const buildContainers = (): Record<string, Task[]> => {
 
 export const useTaskDnd = () => {
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeList, setActiveList] = useState<ActiveList | null>(null);
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     useSensor(TouchSensor, {
@@ -63,21 +75,43 @@ export const useTaskDnd = () => {
   );
 
   const onDragStart = (event: DragStartEvent) => {
-    const taskId = String(event.active.id);
-    setActiveTask(findTask(taskId));
-    useUiStore.getState().setDragging({ taskId });
+    const activeId = String(event.active.id);
+    const listId = parseListDragId(activeId);
+    if (listId) {
+      const list = useListsStore
+        .getState()
+        .lists.find((item) => item.id === listId);
+      setActiveList({ id: listId, name: list?.name ?? "" });
+      useUiStore.getState().setDragging({ taskId: activeId });
+      return;
+    }
+    setActiveTask(findTask(activeId));
+    useUiStore.getState().setDragging({ taskId: activeId });
   };
 
   const onDragEnd = (event: DragEndEvent) => {
     setActiveTask(null);
+    setActiveList(null);
     useUiStore.getState().setDragging(null);
     const { active, over } = event;
     if (!over) return;
     const uid = useAuthStore.getState().uid;
     if (!uid) return;
+    const activeId = String(active.id);
+    const overId = String(over.id);
+
+    const listId = parseListDragId(activeId);
+    if (listId) {
+      const day = parseDayColumnId(overId);
+      if (day !== null) useListsStore.getState().assignListToDay(listId, day);
+      else if (overId === LIST_SIDEBAR_DROP_ID)
+        useListsStore.getState().unassignList(listId);
+      return;
+    }
+
     const result = resolveMove({
-      activeId: String(active.id),
-      overId: String(over.id),
+      activeId,
+      overId,
       containers: buildContainers(),
       weekId: useWeekStore.getState().weekId,
     });
@@ -88,10 +122,28 @@ export const useTaskDnd = () => {
 
   const onDragCancel = () => {
     setActiveTask(null);
+    setActiveList(null);
     useUiStore.getState().setDragging(null);
   };
 
-  const collisionDetection: CollisionDetection = closestCorners;
+  const collisionDetection: CollisionDetection = (args) => {
+    const isList = parseListDragId(String(args.active.id)) !== null;
+    const containers = args.droppableContainers.filter((container) => {
+      const id = String(container.id);
+      const listTarget =
+        parseDayColumnId(id) !== null || id === LIST_SIDEBAR_DROP_ID;
+      return isList ? listTarget : !listTarget;
+    });
+    return closestCorners({ ...args, droppableContainers: containers });
+  };
 
-  return { sensors, collisionDetection, onDragStart, onDragEnd, onDragCancel, activeTask };
+  return {
+    sensors,
+    collisionDetection,
+    onDragStart,
+    onDragEnd,
+    onDragCancel,
+    activeTask,
+    activeList,
+  };
 };

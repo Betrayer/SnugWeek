@@ -5,5 +5,14 @@
   "transitionFold": "Перегортання",
   "transitionCurl": "Загинання",
   "transitionNone": "Без анімації",
-  "reduceMotion": "Зменшити анімацію"
+  "reduceMotion": "Зменшити анімацію",
+  "schedule": "Розклад",
+  "weekend": "Вихідні за замовчуванням",
+  "columnMode": "Колонки тижня",
+  "columnCozy": "Затишний (вихідні разом)",
+  "columnEqual": "Сім однакових колонок",
+  "modules": "Модулі",
+  "moduleDayTrackers": "Показники дня",
+  "moduleHabits": "Звички",
+  "moduleWeekNote": "Нотатки"
 }

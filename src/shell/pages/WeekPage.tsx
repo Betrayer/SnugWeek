@@ -6,7 +6,6 @@ import { useAuthStore } from "../../state/authStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
-import { WeekNote } from "../components/note/WeekNote.tsx";
 import { TaskDragOverlay } from "../components/tasks/TaskDragOverlay.tsx";
 import { WeekTransitionHost } from "../components/transitions/WeekTransitionHost.tsx";
 import { MobileDayPager } from "../components/week/MobileDayPager.tsx";
@@ -39,7 +38,6 @@ export const WeekPage = () => {
   const language = useSettingsStore((state) => state.language);
   const columnMode = useProfileStore((state) => state.columnMode);
   const weekend = useProfileStore((state) => state.weekend);
-  const showNote = useProfileStore((state) => state.moduleToggles.weekNote);
   const week = useWeekStore((state) => state.week);
   const isMobile = useIsMobile();
   const dnd = useTaskDnd();
@@ -56,7 +54,6 @@ export const WeekPage = () => {
       <WeekTransitionHost weekId={weekId}>
         <div style={surfaceStyle}>
           <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
-          {showNote && <WeekNote />}
         </div>
       </WeekTransitionHost>
     </div>
@@ -72,7 +69,6 @@ export const WeekPage = () => {
         <WeekTransitionHost weekId={weekId}>
           <div style={surfaceStyle}>
             <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
-            {showNote && <WeekNote />}
           </div>
         </WeekTransitionHost>
       </div>
@@ -91,7 +87,7 @@ export const WeekPage = () => {
       onDragCancel={dnd.onDragCancel}
     >
       {content}
-      <TaskDragOverlay task={dnd.activeTask} />
+      <TaskDragOverlay task={dnd.activeTask} list={dnd.activeList} />
     </DndContext>
   );
 };
