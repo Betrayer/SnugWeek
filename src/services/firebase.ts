@@ -1,9 +1,11 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
+import type { User } from "firebase/auth";
 import {
   initializeFirestore,
   persistentLocalCache,
   persistentMultipleTabManager,
+  waitForPendingWrites,
 } from "firebase/firestore";
 
 const app = initializeApp({
@@ -26,15 +28,31 @@ export const db = initializeFirestore(app, {
 export interface AuthUser {
   uid: string;
   isAnonymous: boolean;
+  email: string | null;
+  displayName: string | null;
+  providerIds: string[];
 }
+
+const toAuthUser = (user: User | null): AuthUser | null =>
+  user
+    ? {
+        uid: user.uid,
+        isAnonymous: user.isAnonymous,
+        email: user.email,
+        displayName: user.displayName,
+        providerIds: user.providerData.map((info) => info.providerId),
+      }
+    : null;
 
 export const subscribeAuthUser = (
   onUser: (user: AuthUser | null) => void,
 ): (() => void) =>
-  onAuthStateChanged(auth, (user) =>
-    onUser(user ? { uid: user.uid, isAnonymous: user.isAnonymous } : null),
-  );
+  onAuthStateChanged(auth, (user) => onUser(toAuthUser(user)));
+
+export const currentAuthUser = (): AuthUser | null => toAuthUser(auth.currentUser);
 
 export const signInAnonymouslyNow = async (): Promise<void> => {
   await signInAnonymously(auth);
 };
+
+export const flushPendingWrites = (): Promise<void> => waitForPendingWrites(db);

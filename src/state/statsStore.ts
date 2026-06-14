@@ -32,6 +32,7 @@ interface StatsState {
   yearStatus: LoadStatus;
   openMonth: (uid: string, monthId: string) => void;
   openYear: (uid: string, year: number) => void;
+  stop: () => void;
   backfill: (uid: string) => Promise<void>;
 }
 
@@ -130,6 +131,23 @@ export const useStatsStore = create<StatsState>()(
         const { start, end } = yearWeekRange(year);
         yearWeeksUnsub = subscribeWeeksRange(uid, start, end, (weeks) => {
           set({ yearWeeks: weeks });
+        });
+      },
+      stop: () => {
+        teardownMonth();
+        teardownYear();
+        activeUid = null;
+        set({
+          monthId: null,
+          monthStats: null,
+          monthWeeks: [],
+          monthCreated: 0,
+          carriedTasks: [],
+          monthStatus: "idle",
+          yearValue: null,
+          yearMonths: {},
+          yearWeeks: [],
+          yearStatus: "idle",
         });
       },
       backfill: async (uid) => {

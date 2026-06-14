@@ -17,6 +17,7 @@ interface MonthState {
   countsByDate: Record<string, DayCounts>;
   moodByDate: Record<string, string>;
   open: (uid: string, monthId: string) => void;
+  stop: () => void;
 }
 
 let tasksUnsub: (() => void) | null = null;
@@ -71,6 +72,15 @@ export const useMonthStore = create<MonthState>()(
         weeksUnsub = subscribeWeeks(uid, weekIds, (weeks) => {
           set({ moodByDate: moodByDate(weeks) });
         });
+      },
+      stop: () => {
+        if (tasksUnsub) tasksUnsub();
+        if (weeksUnsub) weeksUnsub();
+        tasksUnsub = null;
+        weeksUnsub = null;
+        activeUid = null;
+        activeMonthId = null;
+        set({ monthId: null, countsByDate: {}, moodByDate: {} });
       },
     }),
     { name: "monthStore" },

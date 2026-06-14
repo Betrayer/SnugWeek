@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
+import { notePendingWrite } from "../syncSignal.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type TrackerValue = number | string | boolean;
@@ -135,6 +136,7 @@ export const setDayNote = (
   day: number,
   note: string,
 ): void => {
+  notePendingWrite();
   void setDoc(
     weekRef(uid, weekId),
     { dayNotes: { [String(day)]: note }, updatedAt: Date.now() },
@@ -147,6 +149,7 @@ export const setDaysOff = (
   weekId: string,
   days: number[],
 ): void => {
+  notePendingWrite();
   void setDoc(
     weekRef(uid, weekId),
     { daysOff: days, updatedAt: Date.now() },
@@ -161,6 +164,7 @@ export const setTrackerValue = (
   trackerId: string,
   value: TrackerValue,
 ): void => {
+  notePendingWrite();
   void setDoc(
     weekRef(uid, weekId),
     {
@@ -177,6 +181,7 @@ export const clearTrackerValue = (
   day: number,
   trackerId: string,
 ): void => {
+  notePendingWrite();
   void updateDoc(weekRef(uid, weekId), {
     [`trackerValues.${day}.${trackerId}`]: deleteField(),
     updatedAt: Date.now(),
@@ -190,6 +195,7 @@ export const setHabitCheck = (
   day: number,
   checked: boolean,
 ): void => {
+  notePendingWrite();
   const ref = weekRef(uid, weekId);
   if (checked) {
     void setDoc(

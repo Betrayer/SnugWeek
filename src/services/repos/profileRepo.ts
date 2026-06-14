@@ -17,6 +17,7 @@ import type { SupportedLang } from "../../i18n/languages.ts";
 import { ORDER_SPACING } from "../ordering.ts";
 import { currentWeekId, todayIsoDay } from "../time.ts";
 import { db } from "../firebase.ts";
+import { notePendingWrite } from "../syncSignal.ts";
 import { reportWriteError } from "./writeError.ts";
 import { createHabit } from "./habitsRepo.ts";
 import { createTask } from "./tasksRepo.ts";
@@ -170,6 +171,7 @@ export const ensureProfile = async (
 };
 
 export const setTheme = (uid: string, themeId: string): void => {
+  notePendingWrite();
   void updateDoc(profileRef(uid), {
     themeId,
     updatedAt: Date.now(),
@@ -177,6 +179,7 @@ export const setTheme = (uid: string, themeId: string): void => {
 };
 
 export const setWeekend = (uid: string, weekend: number[]): void => {
+  notePendingWrite();
   void updateDoc(profileRef(uid), {
     weekend,
     updatedAt: Date.now(),
@@ -187,6 +190,7 @@ export const setColumnMode = (
   uid: string,
   columnMode: "cozy" | "equal",
 ): void => {
+  notePendingWrite();
   void updateDoc(profileRef(uid), {
     columnMode,
     updatedAt: Date.now(),
@@ -198,11 +202,23 @@ export const setModuleToggle = (
   key: keyof ModuleToggles,
   value: boolean,
 ): void => {
+  notePendingWrite();
   void updateDoc(profileRef(uid), {
     [`moduleToggles.${key}`]: value,
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };
+
+export const setAccountInfo = (
+  uid: string,
+  email: string | null,
+  displayName: string | null,
+): Promise<void> =>
+  setDoc(
+    profileRef(uid),
+    { email, displayName, updatedAt: Date.now() },
+    { merge: true },
+  );
 
 export const markStatsBackfilled = (uid: string): Promise<void> =>
   updateDoc(profileRef(uid), {

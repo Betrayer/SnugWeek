@@ -13,6 +13,7 @@ import {
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
+import { notePendingWrite } from "../syncSignal.ts";
 import { isoDateKeyOf, monthIdOfKey, monthRangeMs } from "../time.ts";
 import { reportWriteError } from "./writeError.ts";
 
@@ -50,6 +51,7 @@ export const bumpCompletion = (
   isoDate: string,
   delta: number,
 ): void => {
+  notePendingWrite();
   void setDoc(
     statsRef(uid, monthIdOfKey(isoDate)),
     {

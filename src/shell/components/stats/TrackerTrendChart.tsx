@@ -1,4 +1,5 @@
 import { LineChart } from "@mantine/charts";
+import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import type { MonthTrendPoint } from "../../../services/stats/monthStatsData.ts";
 
@@ -50,7 +51,7 @@ export const TrackerTrendChart = ({
       withDots
       dotProps={{ r: 3 }}
       gridAxis="y"
-      textColor="var(--sw-ink-3)"
+      style={{ "--chart-text-color": "var(--sw-ink-3)" } as CSSProperties}
       gridColor="var(--sw-line)"
       yAxisProps={{ domain: [0, 5], ticks: [1, 2, 3, 4, 5], width: 22 }}
       xAxisProps={{ interval: 4, minTickGap: 4 }}

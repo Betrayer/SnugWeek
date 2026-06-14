@@ -22,6 +22,7 @@ interface ProfileState {
   moduleToggles: ModuleToggles;
   statsBackfilledAt: number | null;
   start: (uid: string) => void;
+  stop: () => void;
   setThemeId: (themeId: string) => void;
   setWeekend: (weekend: number[]) => void;
   setColumnMode: (columnMode: "cozy" | "equal") => void;
@@ -62,6 +63,19 @@ export const useProfileStore = create<ProfileState>()(
             moduleToggles: profile.moduleToggles,
             statsBackfilledAt: profile.statsBackfilledAt,
           });
+        });
+      },
+      stop: () => {
+        if (unsubscribe) unsubscribe();
+        unsubscribe = null;
+        activeUid = null;
+        set({
+          loaded: false,
+          themeId: DEFAULT_THEME_ID,
+          weekend: DEFAULT_WEEKEND,
+          columnMode: "cozy",
+          moduleToggles: DEFAULT_MODULE_TOGGLES,
+          statsBackfilledAt: null,
         });
       },
       setThemeId: (themeId) => {

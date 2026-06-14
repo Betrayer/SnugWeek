@@ -29,6 +29,7 @@ interface ListsState {
   lists: List[];
   tasksByList: Record<string, Task[]>;
   start: (uid: string) => void;
+  stop: () => void;
   addTask: (listId: string, title: string) => void;
   toggleDone: (task: Task) => void;
   renameTask: (taskId: string, title: string) => void;
@@ -75,6 +76,14 @@ export const useListsStore = create<ListsState>()(
         tasksUnsub = subscribeListTasks(uid, (tasks) => {
           set({ tasksByList: groupByList(tasks) });
         });
+      },
+      stop: () => {
+        if (listsUnsub) listsUnsub();
+        if (tasksUnsub) tasksUnsub();
+        listsUnsub = null;
+        tasksUnsub = null;
+        activeUid = null;
+        set({ lists: [], tasksByList: {} });
       },
       addTask: (listId, title) => {
         const trimmed = title.trim();

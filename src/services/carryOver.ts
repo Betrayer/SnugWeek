@@ -101,11 +101,14 @@ export const runCarryOver = async (uid: string): Promise<void> => {
 };
 
 let lastRun = 0;
+let lastRunUid: string | null = null;
 let running = false;
 
 export const triggerCarryOver = (uid: string): void => {
+  if (uid !== lastRunUid) lastRun = 0;
   if (running || Date.now() - lastRun < THROTTLE_MS) return;
   running = true;
+  lastRunUid = uid;
   void runCarryOver(uid)
     .then(() => {
       lastRun = Date.now();
