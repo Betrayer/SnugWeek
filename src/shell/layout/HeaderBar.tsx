@@ -6,6 +6,7 @@ import { currentMonthId, currentWeekId, isValidWeekId } from "../../services/tim
 import { useListsStore } from "../../state/listsStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
+import { AccountMenu } from "../components/account/AccountMenu.tsx";
 import { SyncBadge } from "./SyncBadge.tsx";
 import { WeekNav } from "./WeekNav.tsx";
 
@@ -150,6 +151,7 @@ export const HeaderBar = () => {
             ))}
           </Menu.Dropdown>
         </Menu>
+        <AccountMenu />
       </Group>
     </Group>
   );

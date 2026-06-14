@@ -2,11 +2,116 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    match /users/{uid} {
-      allow read, write: if request.auth != null && request.auth.uid == uid;
+    function owner(uid) {
+      return request.auth != null && request.auth.uid == uid;
+    }
 
-      match /{collection}/{doc} {
-        allow read, write: if request.auth != null && request.auth.uid == uid;
+    function validTask(d) {
+      return d.keys().hasOnly([
+          'title', 'status', 'bucket', 'weekId', 'day', 'listId',
+          'order', 'createdAt', 'updatedAt', 'completedAt', 'carriedFrom'
+        ])
+        && d.title is string && d.title.size() >= 1 && d.title.size() <= 500
+        && (d.status == 'open' || d.status == 'done')
+        && d.order is number
+        && d.createdAt is number
+        && d.updatedAt is number
+        && (d.completedAt == null || d.completedAt is number)
+        && (d.carriedFrom == null || d.carriedFrom is string)
+        && (
+          (d.bucket == 'day'
+            && d.weekId is string
+            && d.day is number && d.day >= 1 && d.day <= 7
+            && d.listId == null)
+          || (d.bucket == 'list'
+            && d.listId is string
+            && d.weekId == null
+            && d.day == null)
+        );
+    }
+
+    function validList(d) {
+      return d.keys().hasOnly(['kind', 'name', 'order', 'createdAt', 'day'])
+        && (d.kind == 'tasks' || d.kind == 'ideas' || d.kind == 'custom')
+        && (d.name == null || d.name is string)
+        && d.order is number
+        && d.createdAt is number
+        && (!('day' in d) || d.day == null || d.day is number);
+    }
+
+    function validWeek(d) {
+      return d.keys().hasOnly([
+          'note', 'dayNotes', 'daysOff', 'trackerValues', 'habitChecks', 'updatedAt'
+        ])
+        && (!('note' in d) || d.note is string)
+        && (!('dayNotes' in d) || d.dayNotes is map)
+        && (!('daysOff' in d) || d.daysOff == null || d.daysOff is list)
+        && (!('trackerValues' in d) || d.trackerValues is map)
+        && (!('habitChecks' in d) || d.habitChecks is map)
+        && (!('updatedAt' in d) || d.updatedAt is number);
+    }
+
+    function validTracker(d) {
+      return d.keys().hasOnly(['name', 'type', 'icon', 'order', 'enabled', 'createdAt'])
+        && d.name is string
+        && (d.type == 'scale5' || d.type == 'emoji' || d.type == 'number' || d.type == 'checkbox')
+        && d.icon is string
+        && d.order is number
+        && d.enabled is bool
+        && d.createdAt is number;
+    }
+
+    function validHabit(d) {
+      return d.keys().hasOnly(['name', 'icon', 'order', 'archived', 'createdAt'])
+        && d.name is string
+        && (d.icon == null || d.icon is string)
+        && d.order is number
+        && d.archived is bool
+        && d.createdAt is number;
+    }
+
+    function validStats(d) {
+      return d.keys().hasOnly(['tasksCompleted', 'perDay', 'updatedAt'])
+        && d.tasksCompleted is number
+        && d.perDay is map
+        && (!('updatedAt' in d) || d.updatedAt is number);
+    }
+
+    match /users/{uid} {
+      allow read, write: if owner(uid);
+
+      match /tasks/{taskId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && validTask(request.resource.data);
+      }
+
+      match /lists/{listId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && validList(request.resource.data);
+      }
+
+      match /weeks/{weekId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && validWeek(request.resource.data);
+      }
+
+      match /trackers/{trackerId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && validTracker(request.resource.data);
+      }
+
+      match /habits/{habitId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && validHabit(request.resource.data);
+      }
+
+      match /stats/{monthId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && validStats(request.resource.data);
+      }
+
+      match /migrations/{anonUid} {
+        allow read, write: if owner(uid);
       }
     }
   }

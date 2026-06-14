@@ -1,12 +1,13 @@
 import { Center, Loader, MantineProvider, Stack, Text } from "@mantine/core";
 import { Notifications, notifications } from "@mantine/notifications";
 import i18next from "i18next";
-import { Suspense, lazy, useEffect, useMemo, useState } from "react";
+import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
 import { triggerCarryOver } from "./services/carryOver.ts";
+import { hasPendingMigration } from "./services/migration.ts";
 import { setWriteErrorHandler } from "./services/repos/writeError.ts";
 import {
   currentMonthId,
@@ -18,7 +19,10 @@ import {
 import { useAuthStore } from "./state/authStore.ts";
 import { useHabitsStore } from "./state/habitsStore.ts";
 import { useListsStore } from "./state/listsStore.ts";
+import { useMonthStore } from "./state/monthStore.ts";
+import { useStatsStore } from "./state/statsStore.ts";
 import { useTrackersStore } from "./state/trackersStore.ts";
+import { useWeekStore } from "./state/weekStore.ts";
 import { AppShell } from "./shell/layout/AppShell.tsx";
 import { MonthPage } from "./shell/pages/MonthPage.tsx";
 import { SettingsPage } from "./shell/pages/SettingsPage.tsx";
@@ -86,7 +90,9 @@ export const Root = () => {
   const [i18nReady, setI18nReady] = useState(false);
   const authStatus = useAuthStore((state) => state.status);
   const uid = useAuthStore((state) => state.uid);
+  const isAnonymous = useAuthStore((state) => state.isAnonymous);
   const bootstrap = useAuthStore((state) => state.bootstrap);
+  const checkedMigrationUid = useRef<string | null>(null);
   const themeId = useProfileStore((state) => state.themeId);
   const reduceMotion = useSettingsStore((state) => state.reduceMotion);
   const theme = themeById(themeId);
@@ -114,7 +120,16 @@ export const Root = () => {
   }, [bootstrap]);
 
   useEffect(() => {
-    if (authStatus !== "ready" || !uid) return;
+    if (authStatus !== "ready" || !uid) {
+      useProfileStore.getState().stop();
+      useListsStore.getState().stop();
+      useTrackersStore.getState().stop();
+      useHabitsStore.getState().stop();
+      useWeekStore.getState().stop();
+      useMonthStore.getState().stop();
+      useStatsStore.getState().stop();
+      return;
+    }
     useProfileStore.getState().start(uid);
     useListsStore.getState().start(uid);
     useTrackersStore.getState().start(uid);
@@ -126,6 +141,19 @@ export const Root = () => {
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
   }, [authStatus, uid]);
+
+  useEffect(() => {
+    if (authStatus !== "ready" || !uid || isAnonymous) return;
+    if (checkedMigrationUid.current === uid) return;
+    checkedMigrationUid.current = uid;
+    void hasPendingMigration(uid)
+      .then((pending) => {
+        if (pending) {
+          notifications.show({ message: i18next.t("auth:pendingMigration") });
+        }
+      })
+      .catch(() => {});
+  }, [authStatus, uid, isAnonymous]);
 
   useEffect(() => {
     document.documentElement.dataset.snugTheme = theme.id;

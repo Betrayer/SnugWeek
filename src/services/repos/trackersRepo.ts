@@ -14,6 +14,7 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import { ORDER_SPACING } from "../ordering.ts";
 import { db } from "../firebase.ts";
+import { notePendingWrite } from "../syncSignal.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type TrackerType = "scale5" | "emoji" | "number" | "checkbox";
@@ -106,6 +107,7 @@ export const subscribeTrackers = (
   });
 
 export const createTracker = (uid: string, fields: NewTrackerFields): void => {
+  notePendingWrite();
   void addDoc(trackersCol(uid), {
     name: fields.name,
     type: fields.type,
@@ -121,6 +123,7 @@ export const updateTracker = (
   trackerId: string,
   fields: { name: string; icon: string },
 ): void => {
+  notePendingWrite();
   void updateDoc(trackerRef(uid, trackerId), {
     name: fields.name,
     icon: fields.icon,
@@ -132,12 +135,14 @@ export const setTrackerEnabled = (
   trackerId: string,
   enabled: boolean,
 ): void => {
+  notePendingWrite();
   void updateDoc(trackerRef(uid, trackerId), { enabled }).catch(
     reportWriteError,
   );
 };
 
 export const deleteTracker = (uid: string, trackerId: string): void => {
+  notePendingWrite();
   void deleteDoc(trackerRef(uid, trackerId)).catch(reportWriteError);
 };
 
@@ -145,6 +150,7 @@ export const applyTrackerOrders = (
   uid: string,
   updates: { id: string; order: number }[],
 ): void => {
+  notePendingWrite();
   const batch = writeBatch(db);
   for (const update of updates) {
     batch.update(trackerRef(uid, update.id), { order: update.order });

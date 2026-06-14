@@ -31,6 +31,7 @@ interface WeekState {
   dayNoteSaveState: Record<number, NoteSaveState>;
   tasksByDay: Record<number, Task[]>;
   open: (uid: string, weekId: string) => void;
+  stop: () => void;
   setDayNote: (day: number, text: string) => void;
   addTask: (day: number, title: string) => void;
   toggleDone: (task: Task) => void;
@@ -104,6 +105,26 @@ export const useWeekStore = create<WeekState>()(
         });
         tasksUnsub = subscribeWeekTasks(uid, weekId, (tasks) => {
           set({ tasksByDay: groupByDay(tasks) });
+        });
+      },
+      stop: () => {
+        for (const timer of Object.values(noteTimers)) clearTimeout(timer);
+        for (const timer of Object.values(savedTimers)) clearTimeout(timer);
+        noteTimers = {};
+        savedTimers = {};
+        pendingNotes = {};
+        if (unsubscribe) unsubscribe();
+        if (tasksUnsub) tasksUnsub();
+        unsubscribe = null;
+        tasksUnsub = null;
+        activeUid = null;
+        activeWeekId = null;
+        set({
+          weekId: null,
+          week: null,
+          status: "idle",
+          dayNoteSaveState: {},
+          tasksByDay: {},
         });
       },
       setDayNote: (day, text) => {

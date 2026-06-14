@@ -16,6 +16,7 @@ interface HabitsState {
   habits: Habit[];
   streaks: Record<string, number>;
   start: (uid: string) => void;
+  stop: () => void;
   add: (name: string, icon: string | null) => void;
   update: (id: string, fields: { name: string; icon: string | null }) => void;
   setArchived: (id: string, archived: boolean) => void;
@@ -42,6 +43,13 @@ export const useHabitsStore = create<HabitsState>()(
           set({ habits });
           get().refreshStreaks();
         });
+      },
+      stop: () => {
+        if (unsubscribe) unsubscribe();
+        unsubscribe = null;
+        activeUid = null;
+        streakToken += 1;
+        set({ habits: [], streaks: {} });
       },
       add: (name, icon) => {
         const trimmed = name.trim();
@@ -79,7 +87,7 @@ export const useHabitsStore = create<HabitsState>()(
         const uid = activeUid;
         void computeHabitStreaks(uid, ids)
           .then((streaks) => {
-            if (token === streakToken) set({ streaks });
+            if (token === streakToken && uid === activeUid) set({ streaks });
           })
           .catch((error: unknown) => {
             console.error(error);

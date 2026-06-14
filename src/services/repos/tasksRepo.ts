@@ -12,6 +12,7 @@ import {
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
+import { notePendingWrite } from "../syncSignal.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type TaskStatus = "open" | "done";
@@ -123,6 +124,7 @@ export const subscribeWeeksTasks = (
 };
 
 export const createTask = (uid: string, fields: NewTaskFields): void => {
+  notePendingWrite();
   const now = Date.now();
   void addDoc(tasksCol(uid), {
     title: fields.title,
@@ -144,6 +146,7 @@ export const updateTitle = (
   taskId: string,
   title: string,
 ): void => {
+  notePendingWrite();
   void updateDoc(taskRef(uid, taskId), {
     title,
     updatedAt: Date.now(),
@@ -156,6 +159,7 @@ export const setStatus = (
   status: TaskStatus,
   completedAt: number | null,
 ): void => {
+  notePendingWrite();
   void updateDoc(taskRef(uid, taskId), {
     status,
     completedAt,
@@ -169,6 +173,7 @@ export const moveTask = (
   taskId: string,
   destination: TaskLocation & { order: number },
 ): void => {
+  notePendingWrite();
   void updateDoc(taskRef(uid, taskId), {
     bucket: destination.bucket,
     weekId: destination.weekId,
@@ -181,6 +186,7 @@ export const moveTask = (
 };
 
 export const deleteTask = (uid: string, taskId: string): void => {
+  notePendingWrite();
   void deleteDoc(taskRef(uid, taskId)).catch(reportWriteError);
 };
 
@@ -188,6 +194,7 @@ export const applyOrders = (
   uid: string,
   updates: { id: string; order: number }[],
 ): void => {
+  notePendingWrite();
   const now = Date.now();
   for (let start = 0; start < updates.length; start += BATCH_LIMIT) {
     const chunk = updates.slice(start, start + BATCH_LIMIT);

@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import {
+  currentAuthUser,
   signInAnonymouslyNow,
   subscribeAuthUser,
 } from "../services/firebase.ts";
@@ -9,7 +10,11 @@ interface AuthState {
   status: "init" | "ready";
   uid: string | null;
   isAnonymous: boolean;
+  email: string | null;
+  displayName: string | null;
+  providerIds: string[];
   bootstrap: () => void;
+  refresh: () => void;
 }
 
 let bootstrapped = false;
@@ -20,6 +25,9 @@ export const useAuthStore = create<AuthState>()(
       status: "init",
       uid: null,
       isAnonymous: false,
+      email: null,
+      displayName: null,
+      providerIds: [],
       bootstrap: () => {
         if (bootstrapped) return;
         bootstrapped = true;
@@ -29,13 +37,35 @@ export const useAuthStore = create<AuthState>()(
               status: "ready",
               uid: user.uid,
               isAnonymous: user.isAnonymous,
+              email: user.email,
+              displayName: user.displayName,
+              providerIds: user.providerIds,
             });
             return;
           }
-          set({ status: "init", uid: null, isAnonymous: false });
+          set({
+            status: "init",
+            uid: null,
+            isAnonymous: false,
+            email: null,
+            displayName: null,
+            providerIds: [],
+          });
           signInAnonymouslyNow().catch((error: unknown) => {
             console.error(error);
           });
+        });
+      },
+      refresh: () => {
+        const user = currentAuthUser();
+        if (!user) return;
+        set({
+          status: "ready",
+          uid: user.uid,
+          isAnonymous: user.isAnonymous,
+          email: user.email,
+          displayName: user.displayName,
+          providerIds: user.providerIds,
         });
       },
     }),

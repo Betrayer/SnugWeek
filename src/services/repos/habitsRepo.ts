@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
+import { notePendingWrite } from "../syncSignal.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export interface Habit {
@@ -49,6 +50,7 @@ export const createHabit = (
   icon: string | null,
   order: number,
 ): void => {
+  notePendingWrite();
   void addDoc(habitsCol(uid), {
     name,
     icon,
@@ -63,6 +65,7 @@ export const updateHabit = (
   habitId: string,
   fields: { name: string; icon: string | null },
 ): void => {
+  notePendingWrite();
   void updateDoc(habitRef(uid, habitId), {
     name: fields.name,
     icon: fields.icon,
@@ -74,6 +77,7 @@ export const setHabitArchived = (
   habitId: string,
   archived: boolean,
 ): void => {
+  notePendingWrite();
   void updateDoc(habitRef(uid, habitId), { archived }).catch(reportWriteError);
 };
 
@@ -82,6 +86,7 @@ export const restoreHabit = (
   habitId: string,
   order: number,
 ): void => {
+  notePendingWrite();
   void updateDoc(habitRef(uid, habitId), { archived: false, order }).catch(
     reportWriteError,
   );
@@ -91,6 +96,7 @@ export const applyHabitOrders = (
   uid: string,
   updates: { id: string; order: number }[],
 ): void => {
+  notePendingWrite();
   const batch = writeBatch(db);
   for (const update of updates) {
     batch.update(habitRef(uid, update.id), { order: update.order });

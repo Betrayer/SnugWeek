@@ -13,6 +13,7 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import { ORDER_SPACING } from "../ordering.ts";
 import { db } from "../firebase.ts";
+import { notePendingWrite } from "../syncSignal.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type ListKind = "tasks" | "ideas" | "custom";
@@ -77,6 +78,7 @@ export const subscribeLists = (
   });
 
 export const createList = (uid: string, name: string, order: number): void => {
+  notePendingWrite();
   void addDoc(listsCol(uid), {
     kind: "custom",
     name,
@@ -87,6 +89,7 @@ export const createList = (uid: string, name: string, order: number): void => {
 };
 
 export const renameList = (uid: string, listId: string, name: string): void => {
+  notePendingWrite();
   void updateDoc(listRef(uid, listId), { name }).catch(reportWriteError);
 };
 
@@ -95,10 +98,12 @@ export const assignListToDay = (
   listId: string,
   day: number,
 ): void => {
+  notePendingWrite();
   void updateDoc(listRef(uid, listId), { day }).catch(reportWriteError);
 };
 
 export const unassignList = (uid: string, listId: string): void => {
+  notePendingWrite();
   void updateDoc(listRef(uid, listId), { day: null }).catch(reportWriteError);
 };
 
@@ -108,6 +113,7 @@ export const deleteListAndRehomeTasks = (
   rehomed: { id: string; order: number }[],
 ): void => {
   if (isBuiltinList(listId)) return;
+  notePendingWrite();
   const now = Date.now();
   const batch = writeBatch(db);
   for (const task of rehomed) {

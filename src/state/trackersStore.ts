@@ -17,6 +17,7 @@ import type {
 interface TrackersState {
   trackers: Tracker[];
   start: (uid: string) => void;
+  stop: () => void;
   add: (fields: Omit<NewTrackerFields, "order">) => void;
   update: (id: string, fields: { name: string; icon: string }) => void;
   setEnabled: (id: string, enabled: boolean) => void;
@@ -39,6 +40,12 @@ export const useTrackersStore = create<TrackersState>()(
         unsubscribe = subscribeTrackers(uid, (trackers) => {
           set({ trackers });
         });
+      },
+      stop: () => {
+        if (unsubscribe) unsubscribe();
+        unsubscribe = null;
+        activeUid = null;
+        set({ trackers: [] });
       },
       add: (fields) => {
         const name = fields.name.trim();
