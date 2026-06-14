@@ -18,6 +18,7 @@ export const milk: ThemeSpec = {
     "--sw-done": "#a4b494",
     "--sw-danger": "#c4705f",
     "--sw-shadow": "0 2px 10px rgba(86, 70, 56, 0.08)",
+    "--sw-fold-shade": "rgba(58, 44, 30, 0.3)",
     "--sw-paper-texture": "none",
     "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
     "--sw-font-hand": "'Caveat', cursive",

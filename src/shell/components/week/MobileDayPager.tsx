@@ -1,9 +1,10 @@
 import { UnstyledButton } from "@mantine/core";
 import type { CSSProperties } from "react";
-import { useEffect, useRef, useState } from "react";
-import { initialDayIndex } from "../../../services/time.ts";
+import { useEffect, useRef } from "react";
+import { currentWeekId, todayIsoDay } from "../../../services/time.ts";
 import type { WeekDay } from "../../../services/time.ts";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
+import { useUiStore } from "../../../state/uiStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { DayColumn } from "./DayColumn.tsx";
 
@@ -14,6 +15,11 @@ interface MobileDayPagerProps {
 }
 
 const EMPTY: Task[] = [];
+
+const clampIndex = (index: number): number => Math.min(Math.max(index, 0), 6);
+
+const defaultIso = (weekId: string): number =>
+  weekId === currentWeekId() ? todayIsoDay() : 1;
 
 const dotStyle = (active: boolean): CSSProperties => ({
   width: 28,
@@ -34,28 +40,33 @@ export const MobileDayPager = ({
   weekId,
 }: MobileDayPagerProps) => {
   const pagerRef = useRef<HTMLDivElement>(null);
-  const [active, setActive] = useState(() => initialDayIndex(weekId));
   const tasksByDay = useWeekStore((state) => state.tasksByDay);
+  const activeIso = useUiStore((state) => state.activeMobileDay);
+  const setActiveMobileDay = useUiStore((state) => state.setActiveMobileDay);
+
+  const activeIndex = clampIndex((activeIso ?? defaultIso(weekId)) - 1);
 
   useEffect(() => {
+    const stored = useUiStore.getState().activeMobileDay;
+    const iso = stored ?? defaultIso(weekId);
+    const index = clampIndex(iso - 1);
     const element = pagerRef.current;
-    if (!element) return;
-    const index = initialDayIndex(weekId);
-    element.scrollLeft = index * element.clientWidth;
-    setActive(index);
-  }, [weekId]);
+    if (element) element.scrollLeft = index * element.clientWidth;
+    if (stored === null) setActiveMobileDay(iso);
+  }, [weekId, setActiveMobileDay]);
 
   const handleScroll = () => {
     const element = pagerRef.current;
     if (!element || element.clientWidth === 0) return;
-    setActive(Math.round(element.scrollLeft / element.clientWidth));
+    const iso = clampIndex(Math.round(element.scrollLeft / element.clientWidth)) + 1;
+    if (iso !== useUiStore.getState().activeMobileDay) setActiveMobileDay(iso);
   };
 
   const goToDay = (index: number) => {
     const element = pagerRef.current;
-    if (!element) return;
-    element.scrollTo({ left: index * element.clientWidth, behavior: "smooth" });
-    setActive(index);
+    if (element)
+      element.scrollTo({ left: index * element.clientWidth, behavior: "smooth" });
+    setActiveMobileDay(index + 1);
   };
 
   return (
@@ -83,6 +94,7 @@ export const MobileDayPager = ({
             <UnstyledButton
               key={day.iso}
               onClick={() => goToDay(index)}
+              aria-label={day.label}
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -90,7 +102,7 @@ export const MobileDayPager = ({
                 gap: 2,
               }}
             >
-              <span style={dotStyle(index === active)}>{day.initial}</span>
+              <span style={dotStyle(index === activeIndex)}>{day.initial}</span>
               <span
                 style={{
                   fontSize: 9,

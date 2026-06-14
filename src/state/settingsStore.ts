@@ -5,7 +5,7 @@ import { DEFAULT_LANGUAGE, isSupportedLang } from "../i18n/languages.ts";
 import type { SupportedLang } from "../i18n/languages.ts";
 import { setTimeLocale } from "../services/time.ts";
 
-type TransitionSetting = "fold" | "none";
+type TransitionSetting = "fold" | "none" | "curl";
 
 interface PersistedSettings {
   language: SupportedLang;
@@ -22,7 +22,7 @@ interface SettingsState extends PersistedSettings {
 const defaultSettings: PersistedSettings = {
   language: DEFAULT_LANGUAGE,
   reduceMotion: false,
-  transition: "fold",
+  transition: "curl",
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -40,7 +40,7 @@ export const useSettingsStore = create<SettingsState>()(
       }),
       {
         name: "snugweek-settings",
-        version: 1,
+        version: 2,
         partialize: (state): PersistedSettings => ({
           language: state.language,
           reduceMotion: state.reduceMotion,
@@ -51,6 +51,7 @@ export const useSettingsStore = create<SettingsState>()(
           return {
             ...defaultSettings,
             ...stored,
+            transition: defaultSettings.transition,
             language: isSupportedLang(stored?.language)
               ? stored.language
               : DEFAULT_LANGUAGE,

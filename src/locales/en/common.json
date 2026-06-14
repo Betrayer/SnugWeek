@@ -9,6 +9,8 @@
   "offlinePill": "Offline — changes are saved locally",
   "comingSoon": "it will be cozy here soon",
   "saveError": "Couldn't save — please try again",
+  "today": "Today",
+  "todayWeek": "Go to the current week",
   "languageNames": {
     "uk": "Українська",
     "en": "English"

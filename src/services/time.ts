@@ -59,6 +59,96 @@ export const currentMonthId = (): string => monthIdOf(dayjs());
 export const weekTitle = (weekId: string): string =>
   `${capitalize(mondayOf(weekId).format("MMMM YYYY"))} · ${weekId.slice(5)}`;
 
+const MONTH_ID_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
+
+export const isValidMonthId = (value: string): boolean =>
+  MONTH_ID_PATTERN.test(value);
+
+export const monthTitle = (monthId: string): string =>
+  capitalize(dayjs(`${monthId}-01`).format("MMMM YYYY"));
+
+export const addMonths = (monthId: string, count: number): string =>
+  dayjs(`${monthId}-01`).add(count, "month").format("YYYY-MM");
+
+export const monthIdOfWeek = (weekId: string): string =>
+  monthIdOf(mondayOf(weekId).add(3, "day"));
+
+export const weekIdFromKey = (dateKey: string): string =>
+  weekIdFromDate(dayjs(dateKey));
+
+export const isoDayOfKey = (dateKey: string): number =>
+  dayjs(dateKey).isoWeekday();
+
+export const isoDateKey = (weekId: string, isoDay: number): string =>
+  mondayOf(weekId)
+    .add(isoDay - 1, "day")
+    .format("YYYY-MM-DD");
+
+export const todayIsoDay = (): number => dayjs().isoWeekday();
+
+export const weeksOfMonth = (monthId: string): string[] => {
+  const start = dayjs(`${monthId}-01`);
+  const lastDay = start.endOf("month");
+  const ids: string[] = [];
+  let cursor = start.startOf("isoWeek");
+  while (!cursor.isAfter(lastDay, "day")) {
+    ids.push(weekIdFromDate(cursor));
+    cursor = cursor.add(1, "week");
+  }
+  return ids;
+};
+
+export const weekdayInitials = (locale: string): string[] => {
+  const monday = dayjs().startOf("isoWeek");
+  return Array.from({ length: 7 }, (_, index) =>
+    capitalize(monday.add(index, "day").locale(locale).format("dd")).charAt(0),
+  );
+};
+
+export interface MonthDayCellData {
+  iso: number;
+  date: number;
+  dateKey: string;
+  inMonth: boolean;
+  isToday: boolean;
+  isWeekend: boolean;
+}
+
+export interface MonthWeekRow {
+  weekId: string;
+  weekNumber: string;
+  days: MonthDayCellData[];
+}
+
+export const buildMonthGrid = (
+  monthId: string,
+  weekend: number[],
+): MonthWeekRow[] => {
+  const start = dayjs(`${monthId}-01`);
+  const monthIndex = start.month();
+  const lastDay = start.endOf("month");
+  const today = dayjs();
+  const rows: MonthWeekRow[] = [];
+  let cursor = start.startOf("isoWeek");
+  while (!cursor.isAfter(lastDay, "day")) {
+    const weekId = weekIdFromDate(cursor);
+    const days: MonthDayCellData[] = Array.from({ length: 7 }, (_, index) => {
+      const day = cursor.add(index, "day");
+      return {
+        iso: day.isoWeekday(),
+        date: day.date(),
+        dateKey: day.format("YYYY-MM-DD"),
+        inMonth: day.month() === monthIndex,
+        isToday: day.isSame(today, "day"),
+        isWeekend: weekend.includes(day.isoWeekday()),
+      };
+    });
+    rows.push({ weekId, weekNumber: weekId.slice(5), days });
+    cursor = cursor.add(1, "week");
+  }
+  return rows;
+};
+
 export const dayLabel = (day: Dayjs): string =>
   `${capitalize(day.format("dd"))} ${day.format("D.MM")}`;
 
@@ -81,12 +171,6 @@ export const weekDays = (weekId: string, locale: string): WeekDay[] => {
       isToday: day.isSame(today, "day"),
     };
   });
-};
-
-export const initialDayIndex = (weekId: string): number => {
-  const today = dayjs();
-  const index = daysOfWeek(weekId).findIndex((day) => day.isSame(today, "day"));
-  return index >= 0 ? index : 0;
 };
 
 export const setTimeLocale = (locale: string): void => {
