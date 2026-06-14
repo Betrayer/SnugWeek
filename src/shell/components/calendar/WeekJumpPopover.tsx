@@ -1,16 +1,14 @@
-import { Anchor, Popover, Stack, UnstyledButton } from "@mantine/core";
-import { Calendar, DatesProvider } from "@mantine/dates";
-import { useState } from "react";
+import { Center, Loader, Popover, UnstyledButton } from "@mantine/core";
+import { Suspense, lazy, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router";
-import {
-  isoDateKey,
-  isoDayOfKey,
-  monthIdOfWeek,
-  weekIdFromKey,
-  weekTitle,
-} from "../../../services/time.ts";
+import { weekIdFromKey, weekTitle } from "../../../services/time.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
+
+const WeekJumpCalendar = lazy(() =>
+  import("./WeekJumpCalendar.tsx").then((module) => ({
+    default: module.WeekJumpCalendar,
+  })),
+);
 
 interface WeekJumpPopoverProps {
   weekId: string;
@@ -57,38 +55,22 @@ export const WeekJumpPopover = ({ weekId, onPick }: WeekJumpPopoverProps) => {
         </UnstyledButton>
       </Popover.Target>
       <Popover.Dropdown p="xs">
-        <Stack gap="xs">
-          <DatesProvider settings={{ locale: language, firstDayOfWeek: 1 }}>
-            <div onMouseLeave={() => setHovered(null)}>
-              <Calendar
-                defaultDate={isoDateKey(weekId, 4)}
-                highlightToday
-                getDayProps={(dateKey) => {
-                  const inWeek = weekIdFromKey(dateKey) === activeWeek;
-                  const iso = isoDayOfKey(dateKey);
-                  return {
-                    inRange: inWeek,
-                    firstInRange: inWeek && iso === 1,
-                    lastInRange: inWeek && iso === 7,
-                    onMouseEnter: () => setHovered(dateKey),
-                    onClick: () => pick(dateKey),
-                  };
-                }}
-              />
-            </div>
-          </DatesProvider>
-          <Anchor
-            component={Link}
-            to={`/month/${monthIdOfWeek(weekId)}`}
-            onClick={() => setOpened(false)}
-            c="var(--sw-accent-2)"
-            fw={600}
-            fz="sm"
-            ta="center"
-          >
-            {t("jumpToMonth")}
-          </Anchor>
-        </Stack>
+        <Suspense
+          fallback={
+            <Center mih={300} miw={252}>
+              <Loader size="sm" color="var(--sw-accent)" />
+            </Center>
+          }
+        >
+          <WeekJumpCalendar
+            weekId={weekId}
+            language={language}
+            activeWeek={activeWeek}
+            onHover={setHovered}
+            onPick={pick}
+            onJumpMonth={() => setOpened(false)}
+          />
+        </Suspense>
       </Popover.Dropdown>
     </Popover>
   );

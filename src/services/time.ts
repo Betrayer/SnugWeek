@@ -14,6 +14,12 @@ export type { Dayjs };
 
 const WEEK_ID_PATTERN = /^\d{4}-W\d{2}$/;
 
+const MIN_YEAR = 2020;
+const MAX_YEAR = 2100;
+
+const isYearInRange = (year: number): boolean =>
+  year >= MIN_YEAR && year <= MAX_YEAR;
+
 const pad2 = (value: number): string => String(value).padStart(2, "0");
 
 const capitalize = (value: string): string =>
@@ -31,8 +37,10 @@ export const currentWeekId = (): string => weekIdFromDate(dayjs());
 
 export const isValidWeekId = (value: string): boolean => {
   if (!WEEK_ID_PATTERN.test(value)) return false;
+  const year = Number(value.slice(0, 4));
+  if (!isYearInRange(year)) return false;
   const week = Number(value.slice(6));
-  return week >= 1 && week <= isoWeeksInYear(Number(value.slice(0, 4)));
+  return week >= 1 && week <= isoWeeksInYear(year);
 };
 
 export const mondayOf = (weekId: string): Dayjs => {
@@ -61,8 +69,10 @@ export const weekTitle = (weekId: string): string =>
 
 const MONTH_ID_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
 
-export const isValidMonthId = (value: string): boolean =>
-  MONTH_ID_PATTERN.test(value);
+export const isValidMonthId = (value: string): boolean => {
+  if (!MONTH_ID_PATTERN.test(value)) return false;
+  return isYearInRange(Number(value.slice(0, 4)));
+};
 
 export const monthTitle = (monthId: string): string =>
   capitalize(dayjs(`${monthId}-01`).format("MMMM YYYY"));
@@ -105,7 +115,8 @@ export const monthIdOfKey = (dateKey: string): string => dateKey.slice(0, 7);
 
 export const currentYear = (): number => dayjs().year();
 
-export const isValidYear = (value: string): boolean => /^\d{4}$/.test(value);
+export const isValidYear = (value: string): boolean =>
+  /^\d{4}$/.test(value) && isYearInRange(Number(value));
 
 export const monthsOfYear = (year: number): string[] =>
   Array.from({ length: 12 }, (_, index) => `${year}-${pad2(index + 1)}`);

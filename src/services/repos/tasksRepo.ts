@@ -13,6 +13,7 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
+import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type TaskStatus = "open" | "done";
@@ -84,6 +85,7 @@ export const subscribeWeekTasks = (
     (snap) => {
       cb(snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data())));
     },
+    reportReadError,
   );
 
 export const subscribeListTasks = (
@@ -100,6 +102,7 @@ export const subscribeListTasks = (
     (snap) => {
       cb(snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data())));
     },
+    reportReadError,
   );
 
 export const subscribeWeeksTasks = (
@@ -120,6 +123,7 @@ export const subscribeWeeksTasks = (
     (snap) => {
       cb(snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data())));
     },
+    reportReadError,
   );
 };
 

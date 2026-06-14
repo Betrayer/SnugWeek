@@ -1,4 +1,4 @@
-import { motion } from "motion/react";
+import { m } from "motion/react";
 import type { Variants } from "motion/react";
 import type { CSSProperties } from "react";
 import type { WeekDay } from "../../../services/time.ts";
@@ -43,37 +43,37 @@ export const WeekBoard = ({ days, daysOff, columnMode }: WeekBoardProps) => {
 
   if (columnMode === "equal") {
     return (
-      <motion.div
+      <m.div
         style={gridStyle("repeat(7, 1fr)")}
         variants={container}
         initial={initial}
         animate="animate"
       >
         {days.map((day) => (
-          <motion.div key={day.iso} variants={item} style={cellStyle}>
+          <m.div key={day.iso} variants={item} style={cellStyle}>
             <DayColumn day={day} isOff={daysOff.includes(day.iso)} />
-          </motion.div>
+          </m.div>
         ))}
-      </motion.div>
+      </m.div>
     );
   }
   const weekdays = days.slice(0, 5);
   const weekendDays = days.slice(5);
   return (
-    <motion.div
+    <m.div
       style={gridStyle("repeat(5, 1fr) 0.72fr")}
       variants={container}
       initial={initial}
       animate="animate"
     >
       {weekdays.map((day) => (
-        <motion.div key={day.iso} variants={item} style={cellStyle}>
+        <m.div key={day.iso} variants={item} style={cellStyle}>
           <DayColumn day={day} isOff={daysOff.includes(day.iso)} />
-        </motion.div>
+        </m.div>
       ))}
-      <motion.div variants={item} style={cellStyle}>
+      <m.div variants={item} style={cellStyle}>
         <WeekendStack days={weekendDays} daysOff={daysOff} />
-      </motion.div>
-    </motion.div>
+      </m.div>
+    </m.div>
   );
 };

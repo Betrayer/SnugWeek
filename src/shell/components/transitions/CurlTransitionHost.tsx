@@ -1,4 +1,4 @@
-import { motion, useAnimationControls } from "motion/react";
+import { m, useAnimationControls } from "motion/react";
 import { useLayoutEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { curlConfig } from "./curl.ts";
@@ -81,7 +81,7 @@ export const CurlTransitionHost = ({
           dangerouslySetInnerHTML={{ __html: cover.html }}
         />
       )}
-      <motion.div
+      <m.div
         ref={liveRef}
         initial={{ x: "0%", rotate: 0, scale: 1 }}
         animate={liveControls}
@@ -96,9 +96,9 @@ export const CurlTransitionHost = ({
         }}
       >
         {children}
-      </motion.div>
+      </m.div>
       {cover && cover.forward && (
-        <motion.div
+        <m.div
           key={cover.token}
           aria-hidden
           initial={{ x: "0%", rotate: 0, scale: 1 }}

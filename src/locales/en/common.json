@@ -13,10 +13,26 @@
   },
   "comingSoon": "it will be cozy here soon",
   "saveError": "Couldn't save — please try again",
+  "loadError": "Couldn't load your data — try reloading the page",
   "today": "Today",
   "todayWeek": "Go to the current week",
   "languageNames": {
     "uk": "Українська",
     "en": "English"
+  },
+  "update": {
+    "message": "A new version of SnugWeek is ready — update?",
+    "action": "Update",
+    "dismiss": "Later"
+  },
+  "error": {
+    "title": "Something went wrong",
+    "message": "This page got a little crumpled. Reload to get back to cozy.",
+    "reload": "Reload"
+  },
+  "authError": {
+    "title": "Couldn't sign in",
+    "message": "We couldn't connect to your account. Check your connection and try again.",
+    "retry": "Try again"
   }
 }

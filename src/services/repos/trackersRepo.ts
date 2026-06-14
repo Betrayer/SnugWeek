@@ -15,6 +15,7 @@ import type { DocumentData } from "firebase/firestore";
 import { ORDER_SPACING } from "../ordering.ts";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
+import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type TrackerType = "scale5" | "emoji" | "number" | "checkbox";
@@ -102,9 +103,13 @@ export const subscribeTrackers = (
   uid: string,
   cb: (trackers: Tracker[]) => void,
 ): (() => void) =>
-  onSnapshot(query(trackersCol(uid), orderBy("order")), (snap) => {
-    cb(snap.docs.map((docSnap) => normalizeTracker(docSnap.id, docSnap.data())));
-  });
+  onSnapshot(
+    query(trackersCol(uid), orderBy("order")),
+    (snap) => {
+      cb(snap.docs.map((docSnap) => normalizeTracker(docSnap.id, docSnap.data())));
+    },
+    reportReadError,
+  );
 
 export const createTracker = (uid: string, fields: NewTrackerFields): void => {
   notePendingWrite();

@@ -18,6 +18,7 @@ import { ORDER_SPACING } from "../ordering.ts";
 import { currentWeekId, todayIsoDay } from "../time.ts";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
+import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 import { createHabit } from "./habitsRepo.ts";
 import { createTask } from "./tasksRepo.ts";
@@ -230,6 +231,10 @@ export const subscribeProfile = (
   uid: string,
   cb: (profile: ProfileDoc | null) => void,
 ): (() => void) =>
-  onSnapshot(profileRef(uid), (snap) => {
-    cb(snap.exists() ? normalizeProfile(snap.data()) : null);
-  });
+  onSnapshot(
+    profileRef(uid),
+    (snap) => {
+      cb(snap.exists() ? normalizeProfile(snap.data()) : null);
+    },
+    reportReadError,
+  );

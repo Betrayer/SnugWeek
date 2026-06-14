@@ -3,7 +3,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, m } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
@@ -62,7 +62,7 @@ export const TaskList = ({
       <div ref={setNodeRef} style={zoneStyle(isOver, fill)}>
         <AnimatePresence initial={false}>
           {display.map((task) => (
-            <motion.div
+            <m.div
               key={task.id}
               style={{ overflow: "hidden" }}
               initial={reduced ? false : { opacity: 0, height: 0, scale: 0.96 }}
@@ -79,7 +79,7 @@ export const TaskList = ({
                 onDelete={() => onDelete(task.id)}
                 onMove={onMove ? () => onMove(task) : undefined}
               />
-            </motion.div>
+            </m.div>
           ))}
         </AnimatePresence>
         {display.length === 0 && emptyLabel && (

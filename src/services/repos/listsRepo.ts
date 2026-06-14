@@ -14,6 +14,7 @@ import type { DocumentData } from "firebase/firestore";
 import { ORDER_SPACING } from "../ordering.ts";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
+import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 
 export type ListKind = "tasks" | "ideas" | "custom";
@@ -73,9 +74,13 @@ export const subscribeLists = (
   uid: string,
   cb: (lists: List[]) => void,
 ): (() => void) =>
-  onSnapshot(query(listsCol(uid), orderBy("order")), (snap) => {
-    cb(snap.docs.map((docSnap) => normalizeList(docSnap.id, docSnap.data())));
-  });
+  onSnapshot(
+    query(listsCol(uid), orderBy("order")),
+    (snap) => {
+      cb(snap.docs.map((docSnap) => normalizeList(docSnap.id, docSnap.data())));
+    },
+    reportReadError,
+  );
 
 export const createList = (uid: string, name: string, order: number): void => {
   notePendingWrite();
