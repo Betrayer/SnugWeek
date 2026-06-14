@@ -23,6 +23,7 @@ export interface List {
   name: string | null;
   order: number;
   createdAt: number;
+  day: number | null;
 }
 
 export const isBuiltinList = (listId: string): boolean =>
@@ -37,6 +38,7 @@ const normalizeList = (id: string, data: DocumentData): List => ({
   name: typeof data.name === "string" ? data.name : null,
   order: typeof data.order === "number" ? data.order : 0,
   createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
+  day: typeof data.day === "number" ? data.day : null,
 });
 
 const listsCol = (uid: string) => collection(db, "users", uid, "lists");
@@ -80,11 +82,24 @@ export const createList = (uid: string, name: string, order: number): void => {
     name,
     order,
     createdAt: Date.now(),
+    day: null,
   }).catch(reportWriteError);
 };
 
 export const renameList = (uid: string, listId: string, name: string): void => {
   void updateDoc(listRef(uid, listId), { name }).catch(reportWriteError);
+};
+
+export const assignListToDay = (
+  uid: string,
+  listId: string,
+  day: number,
+): void => {
+  void updateDoc(listRef(uid, listId), { day }).catch(reportWriteError);
+};
+
+export const unassignList = (uid: string, listId: string): void => {
+  void updateDoc(listRef(uid, listId), { day: null }).catch(reportWriteError);
 };
 
 export const deleteListAndRehomeTasks = (

@@ -2,6 +2,9 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { subscribeWeeksTasks } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
+import { subscribeWeeks } from "../services/repos/weeksRepo.ts";
+import type { WeekEntry } from "../services/repos/weeksRepo.ts";
+import { MOOD_TRACKER_ID } from "../services/repos/trackersRepo.ts";
 import { isoDateKey, weeksOfMonth } from "../services/time.ts";
 
 export interface DayCounts {
@@ -12,10 +15,12 @@ export interface DayCounts {
 interface MonthState {
   monthId: string | null;
   countsByDate: Record<string, DayCounts>;
+  moodByDate: Record<string, string>;
   open: (uid: string, monthId: string) => void;
 }
 
-let unsubscribe: (() => void) | null = null;
+let tasksUnsub: (() => void) | null = null;
+let weeksUnsub: (() => void) | null = null;
 let activeUid: string | null = null;
 let activeMonthId: string | null = null;
 
@@ -32,25 +37,40 @@ const countByDate = (tasks: Task[]): Record<string, DayCounts> => {
   return counts;
 };
 
+const moodByDate = (weeks: WeekEntry[]): Record<string, string> => {
+  const moods: Record<string, string> = {};
+  for (const entry of weeks) {
+    for (let day = 1; day <= 7; day += 1) {
+      const value = entry.week.trackerValues[String(day)]?.[MOOD_TRACKER_ID];
+      if (typeof value === "string" && value.length > 0) {
+        moods[isoDateKey(entry.id, day)] = value;
+      }
+    }
+  }
+  return moods;
+};
+
 export const useMonthStore = create<MonthState>()(
   devtools(
     (set) => ({
       monthId: null,
       countsByDate: {},
+      moodByDate: {},
       open: (uid, monthId) => {
-        if (activeUid === uid && activeMonthId === monthId && unsubscribe)
+        if (activeUid === uid && activeMonthId === monthId && tasksUnsub)
           return;
-        if (unsubscribe) unsubscribe();
+        if (tasksUnsub) tasksUnsub();
+        if (weeksUnsub) weeksUnsub();
         activeUid = uid;
         activeMonthId = monthId;
-        set({ monthId, countsByDate: {} });
-        unsubscribe = subscribeWeeksTasks(
-          uid,
-          weeksOfMonth(monthId),
-          (tasks) => {
-            set({ countsByDate: countByDate(tasks) });
-          },
-        );
+        set({ monthId, countsByDate: {}, moodByDate: {} });
+        const weekIds = weeksOfMonth(monthId);
+        tasksUnsub = subscribeWeeksTasks(uid, weekIds, (tasks) => {
+          set({ countsByDate: countByDate(tasks) });
+        });
+        weeksUnsub = subscribeWeeks(uid, weekIds, (weeks) => {
+          set({ moodByDate: moodByDate(weeks) });
+        });
       },
     }),
     { name: "monthStore" },

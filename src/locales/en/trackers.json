@@ -1,0 +1,39 @@
+{
+  "set": "Set {{name}}",
+  "valueOf": "{{name}}: {{value}}",
+  "scaleStep": "{{name}}: {{value}} of 5",
+  "increase": "Increase {{name}}",
+  "decrease": "Decrease {{name}}",
+  "clear": "Clear",
+  "defaults": {
+    "mood": "Mood",
+    "energy": "Energy"
+  },
+  "settings": {
+    "title": "Day trackers",
+    "add": "New tracker",
+    "addTitle": "New tracker",
+    "editTitle": "Edit tracker",
+    "name": "Name",
+    "namePlaceholder": "Tracker name…",
+    "typeLabel": "Type",
+    "type": {
+      "scale5": "Scale 1–5",
+      "emoji": "Emoji",
+      "number": "Number",
+      "checkbox": "Checkbox"
+    },
+    "icon": "Icon",
+    "enabledLabel": "Show {{name}}",
+    "edit": "Edit",
+    "delete": "Delete",
+    "deleteTitle": "Delete tracker?",
+    "deleteWarning": "Values saved in past weeks stay untouched.",
+    "deleteConfirm": "Delete",
+    "cancel": "Cancel",
+    "save": "Save",
+    "empty": "No trackers yet",
+    "reorder": "Reorder",
+    "menu": "Options for {{name}}"
+  }
+}

@@ -9,8 +9,16 @@ import {
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
-import { setWeekNote, subscribeWeek } from "../services/repos/weeksRepo.ts";
-import type { WeekDoc } from "../services/repos/weeksRepo.ts";
+import {
+  clearTrackerValue,
+  setDayNote as setDayNoteDoc,
+  setDaysOff,
+  setHabitCheck,
+  setTrackerValue,
+  subscribeWeek,
+} from "../services/repos/weeksRepo.ts";
+import type { TrackerValue, WeekDoc } from "../services/repos/weeksRepo.ts";
+import { useProfileStore } from "./profileStore.ts";
 
 type NoteSaveState = "idle" | "saving" | "saved";
 
@@ -18,14 +26,18 @@ interface WeekState {
   weekId: string | null;
   week: WeekDoc | null;
   status: "idle" | "loading" | "ready";
-  noteSaveState: NoteSaveState;
+  dayNoteSaveState: Record<number, NoteSaveState>;
   tasksByDay: Record<number, Task[]>;
   open: (uid: string, weekId: string) => void;
-  setNote: (text: string) => void;
+  setDayNote: (day: number, text: string) => void;
   addTask: (day: number, title: string) => void;
   toggleDone: (task: Task) => void;
   renameTask: (taskId: string, title: string) => void;
   removeTask: (taskId: string) => void;
+  setTrackerValue: (day: number, trackerId: string, value: TrackerValue) => void;
+  clearTrackerValue: (day: number, trackerId: string) => void;
+  toggleHabit: (habitId: string, day: number) => void;
+  toggleDayOff: (day: number) => void;
 }
 
 const NOTE_DEBOUNCE_MS = 400;
@@ -35,9 +47,9 @@ let unsubscribe: (() => void) | null = null;
 let tasksUnsub: (() => void) | null = null;
 let activeUid: string | null = null;
 let activeWeekId: string | null = null;
-let noteTimer: ReturnType<typeof setTimeout> | null = null;
-let savedTimer: ReturnType<typeof setTimeout> | null = null;
-let pendingNote: string | null = null;
+let noteTimers: Record<number, ReturnType<typeof setTimeout>> = {};
+let savedTimers: Record<number, ReturnType<typeof setTimeout>> = {};
+let pendingNotes: Record<number, string> = {};
 
 const groupByDay = (tasks: Task[]): Record<number, Task[]> => {
   const grouped: Record<number, Task[]> = {};
@@ -50,15 +62,17 @@ const groupByDay = (tasks: Task[]): Record<number, Task[]> => {
   return grouped;
 };
 
-const flushPendingNote = (): void => {
-  if (noteTimer) {
-    clearTimeout(noteTimer);
-    noteTimer = null;
+const flushPendingNotes = (): void => {
+  for (const timer of Object.values(noteTimers)) clearTimeout(timer);
+  for (const timer of Object.values(savedTimers)) clearTimeout(timer);
+  for (const [key, text] of Object.entries(pendingNotes)) {
+    if (activeUid && activeWeekId) {
+      setDayNoteDoc(activeUid, activeWeekId, Number(key), text);
+    }
   }
-  if (pendingNote !== null && activeUid && activeWeekId) {
-    setWeekNote(activeUid, activeWeekId, pendingNote);
-  }
-  pendingNote = null;
+  noteTimers = {};
+  savedTimers = {};
+  pendingNotes = {};
 };
 
 export const useWeekStore = create<WeekState>()(
@@ -67,11 +81,11 @@ export const useWeekStore = create<WeekState>()(
       weekId: null,
       week: null,
       status: "idle",
-      noteSaveState: "idle",
+      dayNoteSaveState: {},
       tasksByDay: {},
       open: (uid, weekId) => {
         if (activeUid === uid && activeWeekId === weekId && unsubscribe) return;
-        flushPendingNote();
+        flushPendingNotes();
         if (unsubscribe) unsubscribe();
         if (tasksUnsub) tasksUnsub();
         activeUid = uid;
@@ -80,7 +94,7 @@ export const useWeekStore = create<WeekState>()(
           weekId,
           week: null,
           status: "loading",
-          noteSaveState: "idle",
+          dayNoteSaveState: {},
           tasksByDay: {},
         });
         unsubscribe = subscribeWeek(uid, weekId, (week) => {
@@ -90,21 +104,31 @@ export const useWeekStore = create<WeekState>()(
           set({ tasksByDay: groupByDay(tasks) });
         });
       },
-      setNote: (text) => {
+      setDayNote: (day, text) => {
         if (!activeUid || !activeWeekId) return;
-        pendingNote = text;
-        set({ noteSaveState: "saving" });
-        if (noteTimer) clearTimeout(noteTimer);
-        noteTimer = setTimeout(() => {
-          noteTimer = null;
-          if (pendingNote !== null && activeUid && activeWeekId) {
-            setWeekNote(activeUid, activeWeekId, pendingNote);
+        pendingNotes[day] = text;
+        set((state) => ({
+          dayNoteSaveState: { ...state.dayNoteSaveState, [day]: "saving" },
+        }));
+        const existing = noteTimers[day];
+        if (existing) clearTimeout(existing);
+        noteTimers[day] = setTimeout(() => {
+          delete noteTimers[day];
+          const pending = pendingNotes[day];
+          if (pending !== undefined && activeUid && activeWeekId) {
+            setDayNoteDoc(activeUid, activeWeekId, day, pending);
           }
-          pendingNote = null;
-          set({ noteSaveState: "saved" });
-          if (savedTimer) clearTimeout(savedTimer);
-          savedTimer = setTimeout(() => {
-            set({ noteSaveState: "idle" });
+          delete pendingNotes[day];
+          set((state) => ({
+            dayNoteSaveState: { ...state.dayNoteSaveState, [day]: "saved" },
+          }));
+          const savedExisting = savedTimers[day];
+          if (savedExisting) clearTimeout(savedExisting);
+          savedTimers[day] = setTimeout(() => {
+            delete savedTimers[day];
+            set((state) => ({
+              dayNoteSaveState: { ...state.dayNoteSaveState, [day]: "idle" },
+            }));
           }, SAVED_VISIBLE_MS);
         }, NOTE_DEBOUNCE_MS);
       },
@@ -134,6 +158,32 @@ export const useWeekStore = create<WeekState>()(
       removeTask: (taskId) => {
         if (!activeUid) return;
         deleteTask(activeUid, taskId);
+      },
+      setTrackerValue: (day, trackerId, value) => {
+        if (!activeUid || !activeWeekId) return;
+        setTrackerValue(activeUid, activeWeekId, day, trackerId, value);
+      },
+      clearTrackerValue: (day, trackerId) => {
+        if (!activeUid || !activeWeekId) return;
+        const exists =
+          get().week?.trackerValues[String(day)]?.[trackerId] !== undefined;
+        if (!exists) return;
+        clearTrackerValue(activeUid, activeWeekId, day, trackerId);
+      },
+      toggleHabit: (habitId, day) => {
+        if (!activeUid || !activeWeekId) return;
+        const current =
+          get().week?.habitChecks[habitId]?.[String(day)] === true;
+        setHabitCheck(activeUid, activeWeekId, habitId, day, !current);
+      },
+      toggleDayOff: (day) => {
+        if (!activeUid || !activeWeekId) return;
+        const effective =
+          get().week?.daysOff ?? useProfileStore.getState().weekend;
+        const next = effective.includes(day)
+          ? effective.filter((value) => value !== day)
+          : [...effective, day].sort((a, b) => a - b);
+        setDaysOff(activeUid, activeWeekId, next);
       },
     }),
     { name: "weekStore" },

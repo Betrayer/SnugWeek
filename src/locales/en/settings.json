@@ -5,5 +5,14 @@
   "transitionFold": "Page flip",
   "transitionCurl": "Page curl",
   "transitionNone": "No animation",
-  "reduceMotion": "Reduce motion"
+  "reduceMotion": "Reduce motion",
+  "schedule": "Schedule",
+  "weekend": "Days off by default",
+  "columnMode": "Week columns",
+  "columnCozy": "Cozy (weekend stacked)",
+  "columnEqual": "Seven equal columns",
+  "modules": "Modules",
+  "moduleDayTrackers": "Day trackers",
+  "moduleHabits": "Habits",
+  "moduleWeekNote": "Notes"
 }

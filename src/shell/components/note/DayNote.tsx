@@ -3,64 +3,76 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useWeekStore } from "../../../state/weekStore.ts";
 
-export const WeekNote = () => {
+interface DayNoteProps {
+  day: number;
+}
+
+export const DayNote = ({ day }: DayNoteProps) => {
   const { t } = useTranslation("week");
-  const note = useWeekStore((state) => state.week?.note ?? "");
+  const note = useWeekStore((state) => state.week?.dayNotes[String(day)] ?? "");
   const weekId = useWeekStore((state) => state.weekId);
-  const noteSaveState = useWeekStore((state) => state.noteSaveState);
-  const setNote = useWeekStore((state) => state.setNote);
+  const saveState = useWeekStore(
+    (state) => state.dayNoteSaveState[day] ?? "idle",
+  );
+  const setDayNote = useWeekStore((state) => state.setDayNote);
   const [value, setValue] = useState(note);
   const [syncedNote, setSyncedNote] = useState(note);
-  const [syncedWeekId, setSyncedWeekId] = useState(weekId);
+  const [syncedKey, setSyncedKey] = useState(`${weekId}:${day}`);
 
-  if (note !== syncedNote || weekId !== syncedWeekId) {
+  const key = `${weekId}:${day}`;
+  if (note !== syncedNote || key !== syncedKey) {
     setSyncedNote(note);
-    setSyncedWeekId(weekId);
+    setSyncedKey(key);
     setValue(note);
   }
 
   return (
-    <Box style={{ position: "relative", maxWidth: 640 }}>
+    <Box
+      style={{
+        position: "relative",
+        borderTop: "1px dashed var(--sw-line)",
+        paddingBlockStart: 4,
+      }}
+    >
       <Textarea
         variant="unstyled"
         autosize
-        minRows={2}
-        maxRows={4}
+        minRows={1}
+        maxRows={3}
+        aria-label={t("notePlaceholder")}
         placeholder={t("notePlaceholder")}
         value={value}
         onChange={(event) => {
           setValue(event.currentTarget.value);
-          setNote(event.currentTarget.value);
+          setDayNote(day, event.currentTarget.value);
         }}
         styles={{
           input: {
             fontFamily: "var(--sw-font-hand)",
-            fontSize: "1.5rem",
-            lineHeight: 1.5,
-            color: "var(--sw-ink)",
+            fontSize: "1.15rem",
+            lineHeight: 1.35,
+            color: "var(--sw-ink-2)",
             backgroundColor: "transparent",
+            padding: 0,
+            minHeight: "unset",
             "--input-placeholder-color": "var(--sw-ink-3)",
           },
         }}
       />
-      <Transition
-        mounted={noteSaveState === "saved"}
-        transition="fade"
-        duration={250}
-      >
+      <Transition mounted={saveState === "saved"} transition="fade" duration={250}>
         {(style) => (
           <Text
-            fz="sm"
+            fz={11}
             style={{
               ...style,
               position: "absolute",
-              top: 0,
+              top: 4,
               insetInlineEnd: 0,
               color: "var(--sw-done)",
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           >
-            ✓ {t("noteSaved")}
+            ✓
           </Text>
         )}
       </Transition>

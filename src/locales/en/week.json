@@ -1,8 +1,11 @@
 {
-  "notePlaceholder": "Notes, plans, dreams for the week…",
+  "notePlaceholder": "Notes",
   "noteSaved": "saved",
   "prevWeek": "Previous week",
   "nextWeek": "Next week",
   "jumpTitle": "Jump to week",
-  "jumpToMonth": "View month"
+  "jumpToMonth": "View month",
+  "makeDayOff": "Make day off",
+  "makeWorkday": "Make working day",
+  "dayOptions": "Day options: {{day}}"
 }

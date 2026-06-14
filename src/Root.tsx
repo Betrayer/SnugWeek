@@ -16,7 +16,9 @@ import {
   setTimeLocale,
 } from "./services/time.ts";
 import { useAuthStore } from "./state/authStore.ts";
+import { useHabitsStore } from "./state/habitsStore.ts";
 import { useListsStore } from "./state/listsStore.ts";
+import { useTrackersStore } from "./state/trackersStore.ts";
 import { AppShell } from "./shell/layout/AppShell.tsx";
 import { MonthPage } from "./shell/pages/MonthPage.tsx";
 import { SettingsPage } from "./shell/pages/SettingsPage.tsx";
@@ -96,6 +98,8 @@ export const Root = () => {
     if (authStatus !== "ready" || !uid) return;
     useProfileStore.getState().start(uid);
     useListsStore.getState().start(uid);
+    useTrackersStore.getState().start(uid);
+    useHabitsStore.getState().start(uid);
     triggerCarryOver(uid);
     const onVisible = () => {
       if (document.visibilityState === "visible") triggerCarryOver(uid);
