@@ -3,6 +3,7 @@ import { useDisclosure } from "@mantine/hooks";
 import { useTranslation } from "react-i18next";
 import type { Tracker } from "../../../services/repos/trackersRepo.ts";
 import type { TrackerValue } from "../../../services/repos/weeksRepo.ts";
+import { MOOD_EMOJIS } from "../../../services/stats/moodScale.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { TrackerIcon } from "./TrackerIcon.tsx";
 import { trackerDisplayName } from "./trackerName.ts";
@@ -13,7 +14,6 @@ interface TrackerControlProps {
   value: TrackerValue | undefined;
 }
 
-const MOOD_EMOJIS = ["😞", "🙁", "😐", "🙂", "😄"];
 const NUMBER_MAX = 999;
 
 const CheckGlyph = () => (

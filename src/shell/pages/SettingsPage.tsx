@@ -1,4 +1,5 @@
 import {
+  Button,
   Chip,
   Divider,
   Group,
@@ -8,18 +9,24 @@ import {
   Text,
   Title,
 } from "@mantine/core";
-import { useMemo } from "react";
+import { notifications } from "@mantine/notifications";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SUPPORTED_LANGS, isSupportedLang } from "../../i18n/languages.ts";
-import { weekdayInitials } from "../../services/time.ts";
+import { isoDateKeyOf, weekdayInitials } from "../../services/time.ts";
+import { useAuthStore } from "../../state/authStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
+import { useStatsStore } from "../../state/statsStore.ts";
 import { HabitSettings } from "../components/habits/HabitSettings.tsx";
 import { ThemePicker } from "../components/settings/ThemePicker.tsx";
 import { TrackerSettings } from "../components/trackers/TrackerSettings.tsx";
 
 export const SettingsPage = () => {
   const { t } = useTranslation(["settings", "common", "trackers", "habits"]);
+  const uid = useAuthStore((state) => state.uid);
+  const statsBackfilledAt = useProfileStore((state) => state.statsBackfilledAt);
+  const [backfilling, setBackfilling] = useState(false);
   const language = useSettingsStore((state) => state.language);
   const setLanguage = useSettingsStore((state) => state.setLanguage);
   const transition = useSettingsStore((state) => state.transition);
@@ -31,6 +38,28 @@ export const SettingsPage = () => {
   const moduleToggles = useProfileStore((state) => state.moduleToggles);
 
   const initials = useMemo(() => weekdayInitials(language), [language]);
+
+  const runBackfill = () => {
+    if (!uid || backfilling) return;
+    setBackfilling(true);
+    void useStatsStore
+      .getState()
+      .backfill(uid)
+      .then(() => {
+        notifications.show({ message: t("settings:backfillDone") });
+      })
+      .catch((error: unknown) => {
+        console.error(error);
+        notifications.show({
+          message: t("settings:backfillError"),
+          withBorder: true,
+          styles: { root: { borderColor: "var(--sw-danger)" } },
+        });
+      })
+      .finally(() => {
+        setBackfilling(false);
+      });
+  };
 
   return (
     <Stack gap="xl" maw={560} pb="xl">
@@ -171,6 +200,33 @@ export const SettingsPage = () => {
           {t("habits:settings.title")}
         </Title>
         <HabitSettings />
+      </Stack>
+
+      <Divider color="var(--sw-line)" />
+
+      <Stack gap="xs">
+        <Title order={3} c="var(--sw-ink-3)">
+          {t("settings:dev")}
+        </Title>
+        <Text fz="sm" c="var(--sw-ink-3)">
+          {t("settings:backfillHint")}
+        </Text>
+        <Group>
+          <Button
+            variant="light"
+            loading={backfilling}
+            onClick={runBackfill}
+          >
+            {t("settings:backfill")}
+          </Button>
+        </Group>
+        <Text fz="xs" c="var(--sw-ink-3)">
+          {statsBackfilledAt
+            ? t("settings:backfillAt", {
+                date: isoDateKeyOf(statsBackfilledAt),
+              })
+            : t("settings:backfillNever")}
+        </Text>
       </Stack>
     </Stack>
   );

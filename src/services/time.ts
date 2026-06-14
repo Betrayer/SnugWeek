@@ -98,6 +98,98 @@ export const weeksOfMonth = (monthId: string): string[] => {
   return ids;
 };
 
+export const isoDateKeyOf = (ms: number): string =>
+  dayjs(ms).format("YYYY-MM-DD");
+
+export const monthIdOfKey = (dateKey: string): string => dateKey.slice(0, 7);
+
+export const currentYear = (): number => dayjs().year();
+
+export const isValidYear = (value: string): boolean => /^\d{4}$/.test(value);
+
+export const monthsOfYear = (year: number): string[] =>
+  Array.from({ length: 12 }, (_, index) => `${year}-${pad2(index + 1)}`);
+
+export const yearWeekRange = (year: number): { start: string; end: string } => ({
+  start: weekIdFromDate(dayjs(`${year}-01-01`).startOf("isoWeek")),
+  end: weekIdFromDate(dayjs(`${year}-12-31`).startOf("isoWeek")),
+});
+
+export const monthDayKeys = (monthId: string): string[] => {
+  const count = dayjs(`${monthId}-01`).daysInMonth();
+  return Array.from({ length: count }, (_, index) => `${monthId}-${pad2(index + 1)}`);
+};
+
+export const monthRangeMs = (monthId: string): { start: number; end: number } => {
+  const base = dayjs(`${monthId}-01`);
+  return {
+    start: base.startOf("month").valueOf(),
+    end: base.endOf("month").valueOf(),
+  };
+};
+
+export const monthShortLabels = (locale: string): string[] =>
+  Array.from({ length: 12 }, (_, index) =>
+    capitalize(
+      dayjs(`2020-${pad2(index + 1)}-01`).locale(locale).format("MMM"),
+    ),
+  );
+
+export interface HeatmapCell {
+  dateKey: string;
+  date: number;
+  inYear: boolean;
+  isToday: boolean;
+}
+
+export interface HeatmapColumn {
+  weekId: string;
+  cells: HeatmapCell[];
+  monthLabel: string | null;
+}
+
+export interface YearHeatmap {
+  columns: HeatmapColumn[];
+  firstWeekId: string;
+  lastWeekId: string;
+}
+
+export const buildYearHeatmap = (year: number, locale: string): YearHeatmap => {
+  const start = dayjs(`${year}-01-01`).startOf("isoWeek");
+  const end = dayjs(`${year}-12-31`).endOf("isoWeek");
+  const today = dayjs();
+  const columns: HeatmapColumn[] = [];
+  let cursor = start;
+  while (!cursor.isAfter(end, "day")) {
+    const cells: HeatmapCell[] = Array.from({ length: 7 }, (_, index) => {
+      const day = cursor.add(index, "day");
+      return {
+        dateKey: day.format("YYYY-MM-DD"),
+        date: day.date(),
+        inYear: day.year() === year,
+        isToday: day.isSame(today, "day"),
+      };
+    });
+    const monthStart = cells.find((cell) => cell.inYear && cell.date === 1);
+    const monthLabel = monthStart
+      ? capitalize(dayjs(monthStart.dateKey).locale(locale).format("MMM"))
+      : null;
+    columns.push({ weekId: weekIdFromDate(cursor), cells, monthLabel });
+    cursor = cursor.add(1, "week");
+  }
+  const firstWeekId = columns[0]?.weekId ?? weekIdFromDate(start);
+  const lastColumn = columns[columns.length - 1];
+  const lastWeekId = lastColumn ? lastColumn.weekId : weekIdFromDate(end);
+  return { columns, firstWeekId, lastWeekId };
+};
+
+export const weekdayShortLabels = (locale: string): string[] => {
+  const sunday = dayjs().day(0);
+  return Array.from({ length: 7 }, (_, index) =>
+    capitalize(sunday.add(index, "day").locale(locale).format("dd")),
+  );
+};
+
 export const weekdayInitials = (locale: string): string[] => {
   const monday = dayjs().startOf("isoWeek");
   return Array.from({ length: 7 }, (_, index) =>

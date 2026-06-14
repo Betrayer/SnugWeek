@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { ORDER_SPACING, orderForBottom } from "../services/ordering.ts";
+import { bumpCompletion } from "../services/repos/statsRepo.ts";
 import {
   assignListToDay,
   createList,
@@ -20,6 +21,7 @@ import {
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
+import { isoDateKeyOf } from "../services/time.ts";
 
 const TASKS_LIST_ID = "tasks";
 
@@ -89,8 +91,16 @@ export const useListsStore = create<ListsState>()(
       },
       toggleDone: (task) => {
         if (!activeUid) return;
-        const next = task.status === "done" ? "open" : "done";
-        setStatus(activeUid, task.id, next, next === "done" ? Date.now() : null);
+        if (task.status === "done") {
+          if (task.completedAt !== null) {
+            bumpCompletion(activeUid, isoDateKeyOf(task.completedAt), -1);
+          }
+          setStatus(activeUid, task.id, "open", null);
+          return;
+        }
+        const now = Date.now();
+        setStatus(activeUid, task.id, "done", now);
+        bumpCompletion(activeUid, isoDateKeyOf(now), 1);
       },
       renameTask: (taskId, title) => {
         const trimmed = title.trim();

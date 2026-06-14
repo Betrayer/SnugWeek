@@ -40,6 +40,7 @@ export interface ProfileDoc {
   moduleToggles: ModuleToggles;
   weekend: number[];
   columnMode: "cozy" | "equal";
+  statsBackfilledAt: number | null;
 }
 
 export const DEFAULT_MODULE_TOGGLES: ModuleToggles = {
@@ -75,6 +76,8 @@ const normalizeProfile = (data: DocumentData): ProfileDoc => ({
   moduleToggles: normalizeToggles(data.moduleToggles),
   weekend: isNumberArray(data.weekend) ? data.weekend : DEFAULT_WEEKEND,
   columnMode: data.columnMode === "equal" ? "equal" : "cozy",
+  statsBackfilledAt:
+    typeof data.statsBackfilledAt === "number" ? data.statsBackfilledAt : null,
 });
 
 const profileRef = (uid: string) => doc(db, "users", uid);
@@ -200,6 +203,12 @@ export const setModuleToggle = (
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };
+
+export const markStatsBackfilled = (uid: string): Promise<void> =>
+  updateDoc(profileRef(uid), {
+    statsBackfilledAt: Date.now(),
+    updatedAt: Date.now(),
+  });
 
 export const subscribeProfile = (
   uid: string,
