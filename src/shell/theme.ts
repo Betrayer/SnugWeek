@@ -1,6 +1,18 @@
-import { createTheme, mergeThemeOverrides } from "@mantine/core";
-import type { MantineColorsTuple, MantineThemeOverride } from "@mantine/core";
+import { createTheme, defaultVariantColorsResolver, mergeThemeOverrides } from "@mantine/core";
+import type {
+  MantineColorsTuple,
+  MantineThemeOverride,
+  VariantColorsResolver,
+} from "@mantine/core";
 import type { ThemeSpec } from "../data/themes/types.ts";
+
+const variantColorResolver: VariantColorsResolver = (input) => {
+  const resolved = defaultVariantColorsResolver(input);
+  if (input.variant === "filled" && (input.color === "snug" || !input.color)) {
+    return { ...resolved, color: "var(--sw-accent-ink)" };
+  }
+  return resolved;
+};
 
 interface Hsl {
   h: number;
@@ -80,6 +92,8 @@ export const buildMantineTheme = (spec: ThemeSpec): MantineThemeOverride => {
     headings: { fontFamily: "var(--sw-font-body)", fontWeight: "700" },
     defaultRadius: "lg",
     primaryColor: "snug",
+    primaryShade: 6,
+    variantColorResolver,
     colors: { snug: accentColors(accent) },
     components: {
       Paper: {

@@ -7,10 +7,12 @@ import {
   UnstyledButton,
 } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
-import { useState } from "react";
+import { motion, useAnimationControls } from "motion/react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
+import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 
 interface TaskCardProps {
   task: Task;
@@ -72,7 +74,8 @@ const cardStyle = (
         ? "var(--sw-paper-2)"
         : "transparent",
   boxShadow: isOverlay ? "var(--sw-shadow)" : "none",
-  transition: "background-color 120ms ease",
+  transform: hovered && !isOverlay ? "translateY(-1px)" : "none",
+  transition: "background-color 120ms ease, transform 120ms ease",
 });
 
 export const TaskCard = ({
@@ -85,9 +88,22 @@ export const TaskCard = ({
 }: TaskCardProps) => {
   const { t } = useTranslation("tasks");
   const { hovered, ref } = useHover();
+  const reduced = useReducedMotionPref();
+  const checkControls = useAnimationControls();
+  const wasDone = useRef(task.status === "done");
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(task.title);
   const done = task.status === "done";
+
+  useEffect(() => {
+    if (done && !wasDone.current && !reduced) {
+      void checkControls.start({
+        scale: [1, 1.28, 1],
+        transition: { duration: 0.3, ease: "easeOut" },
+      });
+    }
+    wasDone.current = done;
+  }, [done, reduced, checkControls]);
 
   const startEdit = () => {
     setDraft(task.title);
@@ -116,27 +132,30 @@ export const TaskCard = ({
 
   return (
     <Box ref={isOverlay ? undefined : ref} style={cardStyle(done, hovered, isOverlay)}>
-      <UnstyledButton
-        onClick={onToggle}
-        onPointerDown={(event) => event.stopPropagation()}
-        onKeyDown={(event) => event.stopPropagation()}
-        aria-label={done ? t("reopen") : t("done")}
-        style={{
-          marginTop: 2,
-          width: 20,
-          height: 20,
-          flex: "0 0 auto",
-          borderRadius: "50%",
-          border: `2px solid ${done ? "var(--sw-done)" : "var(--sw-line)"}`,
-          backgroundColor: done ? "var(--sw-done)" : "transparent",
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          transition: "background-color 150ms ease, border-color 150ms ease",
-        }}
+      <motion.div
+        animate={checkControls}
+        style={{ marginTop: 2, flex: "0 0 auto", display: "inline-flex" }}
       >
-        <CheckMark done={done} />
-      </UnstyledButton>
+        <UnstyledButton
+          onClick={onToggle}
+          onPointerDown={(event) => event.stopPropagation()}
+          onKeyDown={(event) => event.stopPropagation()}
+          aria-label={done ? t("reopen") : t("done")}
+          style={{
+            width: 20,
+            height: 20,
+            borderRadius: "50%",
+            border: `2px solid ${done ? "var(--sw-done)" : "var(--sw-line)"}`,
+            backgroundColor: done ? "var(--sw-done)" : "transparent",
+            display: "inline-flex",
+            alignItems: "center",
+            justifyContent: "center",
+            transition: "background-color 150ms ease, border-color 150ms ease",
+          }}
+        >
+          <CheckMark done={done} />
+        </UnstyledButton>
+      </motion.div>
       <div
         style={{
           flex: 1,
@@ -173,9 +192,11 @@ export const TaskCard = ({
             style={{
               cursor: isOverlay ? "default" : "text",
               color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
-              textDecoration: done ? "line-through" : "none",
+              textDecoration: "line-through",
+              textDecorationColor: done ? "var(--sw-ink-3)" : "transparent",
               lineHeight: 1.4,
               wordBreak: "break-word",
+              transition: "color 150ms ease, text-decoration-color 250ms ease",
             }}
           >
             {task.title}

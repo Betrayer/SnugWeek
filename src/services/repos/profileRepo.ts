@@ -1,9 +1,30 @@
-import { doc, getDoc, onSnapshot, setDoc, updateDoc } from "firebase/firestore";
+import {
+  collection,
+  doc,
+  getDoc,
+  getDocs,
+  limit,
+  onSnapshot,
+  query,
+  runTransaction,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
+import { seedContentFor } from "../../data/defaults.ts";
 import { DEFAULT_THEME_ID } from "../../data/themes/registry.ts";
+import type { SupportedLang } from "../../i18n/languages.ts";
+import { ORDER_SPACING } from "../ordering.ts";
+import { currentWeekId, todayIsoDay } from "../time.ts";
 import { db } from "../firebase.ts";
 import { reportWriteError } from "./writeError.ts";
-import { seedDefaultTrackers } from "./trackersRepo.ts";
+import { createHabit } from "./habitsRepo.ts";
+import { createTask } from "./tasksRepo.ts";
+import { MOOD_TRACKER_ID, seedDefaultTrackers } from "./trackersRepo.ts";
+import { setTrackerValue } from "./weeksRepo.ts";
+
+const SEED_WINDOW_MS = 5 * 60 * 1000;
+const TASKS_LIST_ID = "tasks";
 
 export interface ModuleToggles {
   dayTrackers: boolean;
@@ -58,7 +79,64 @@ const normalizeProfile = (data: DocumentData): ProfileDoc => ({
 
 const profileRef = (uid: string) => doc(db, "users", uid);
 
-export const ensureProfile = async (uid: string): Promise<void> => {
+const seedFirstRun = async (
+  uid: string,
+  lang: SupportedLang,
+): Promise<void> => {
+  const ref = profileRef(uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) return;
+  const data = snap.data();
+  if (data.seeded === true) return;
+  const createdAt = typeof data.createdAt === "number" ? data.createdAt : 0;
+  if (Date.now() - createdAt > SEED_WINDOW_MS) {
+    await updateDoc(ref, { seeded: true }).catch(reportWriteError);
+    return;
+  }
+  const [tasksSnap, habitsSnap] = await Promise.all([
+    getDocs(query(collection(db, "users", uid, "tasks"), limit(1))),
+    getDocs(query(collection(db, "users", uid, "habits"), limit(1))),
+  ]);
+  if (!tasksSnap.empty || !habitsSnap.empty) {
+    await updateDoc(ref, { seeded: true }).catch(reportWriteError);
+    return;
+  }
+  try {
+    const claimed = await runTransaction(db, async (tx) => {
+      const fresh = await tx.get(ref);
+      if (!fresh.exists() || fresh.data().seeded === true) return false;
+      tx.update(ref, { seeded: true });
+      return true;
+    });
+    if (!claimed) return;
+  } catch {
+    return;
+  }
+  const content = seedContentFor(lang);
+  content.tasks.forEach((title, index) => {
+    createTask(uid, {
+      title,
+      bucket: "list",
+      weekId: null,
+      day: null,
+      listId: TASKS_LIST_ID,
+      order: (index + 1) * ORDER_SPACING,
+    });
+  });
+  createHabit(uid, content.habit, content.habitIcon, ORDER_SPACING);
+  setTrackerValue(
+    uid,
+    currentWeekId(),
+    todayIsoDay(),
+    MOOD_TRACKER_ID,
+    content.mood,
+  );
+};
+
+export const ensureProfile = async (
+  uid: string,
+  lang: SupportedLang,
+): Promise<void> => {
   const ref = profileRef(uid);
   const snap = await getDoc(ref);
   if (snap.exists()) {
@@ -66,6 +144,7 @@ export const ensureProfile = async (uid: string): Promise<void> => {
       await seedDefaultTrackers(uid);
       await updateDoc(ref, { trackersSeeded: true });
     }
+    await seedFirstRun(uid, lang);
     return;
   }
   const now = Date.now();
@@ -84,6 +163,14 @@ export const ensureProfile = async (uid: string): Promise<void> => {
   );
   await seedDefaultTrackers(uid);
   await updateDoc(ref, { trackersSeeded: true });
+  await seedFirstRun(uid, lang);
+};
+
+export const setTheme = (uid: string, themeId: string): void => {
+  void updateDoc(profileRef(uid), {
+    themeId,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
 };
 
 export const setWeekend = (uid: string, weekend: number[]): void => {

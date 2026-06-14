@@ -32,6 +32,7 @@ export const DayNote = ({ day }: DayNoteProps) => {
         position: "relative",
         borderTop: "1px dashed var(--sw-line)",
         paddingBlockStart: 4,
+        transform: "rotate(-0.3deg)",
       }}
     >
       <Textarea
@@ -53,6 +54,10 @@ export const DayNote = ({ day }: DayNoteProps) => {
             lineHeight: 1.35,
             color: "var(--sw-ink-2)",
             backgroundColor: "transparent",
+            backgroundImage:
+              "repeating-linear-gradient(to bottom, transparent 0, transparent calc(1.35em - 1px), color-mix(in srgb, var(--sw-line) 60%, transparent) calc(1.35em - 1px), color-mix(in srgb, var(--sw-line) 60%, transparent) 1.35em)",
+            backgroundAttachment: "local",
+            backgroundPositionY: "0.28em",
             padding: 0,
             minHeight: "unset",
             "--input-placeholder-color": "var(--sw-ink-3)",

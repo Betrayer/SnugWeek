@@ -70,6 +70,7 @@ export const Root = () => {
   const uid = useAuthStore((state) => state.uid);
   const bootstrap = useAuthStore((state) => state.bootstrap);
   const themeId = useProfileStore((state) => state.themeId);
+  const reduceMotion = useSettingsStore((state) => state.reduceMotion);
   const theme = themeById(themeId);
   const mantineTheme = useMemo(() => buildMantineTheme(theme), [theme]);
 
@@ -111,6 +112,10 @@ export const Root = () => {
   useEffect(() => {
     document.documentElement.dataset.snugTheme = theme.id;
   }, [theme.id]);
+
+  useEffect(() => {
+    document.documentElement.dataset.reduceMotion = String(reduceMotion);
+  }, [reduceMotion]);
 
   const ready = i18nReady && authStatus === "ready";
 

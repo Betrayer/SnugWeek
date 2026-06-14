@@ -15,6 +15,7 @@ import { weekdayInitials } from "../../services/time.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { HabitSettings } from "../components/habits/HabitSettings.tsx";
+import { ThemePicker } from "../components/settings/ThemePicker.tsx";
 import { TrackerSettings } from "../components/trackers/TrackerSettings.tsx";
 
 export const SettingsPage = () => {
@@ -38,6 +39,10 @@ export const SettingsPage = () => {
       </Title>
 
       <Stack gap="lg">
+        <Stack gap="xs">
+          <Text fw={600}>{t("settings:theme")}</Text>
+          <ThemePicker />
+        </Stack>
         <Stack gap="xs">
           <Text fw={600}>{t("settings:language")}</Text>
           <SegmentedControl

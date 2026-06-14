@@ -3,9 +3,12 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { Text } from "@mantine/core";
-import type { CSSProperties } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import type { CSSProperties, ReactNode } from "react";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
+import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
+import { EmptyState } from "../common/EmptyState.tsx";
+import { SparkleDoodle } from "../common/doodles.tsx";
 import { SortableTaskCard } from "./SortableTaskCard.tsx";
 import { sortForDisplay } from "./taskSort.ts";
 
@@ -13,6 +16,7 @@ interface TaskListProps {
   tasks: Task[];
   containerId: string;
   emptyLabel?: string;
+  emptyIcon?: ReactNode;
   fill?: boolean;
   onToggle: (task: Task) => void;
   onRename: (taskId: string, title: string) => void;
@@ -38,6 +42,7 @@ export const TaskList = ({
   tasks,
   containerId,
   emptyLabel,
+  emptyIcon,
   fill = false,
   onToggle,
   onRename,
@@ -45,6 +50,7 @@ export const TaskList = ({
   onMove,
 }: TaskListProps) => {
   const { setNodeRef, isOver } = useDroppable({ id: containerId });
+  const reduced = useReducedMotionPref();
   const display = sortForDisplay(tasks);
 
   return (
@@ -54,30 +60,30 @@ export const TaskList = ({
       strategy={verticalListSortingStrategy}
     >
       <div ref={setNodeRef} style={zoneStyle(isOver, fill)}>
-        {display.map((task) => (
-          <SortableTaskCard
-            key={task.id}
-            task={task}
-            onToggle={() => onToggle(task)}
-            onRename={(title) => onRename(task.id, title)}
-            onDelete={() => onDelete(task.id)}
-            onMove={onMove ? () => onMove(task) : undefined}
-          />
-        ))}
+        <AnimatePresence initial={false}>
+          {display.map((task) => (
+            <motion.div
+              key={task.id}
+              style={{ overflow: "hidden" }}
+              initial={reduced ? false : { opacity: 0, height: 0, scale: 0.96 }}
+              animate={{ opacity: 1, height: "auto", scale: 1 }}
+              exit={reduced ? { opacity: 0 } : { opacity: 0, height: 0 }}
+              transition={
+                reduced ? { duration: 0 } : { duration: 0.18, ease: "easeOut" }
+              }
+            >
+              <SortableTaskCard
+                task={task}
+                onToggle={() => onToggle(task)}
+                onRename={(title) => onRename(task.id, title)}
+                onDelete={() => onDelete(task.id)}
+                onMove={onMove ? () => onMove(task) : undefined}
+              />
+            </motion.div>
+          ))}
+        </AnimatePresence>
         {display.length === 0 && emptyLabel && (
-          <div
-            style={{
-              flex: fill ? 1 : undefined,
-              minHeight: 72,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Text ff="var(--sw-font-hand)" fz="lg" c="var(--sw-ink-3)">
-              {emptyLabel}
-            </Text>
-          </div>
+          <EmptyState icon={emptyIcon ?? <SparkleDoodle />} label={emptyLabel} />
         )}
       </div>
     </SortableContext>

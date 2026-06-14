@@ -39,3 +39,87 @@
   --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
   --sw-font-hand: "Caveat", cursive;
 }
+
+[data-snug-theme="lavender"] {
+  --sw-paper: #f6f4fb;
+  --sw-paper-2: #ece7f5;
+  --sw-card: #fefcff;
+  --sw-ink: #423a52;
+  --sw-ink-2: #6f6582;
+  --sw-ink-3: #a79eb8;
+  --sw-line: #e3dcef;
+  --sw-accent: #9a86c9;
+  --sw-accent-2: #7d6bb0;
+  --sw-accent-ink: #fffbff;
+  --sw-highlight: #f1e8d4;
+  --sw-done: #9bbb96;
+  --sw-danger: #c4705f;
+  --sw-shadow: 0 2px 10px rgba(70, 58, 92, 0.1);
+  --sw-fold-shade: rgba(45, 33, 64, 0.3);
+  --sw-paper-texture: none;
+  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --sw-font-hand: "Caveat", cursive;
+}
+
+[data-snug-theme="sage"] {
+  --sw-paper: #f3f6f1;
+  --sw-paper-2: #e6ede1;
+  --sw-card: #fcfdfb;
+  --sw-ink: #3b443a;
+  --sw-ink-2: #667064;
+  --sw-ink-3: #9aa597;
+  --sw-line: #dbe5d5;
+  --sw-accent: #5f9488;
+  --sw-accent-2: #4d7c71;
+  --sw-accent-ink: #f8fdfb;
+  --sw-highlight: #f0ead3;
+  --sw-done: #a8bd86;
+  --sw-danger: #c4705f;
+  --sw-shadow: 0 2px 10px rgba(56, 70, 52, 0.09);
+  --sw-fold-shade: rgba(38, 50, 34, 0.3);
+  --sw-paper-texture: none;
+  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --sw-font-hand: "Caveat", cursive;
+}
+
+[data-snug-theme="peach"] {
+  --sw-paper: #fdf3ee;
+  --sw-paper-2: #f9e6db;
+  --sw-card: #fffcf9;
+  --sw-ink: #4e3d34;
+  --sw-ink-2: #79604f;
+  --sw-ink-3: #b49a8b;
+  --sw-line: #f0dccf;
+  --sw-accent: #e08868;
+  --sw-accent-2: #bb6240;
+  --sw-accent-ink: #43332a;
+  --sw-highlight: #fbe6c4;
+  --sw-done: #a8bd86;
+  --sw-danger: #c75b4a;
+  --sw-shadow: 0 2px 10px rgba(110, 70, 50, 0.1);
+  --sw-fold-shade: rgba(70, 40, 24, 0.3);
+  --sw-paper-texture: none;
+  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --sw-font-hand: "Caveat", cursive;
+}
+
+[data-snug-theme="midnight"] {
+  --sw-paper: #1c1f27;
+  --sw-paper-2: #242833;
+  --sw-card: #2a2f3b;
+  --sw-ink: #e8e2d6;
+  --sw-ink-2: #b3ab9c;
+  --sw-ink-3: #948c7d;
+  --sw-line: #3a3f4c;
+  --sw-accent: #e3ad6f;
+  --sw-accent-2: #f0bf86;
+  --sw-accent-ink: #241c12;
+  --sw-highlight: #3a3322;
+  --sw-done: #9cc394;
+  --sw-danger: #e08a7a;
+  --sw-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --sw-fold-shade: rgba(0, 0, 0, 0.55);
+  --sw-paper-texture: none;
+  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+  --sw-font-hand: "Caveat", cursive;
+}

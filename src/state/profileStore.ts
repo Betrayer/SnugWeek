@@ -7,10 +7,12 @@ import {
   ensureProfile,
   setColumnMode,
   setModuleToggle,
+  setTheme,
   setWeekend,
   subscribeProfile,
 } from "../services/repos/profileRepo.ts";
 import type { ModuleToggles } from "../services/repos/profileRepo.ts";
+import { useSettingsStore } from "./settingsStore.ts";
 
 interface ProfileState {
   loaded: boolean;
@@ -19,6 +21,7 @@ interface ProfileState {
   columnMode: "cozy" | "equal";
   moduleToggles: ModuleToggles;
   start: (uid: string) => void;
+  setThemeId: (themeId: string) => void;
   setWeekend: (weekend: number[]) => void;
   setColumnMode: (columnMode: "cozy" | "equal") => void;
   setModuleToggle: (key: keyof ModuleToggles, value: boolean) => void;
@@ -39,9 +42,11 @@ export const useProfileStore = create<ProfileState>()(
         if (activeUid === uid && unsubscribe) return;
         if (unsubscribe) unsubscribe();
         activeUid = uid;
-        ensureProfile(uid).catch((error: unknown) => {
-          console.error(error);
-        });
+        ensureProfile(uid, useSettingsStore.getState().language).catch(
+          (error: unknown) => {
+            console.error(error);
+          },
+        );
         unsubscribe = subscribeProfile(uid, (profile) => {
           if (!profile) {
             set({ loaded: true });
@@ -55,6 +60,10 @@ export const useProfileStore = create<ProfileState>()(
             moduleToggles: profile.moduleToggles,
           });
         });
+      },
+      setThemeId: (themeId) => {
+        if (!activeUid) return;
+        setTheme(activeUid, themeId);
       },
       setWeekend: (weekend) => {
         if (!activeUid) return;

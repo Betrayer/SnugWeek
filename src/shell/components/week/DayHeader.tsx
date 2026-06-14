@@ -1,4 +1,4 @@
-import { ActionIcon, Group, Menu, Text } from "@mantine/core";
+import { ActionIcon, Box, Group, Menu, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { WeekDay } from "../../../services/time.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
@@ -25,20 +25,37 @@ export const DayHeader = ({ day, isOff }: DayHeaderProps) => {
       : "var(--sw-ink)";
   return (
     <Group justify="space-between" wrap="nowrap" style={{ color }}>
-      <Text fw={700} fz="sm">
-        {day.label}
-      </Text>
-      <Group gap={4} wrap="nowrap">
+      <Box style={{ position: "relative", display: "inline-block" }}>
         {day.isToday && (
-          <span
+          <svg
+            aria-hidden
+            viewBox="0 0 100 44"
+            preserveAspectRatio="none"
+            fill="none"
             style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              backgroundColor: "var(--sw-accent)",
+              position: "absolute",
+              insetInline: -9,
+              insetBlock: -5,
+              width: "calc(100% + 18px)",
+              height: "calc(100% + 10px)",
+              overflow: "visible",
+              pointerEvents: "none",
             }}
-          />
+          >
+            <path
+              d="M16 7 C 42 -1, 78 1, 86 16 C 92 30, 60 41, 32 38 C 8 35, 2 14, 22 8"
+              stroke="var(--sw-accent)"
+              strokeWidth="1.8"
+              strokeLinecap="round"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
         )}
+        <Text fw={700} fz="sm" style={{ position: "relative" }}>
+          {day.label}
+        </Text>
+      </Box>
+      <Group gap={4} wrap="nowrap">
         <Menu position="bottom-end">
           <Menu.Target>
             <ActionIcon

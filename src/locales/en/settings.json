@@ -1,5 +1,13 @@
 {
   "title": "Settings",
+  "theme": "Theme",
+  "themeNames": {
+    "milk": "Milk",
+    "lavender": "Lavender",
+    "sage": "Sage",
+    "peach": "Peach",
+    "midnight": "Midnight"
+  },
   "language": "Language",
   "animation": "Animation",
   "transitionFold": "Page flip",
