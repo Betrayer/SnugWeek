@@ -1,5 +1,15 @@
 {
   "title": "Settings",
+  "appearance": "Appearance",
+  "account": "Account",
+  "about": "About",
+  "accountAnonHint": "Save your data to an account so it follows you across devices.",
+  "accountSignedIn": "Signed in as",
+  "aboutTagline": "A cozy weekly planner-journal.",
+  "remindersTitle": "Reminders",
+  "remindersHint": "Task times and reminders are coming soon.",
+  "paperTexture": "Paper texture",
+  "paperTextureHint": "Subtle paper textures are coming soon.",
   "theme": "Theme",
   "themeNames": {
     "milk": "Milk",

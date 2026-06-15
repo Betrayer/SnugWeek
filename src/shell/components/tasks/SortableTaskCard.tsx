@@ -7,17 +7,13 @@ import { TaskCard } from "./TaskCard.tsx";
 interface SortableTaskCardProps {
   task: Task;
   onToggle: () => void;
-  onRename: (title: string) => void;
-  onDelete: () => void;
-  onMove?: () => void;
+  onOpen: () => void;
 }
 
 export const SortableTaskCard = ({
   task,
   onToggle,
-  onRename,
-  onDelete,
-  onMove,
+  onOpen,
 }: SortableTaskCardProps) => {
   const {
     attributes,
@@ -51,13 +47,7 @@ export const SortableTaskCard = ({
           }}
         />
       )}
-      <TaskCard
-        task={task}
-        onToggle={onToggle}
-        onRename={onRename}
-        onDelete={onDelete}
-        onMove={onMove}
-      />
+      <TaskCard task={task} onToggle={onToggle} onOpen={onOpen} />
     </div>
   );
 };

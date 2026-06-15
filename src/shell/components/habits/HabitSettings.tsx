@@ -1,32 +1,17 @@
-import {
-  ActionIcon,
-  Button,
-  Group,
-  Menu,
-  Modal,
-  Stack,
-  Text,
-  TextInput,
-} from "@mantine/core";
+import { Button, Group, Stack, Text, TextInput } from "@mantine/core";
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Habit } from "../../../services/repos/habitsRepo.ts";
 import { useHabitsStore } from "../../../state/habitsStore.ts";
+import { ActionMenu } from "../common/ActionMenu.tsx";
+import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { IconPicker } from "../trackers/IconPicker.tsx";
 import { TrackerIcon } from "../trackers/TrackerIcon.tsx";
 import { SortableItem } from "../settings/SortableItem.tsx";
 import { SortableList } from "../settings/SortableList.tsx";
 
 const MAX_NAME = 60;
-
-const KebabIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-    <circle cx="12" cy="5" r="1.7" />
-    <circle cx="12" cy="12" r="1.7" />
-    <circle cx="12" cy="19" r="1.7" />
-  </svg>
-);
 
 export const HabitSettings = () => {
   const { t } = useTranslation("habits");
@@ -87,30 +72,22 @@ export const HabitSettings = () => {
                       {habit.name}
                     </Text>
                   </Group>
-                  <Menu position="bottom-end">
-                    <Menu.Target>
-                      <ActionIcon
-                        variant="subtle"
-                        color="var(--sw-ink-3)"
-                        size="sm"
-                        aria-label={t("menu", { name: habit.name })}
-                      >
-                        <KebabIcon />
-                      </ActionIcon>
-                    </Menu.Target>
-                    <Menu.Dropdown>
-                      <Menu.Item onClick={() => openEdit(habit)}>
-                        {t("edit")}
-                      </Menu.Item>
-                      <Menu.Item
-                        onClick={() =>
-                          useHabitsStore.getState().setArchived(habit.id, true)
-                        }
-                      >
-                        {t("archive")}
-                      </Menu.Item>
-                    </Menu.Dropdown>
-                  </Menu>
+                  <ActionMenu
+                    label={t("menu", { name: habit.name })}
+                    actions={[
+                      {
+                        key: "edit",
+                        label: t("edit"),
+                        onClick: () => openEdit(habit),
+                      },
+                      {
+                        key: "archive",
+                        label: t("archive"),
+                        onClick: () =>
+                          useHabitsStore.getState().setArchived(habit.id, true),
+                      },
+                    ]}
+                  />
                 </Group>
               </SortableItem>
             ))}
@@ -141,11 +118,10 @@ export const HabitSettings = () => {
         </Stack>
       )}
 
-      <Modal
+      <ResponsiveDialog
         opened={editing !== null}
         onClose={() => setEditing(null)}
         title={t("renameTitle")}
-        centered
       >
         <Stack gap="md">
           <TextInput
@@ -172,7 +148,7 @@ export const HabitSettings = () => {
             </Button>
           </Group>
         </Stack>
-      </Modal>
+      </ResponsiveDialog>
     </Stack>
   );
 };

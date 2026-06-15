@@ -1,12 +1,16 @@
-import { ActionIcon, Anchor, Button, Group, Menu } from "@mantine/core";
+import { ActionIcon, Anchor, Box, Group } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { Link, useMatch } from "react-router";
-import { SUPPORTED_LANGS } from "../../i18n/languages.ts";
-import { currentMonthId, currentWeekId, isValidWeekId } from "../../services/time.ts";
+import {
+  currentMonthId,
+  currentWeekId,
+  isValidWeekId,
+} from "../../services/time.ts";
 import { useListsStore } from "../../state/listsStore.ts";
-import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { AccountMenu } from "../components/account/AccountMenu.tsx";
+import { HeaderSearchSlot } from "./HeaderSearchSlot.tsx";
+import { LanguageMenu } from "./LanguageMenu.tsx";
 import { SyncBadge } from "./SyncBadge.tsx";
 import { WeekNav } from "./WeekNav.tsx";
 
@@ -28,10 +32,14 @@ const ListsIcon = () => (
   </svg>
 );
 
+const navLinkProps = {
+  c: "var(--sw-ink-2)",
+  fw: 600,
+  fz: "sm",
+} as const;
+
 export const HeaderBar = () => {
   const { t } = useTranslation(["common", "week", "tasks"]);
-  const language = useSettingsStore((state) => state.language);
-  const setLanguage = useSettingsStore((state) => state.setLanguage);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
   const listOpenCount = useListsStore((state) =>
     Object.values(state.tasksByList).reduce(
@@ -45,58 +53,54 @@ export const HeaderBar = () => {
   const onWeek = weekId !== undefined && isValidWeekId(weekId);
 
   return (
-    <Group h="100%" px="md" justify="space-between" wrap="nowrap">
-      <Anchor
-        component={Link}
-        to="/"
-        underline="never"
-        c="var(--sw-ink)"
-        ff="var(--sw-font-hand)"
-        fz={28}
-        fw={600}
-        visibleFrom="sm"
-      >
-        {t("common:appName")}
-      </Anchor>
-      {onWeek && <WeekNav />}
-      <Group gap="sm" wrap="nowrap">
-        <Group gap="sm" visibleFrom="md">
-          <Anchor
-            component={Link}
-            to={`/w/${currentWeekId()}`}
-            c="var(--sw-ink-2)"
-            fw={600}
-            fz="sm"
-          >
+    <Box
+      px="md"
+      style={{
+        height: "100%",
+        display: "grid",
+        gridTemplateColumns: "minmax(0, 1fr) auto minmax(0, 1fr)",
+        alignItems: "center",
+        columnGap: "var(--mantine-spacing-sm)",
+      }}
+    >
+      <Group gap="md" wrap="nowrap" style={{ minWidth: 0 }}>
+        <Anchor
+          component={Link}
+          to="/"
+          underline="never"
+          c="var(--sw-ink)"
+          ff="var(--sw-font-hand)"
+          fz={28}
+          fw={600}
+          visibleFrom="sm"
+        >
+          {t("common:appName")}
+        </Anchor>
+        <Group gap="sm" visibleFrom="md" wrap="nowrap">
+          <Anchor component={Link} to={`/w/${currentWeekId()}`} {...navLinkProps}>
             {t("common:nav.week")}
           </Anchor>
           <Anchor
             component={Link}
             to={`/month/${currentMonthId()}`}
-            c="var(--sw-ink-2)"
-            fw={600}
-            fz="sm"
+            {...navLinkProps}
           >
             {t("common:nav.month")}
           </Anchor>
-          <Anchor
-            component={Link}
-            to="/stats"
-            c="var(--sw-ink-2)"
-            fw={600}
-            fz="sm"
-          >
+          <Anchor component={Link} to="/stats" {...navLinkProps}>
             {t("common:nav.stats")}
           </Anchor>
-          <Anchor
-            component={Link}
-            to="/settings"
-            c="var(--sw-ink-2)"
-            fw={600}
-            fz="sm"
-          >
+          <Anchor component={Link} to="/settings" {...navLinkProps}>
             {t("common:nav.settings")}
           </Anchor>
+        </Group>
+      </Group>
+
+      {onWeek ? <WeekNav /> : <div />}
+
+      <Group gap="sm" wrap="nowrap" justify="flex-end" style={{ minWidth: 0 }}>
+        <Group visibleFrom="md">
+          <HeaderSearchSlot />
         </Group>
         {onWeek && (
           <ActionIcon
@@ -133,26 +137,11 @@ export const HeaderBar = () => {
           </ActionIcon>
         )}
         <SyncBadge />
-        <Menu position="bottom-end">
-          <Menu.Target>
-            <Button variant="subtle" size="compact-sm" c="var(--sw-ink-2)">
-              {language.toUpperCase()}
-            </Button>
-          </Menu.Target>
-          <Menu.Dropdown>
-            {SUPPORTED_LANGS.map((lang) => (
-              <Menu.Item
-                key={lang}
-                onClick={() => setLanguage(lang)}
-                rightSection={lang === language ? "✓" : null}
-              >
-                {t(`common:languageNames.${lang}`)}
-              </Menu.Item>
-            ))}
-          </Menu.Dropdown>
-        </Menu>
+        <Group visibleFrom="md">
+          <LanguageMenu />
+        </Group>
         <AccountMenu />
       </Group>
-    </Group>
+    </Box>
   );
 };

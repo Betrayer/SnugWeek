@@ -1,265 +1,42 @@
-import {
-  Button,
-  Chip,
-  Divider,
-  Group,
-  SegmentedControl,
-  Slider,
-  Stack,
-  Switch,
-  Text,
-  Title,
-} from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-import { useMemo, useState } from "react";
+import { Stack, Title } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { SUPPORTED_LANGS, isSupportedLang } from "../../i18n/languages.ts";
-import { playPop, setVolume } from "../../services/sound/soundService.ts";
-import { isoDateKeyOf, weekdayInitials } from "../../services/time.ts";
-import { useAuthStore } from "../../state/authStore.ts";
-import { useProfileStore } from "../../state/profileStore.ts";
-import { useSettingsStore } from "../../state/settingsStore.ts";
-import { useStatsStore } from "../../state/statsStore.ts";
-import { HabitSettings } from "../components/habits/HabitSettings.tsx";
-import { ThemePicker } from "../components/settings/ThemePicker.tsx";
-import { TrackerSettings } from "../components/trackers/TrackerSettings.tsx";
+import { SettingsLayout } from "../components/settings/SettingsLayout.tsx";
+import type { SettingsSection } from "../components/settings/SettingsLayout.tsx";
+import { AboutSection } from "../components/settings/sections/AboutSection.tsx";
+import { AccountSection } from "../components/settings/sections/AccountSection.tsx";
+import { AppearanceSection } from "../components/settings/sections/AppearanceSection.tsx";
+import { ModulesSection } from "../components/settings/sections/ModulesSection.tsx";
+import { RemindersSection } from "../components/settings/sections/RemindersSection.tsx";
+import { ScheduleSection } from "../components/settings/sections/ScheduleSection.tsx";
+import { SoundSection } from "../components/settings/sections/SoundSection.tsx";
 
 export const SettingsPage = () => {
-  const { t } = useTranslation(["settings", "common", "trackers", "habits"]);
-  const uid = useAuthStore((state) => state.uid);
-  const statsBackfilledAt = useProfileStore((state) => state.statsBackfilledAt);
-  const [backfilling, setBackfilling] = useState(false);
-  const language = useSettingsStore((state) => state.language);
-  const setLanguage = useSettingsStore((state) => state.setLanguage);
-  const transition = useSettingsStore((state) => state.transition);
-  const setTransition = useSettingsStore((state) => state.setTransition);
-  const reduceMotion = useSettingsStore((state) => state.reduceMotion);
-  const setReduceMotion = useSettingsStore((state) => state.setReduceMotion);
-  const soundEnabled = useSettingsStore((state) => state.soundEnabled);
-  const setSoundEnabled = useSettingsStore((state) => state.setSoundEnabled);
-  const soundVolume = useSettingsStore((state) => state.soundVolume);
-  const setSoundVolume = useSettingsStore((state) => state.setSoundVolume);
-  const weekend = useProfileStore((state) => state.weekend);
-  const columnMode = useProfileStore((state) => state.columnMode);
-  const moduleToggles = useProfileStore((state) => state.moduleToggles);
+  const { t } = useTranslation("settings");
 
-  const initials = useMemo(() => weekdayInitials(language), [language]);
-
-  const runBackfill = () => {
-    if (!uid || backfilling) return;
-    setBackfilling(true);
-    void useStatsStore
-      .getState()
-      .backfill(uid)
-      .then(() => {
-        notifications.show({ message: t("settings:backfillDone") });
-      })
-      .catch((error: unknown) => {
-        console.error(error);
-        notifications.show({
-          message: t("settings:backfillError"),
-          withBorder: true,
-          styles: { root: { borderColor: "var(--sw-danger)" } },
-        });
-      })
-      .finally(() => {
-        setBackfilling(false);
-      });
-  };
+  const sections: SettingsSection[] = [
+    {
+      value: "appearance",
+      label: t("appearance"),
+      content: <AppearanceSection />,
+    },
+    { value: "modules", label: t("modules"), content: <ModulesSection /> },
+    { value: "schedule", label: t("schedule"), content: <ScheduleSection /> },
+    { value: "sound", label: t("sound"), content: <SoundSection /> },
+    {
+      value: "reminders",
+      label: t("remindersTitle"),
+      content: <RemindersSection />,
+    },
+    { value: "account", label: t("account"), content: <AccountSection /> },
+    { value: "about", label: t("about"), content: <AboutSection /> },
+  ];
 
   return (
-    <Stack gap="xl" maw={560} pb="xl">
+    <Stack gap="xl" maw={760} pb="xl">
       <Title order={2} c="var(--sw-ink)">
-        {t("settings:title")}
+        {t("title")}
       </Title>
-
-      <Stack gap="lg">
-        <Stack gap="xs">
-          <Text fw={600}>{t("settings:theme")}</Text>
-          <ThemePicker />
-        </Stack>
-        <Stack gap="xs">
-          <Text fw={600}>{t("settings:language")}</Text>
-          <SegmentedControl
-            value={language}
-            onChange={(value) => {
-              if (isSupportedLang(value)) setLanguage(value);
-            }}
-            data={SUPPORTED_LANGS.map((lang) => ({
-              value: lang,
-              label: t(`common:languageNames.${lang}`),
-            }))}
-          />
-        </Stack>
-        <Stack gap="xs">
-          <Text fw={600}>{t("settings:animation")}</Text>
-          <SegmentedControl
-            value={transition}
-            onChange={(value) => {
-              if (value === "fold" || value === "curl" || value === "none")
-                setTransition(value);
-            }}
-            data={[
-              { value: "fold", label: t("settings:transitionFold") },
-              { value: "curl", label: t("settings:transitionCurl") },
-              { value: "none", label: t("settings:transitionNone") },
-            ]}
-          />
-          <Switch
-            checked={reduceMotion}
-            onChange={(event) => setReduceMotion(event.currentTarget.checked)}
-            label={t("settings:reduceMotion")}
-          />
-        </Stack>
-        <Stack gap="xs">
-          <Text fw={600}>{t("settings:sound")}</Text>
-          <Switch
-            checked={soundEnabled}
-            onChange={(event) => setSoundEnabled(event.currentTarget.checked)}
-            label={t("settings:soundEnable")}
-          />
-          <Text fz="sm" c="var(--sw-ink-2)">
-            {t("settings:soundVolume")}
-          </Text>
-          <Slider
-            value={Math.round(soundVolume * 100)}
-            onChange={(value) => setSoundVolume(value / 100)}
-            onChangeEnd={(value) => {
-              setVolume(value / 100);
-              playPop();
-            }}
-            min={0}
-            max={100}
-            step={1}
-            disabled={!soundEnabled}
-            label={(value) => `${value}%`}
-            color="var(--sw-accent)"
-            aria-label={t("settings:soundVolume")}
-          />
-        </Stack>
-      </Stack>
-
-      <Divider color="var(--sw-line)" />
-
-      <Stack gap="md">
-        <Title order={3} c="var(--sw-ink)">
-          {t("settings:schedule")}
-        </Title>
-        <Stack gap="xs">
-          <Text fw={600}>{t("settings:weekend")}</Text>
-          <Chip.Group
-            multiple
-            value={weekend.map(String)}
-            onChange={(value) =>
-              useProfileStore
-                .getState()
-                .setWeekend(value.map(Number).sort((a, b) => a - b))
-            }
-          >
-            <Group gap={6} wrap="nowrap">
-              {initials.map((initial, index) => (
-                <Chip key={index} value={String(index + 1)} size="sm">
-                  {initial}
-                </Chip>
-              ))}
-            </Group>
-          </Chip.Group>
-        </Stack>
-        <Stack gap="xs">
-          <Text fw={600}>{t("settings:columnMode")}</Text>
-          <SegmentedControl
-            value={columnMode}
-            onChange={(value) => {
-              if (value === "cozy" || value === "equal")
-                useProfileStore.getState().setColumnMode(value);
-            }}
-            data={[
-              { value: "cozy", label: t("settings:columnCozy") },
-              { value: "equal", label: t("settings:columnEqual") },
-            ]}
-          />
-        </Stack>
-      </Stack>
-
-      <Divider color="var(--sw-line)" />
-
-      <Stack gap="md">
-        <Title order={3} c="var(--sw-ink)">
-          {t("settings:modules")}
-        </Title>
-        <Switch
-          checked={moduleToggles.dayTrackers}
-          label={t("settings:moduleDayTrackers")}
-          onChange={(event) =>
-            useProfileStore
-              .getState()
-              .setModuleToggle("dayTrackers", event.currentTarget.checked)
-          }
-        />
-        <Switch
-          checked={moduleToggles.habits}
-          label={t("settings:moduleHabits")}
-          onChange={(event) =>
-            useProfileStore
-              .getState()
-              .setModuleToggle("habits", event.currentTarget.checked)
-          }
-        />
-        <Switch
-          checked={moduleToggles.weekNote}
-          label={t("settings:moduleWeekNote")}
-          onChange={(event) =>
-            useProfileStore
-              .getState()
-              .setModuleToggle("weekNote", event.currentTarget.checked)
-          }
-        />
-      </Stack>
-
-      <Divider color="var(--sw-line)" />
-
-      <Stack gap="sm">
-        <Title order={3} c="var(--sw-ink)">
-          {t("trackers:settings.title")}
-        </Title>
-        <TrackerSettings />
-      </Stack>
-
-      <Divider color="var(--sw-line)" />
-
-      <Stack gap="sm">
-        <Title order={3} c="var(--sw-ink)">
-          {t("habits:settings.title")}
-        </Title>
-        <HabitSettings />
-      </Stack>
-
-      <Divider color="var(--sw-line)" />
-
-      <Stack gap="xs">
-        <Title order={3} c="var(--sw-ink-3)">
-          {t("settings:dev")}
-        </Title>
-        <Text fz="sm" c="var(--sw-ink-3)">
-          {t("settings:backfillHint")}
-        </Text>
-        <Group>
-          <Button
-            variant="light"
-            loading={backfilling}
-            onClick={runBackfill}
-          >
-            {t("settings:backfill")}
-          </Button>
-        </Group>
-        <Text fz="xs" c="var(--sw-ink-3)">
-          {statsBackfilledAt
-            ? t("settings:backfillAt", {
-                date: isoDateKeyOf(statsBackfilledAt),
-              })
-            : t("settings:backfillNever")}
-        </Text>
-      </Stack>
+      <SettingsLayout sections={sections} />
     </Stack>
   );
 };

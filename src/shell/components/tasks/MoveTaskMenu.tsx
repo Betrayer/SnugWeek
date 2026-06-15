@@ -1,4 +1,4 @@
-import { Button, Drawer, Group, Stack, Text } from "@mantine/core";
+import { Button, Group, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { isBuiltinList } from "../../../services/repos/listsRepo.ts";
 import { moveTask } from "../../../services/repos/tasksRepo.ts";
@@ -9,6 +9,7 @@ import { useListsStore } from "../../../state/listsStore.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useUiStore } from "../../../state/uiStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
+import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 
 export const MoveTaskMenu = () => {
   const { t } = useTranslation("tasks");
@@ -48,21 +49,10 @@ export const MoveTaskMenu = () => {
   };
 
   return (
-    <Drawer
+    <ResponsiveDialog
       opened={target !== null}
       onClose={() => useUiStore.getState().closeMove()}
-      position="bottom"
-      size="auto"
       title={t("moveMenu.title")}
-      styles={{
-        content: { backgroundColor: "var(--sw-paper)" },
-        header: { backgroundColor: "var(--sw-paper)" },
-        title: {
-          fontFamily: "var(--sw-font-hand)",
-          fontSize: 24,
-          color: "var(--sw-ink-2)",
-        },
-      }}
     >
       <Stack gap="lg" pb="md">
         <Stack gap="xs">
@@ -113,6 +103,6 @@ export const MoveTaskMenu = () => {
           </Group>
         </Stack>
       </Stack>
-    </Drawer>
+    </ResponsiveDialog>
   );
 };

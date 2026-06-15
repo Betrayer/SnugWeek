@@ -1,14 +1,7 @@
-import {
-  ActionIcon,
-  Box,
-  Menu,
-  Text,
-  TextInput,
-  UnstyledButton,
-} from "@mantine/core";
+import { Box, Text, UnstyledButton } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
 import { m, useAnimationControls } from "motion/react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
@@ -17,21 +10,9 @@ import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 interface TaskCardProps {
   task: Task;
   onToggle: () => void;
-  onRename: (title: string) => void;
-  onDelete: () => void;
-  onMove?: () => void;
+  onOpen?: () => void;
   isOverlay?: boolean;
 }
-
-const MAX_TITLE = 500;
-
-const KebabIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <circle cx="12" cy="5" r="1.7" />
-    <circle cx="12" cy="12" r="1.7" />
-    <circle cx="12" cy="19" r="1.7" />
-  </svg>
-);
 
 const CheckMark = ({ done }: { done: boolean }) => (
   <svg
@@ -81,9 +62,7 @@ const cardStyle = (
 export const TaskCard = ({
   task,
   onToggle,
-  onRename,
-  onDelete,
-  onMove,
+  onOpen,
   isOverlay = false,
 }: TaskCardProps) => {
   const { t } = useTranslation("tasks");
@@ -91,8 +70,6 @@ export const TaskCard = ({
   const reduced = useReducedMotionPref();
   const checkControls = useAnimationControls();
   const wasDone = useRef(task.status === "done");
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(task.title);
   const done = task.status === "done";
 
   useEffect(() => {
@@ -104,31 +81,6 @@ export const TaskCard = ({
     }
     wasDone.current = done;
   }, [done, reduced, checkControls]);
-
-  const startEdit = () => {
-    setDraft(task.title);
-    setEditing(true);
-  };
-  const commit = () => {
-    const trimmed = draft.trim();
-    if (trimmed.length > 0 && trimmed !== task.title) onRename(trimmed);
-    setEditing(false);
-  };
-  const cancel = () => {
-    setDraft(task.title);
-    setEditing(false);
-  };
-  const handleKey = (event: KeyboardEvent<HTMLInputElement>) => {
-    event.stopPropagation();
-    if (event.nativeEvent.isComposing) return;
-    if (event.key === "Enter") {
-      event.preventDefault();
-      commit();
-    } else if (event.key === "Escape") {
-      event.preventDefault();
-      cancel();
-    }
-  };
 
   return (
     <Box ref={isOverlay ? undefined : ref} style={cardStyle(done, hovered, isOverlay)}>
@@ -156,56 +108,39 @@ export const TaskCard = ({
           <CheckMark done={done} />
         </UnstyledButton>
       </m.div>
-      <div
+      <UnstyledButton
+        onClick={isOverlay ? undefined : onOpen}
+        onKeyDown={(event: KeyboardEvent<HTMLElement>) =>
+          event.stopPropagation()
+        }
+        component={isOverlay ? "div" : "button"}
+        aria-label={isOverlay ? undefined : t("openDetail", { title: task.title })}
         style={{
           flex: 1,
           minWidth: 0,
           display: "flex",
           flexDirection: "column",
+          alignItems: "flex-start",
           gap: 2,
+          cursor: isOverlay ? "default" : "pointer",
+          textAlign: "start",
         }}
       >
-        {editing ? (
-          <TextInput
-            autoFocus
-            variant="unstyled"
-            value={draft}
-            maxLength={MAX_TITLE}
-            onChange={(event) => setDraft(event.currentTarget.value)}
-            onKeyDown={handleKey}
-            onPointerDown={(event) => event.stopPropagation()}
-            onBlur={commit}
-            styles={{
-              input: {
-                fontFamily: "var(--sw-font-body)",
-                color: "var(--sw-ink)",
-                minHeight: "unset",
-                height: "auto",
-                lineHeight: 1.4,
-                padding: 0,
-              },
-            }}
-          />
-        ) : (
-          <Text
-            onClick={isOverlay ? undefined : startEdit}
-            style={{
-              cursor: isOverlay ? "default" : "text",
-              color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
-              textDecoration: "line-through",
-              textDecorationColor: done ? "var(--sw-ink-3)" : "transparent",
-              lineHeight: 1.4,
-              wordBreak: "break-word",
-              transition: "color 150ms ease, text-decoration-color 250ms ease",
-            }}
-          >
-            {task.title}
-          </Text>
-        )}
-        {!editing && task.carriedFrom && (
+        <Text
+          style={{
+            color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
+            textDecoration: "line-through",
+            textDecorationColor: done ? "var(--sw-ink-3)" : "transparent",
+            lineHeight: 1.4,
+            wordBreak: "break-word",
+            transition: "color 150ms ease, text-decoration-color 250ms ease",
+          }}
+        >
+          {task.title}
+        </Text>
+        {task.carriedFrom && (
           <span
             style={{
-              alignSelf: "flex-start",
               fontSize: 10,
               fontWeight: 700,
               lineHeight: 1.5,
@@ -220,38 +155,7 @@ export const TaskCard = ({
             {t("carriedFrom", { week: task.carriedFrom.slice(5) })}
           </span>
         )}
-      </div>
-      {!isOverlay && (
-        <Menu position="bottom-end">
-          <Menu.Target>
-            <ActionIcon
-              variant="subtle"
-              color="var(--sw-ink-3)"
-              size="sm"
-              aria-label={t("edit")}
-              onPointerDown={(event) => event.stopPropagation()}
-              onKeyDown={(event) => event.stopPropagation()}
-              style={{
-                flex: "0 0 auto",
-                opacity: hovered ? 1 : 0.35,
-                transition: "opacity 120ms ease",
-              }}
-            >
-              <KebabIcon />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item onClick={startEdit}>{t("edit")}</Menu.Item>
-            {onMove && <Menu.Item onClick={onMove}>{t("move")}</Menu.Item>}
-            <Menu.Item
-              style={{ color: "var(--sw-danger)" }}
-              onClick={onDelete}
-            >
-              {t("delete")}
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
-      )}
+      </UnstyledButton>
     </Box>
   );
 };

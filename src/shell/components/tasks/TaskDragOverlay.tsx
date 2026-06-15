@@ -32,13 +32,7 @@ export const TaskDragOverlay = ({ task, list }: TaskDragOverlayProps) => {
             filter: "drop-shadow(0 8px 18px var(--sw-fold-shade))",
           }}
         >
-          <TaskCard
-            task={task}
-            isOverlay
-            onToggle={noop}
-            onRename={noop}
-            onDelete={noop}
-          />
+          <TaskCard task={task} isOverlay onToggle={noop} />
         </m.div>
       ) : list ? (
         <m.div

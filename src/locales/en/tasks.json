@@ -5,7 +5,9 @@
   "delete": "Delete",
   "move": "Move…",
   "done": "Mark done",
+  "completed": "Completed",
   "reopen": "Reopen",
+  "openDetail": "Open “{{title}}”",
   "emptyDay": "a free day",
   "emptyList": "nothing here yet",
   "emptyTasks": "nothing to do yet",
@@ -43,5 +45,23 @@
     "title": "Move to…",
     "days": "Days",
     "lists": "Lists"
+  },
+  "quickAdd": {
+    "label": "Add a task",
+    "title": "Add to {{day}}"
+  },
+  "detail": {
+    "title": "Task",
+    "actions": "Task actions",
+    "titleLabel": "Title",
+    "locationLabel": "Where",
+    "carried": "Carried over from {{week}}",
+    "deleteTitle": "Delete task?",
+    "deleteWarning": "This task will be removed.",
+    "notes": "Notes",
+    "subtasks": "Subtasks",
+    "tags": "Tags",
+    "reminder": "Time & reminder",
+    "attachments": "Attachments"
   }
 }

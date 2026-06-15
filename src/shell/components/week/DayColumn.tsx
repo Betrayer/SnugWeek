@@ -5,7 +5,6 @@ import type { Task } from "../../../services/repos/tasksRepo.ts";
 import type { WeekDay } from "../../../services/time.ts";
 import { useListsStore } from "../../../state/listsStore.ts";
 import { useProfileStore } from "../../../state/profileStore.ts";
-import { useUiStore } from "../../../state/uiStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { DayNote } from "../note/DayNote.tsx";
 import { ListSection } from "../sidebar/ListSection.tsx";
@@ -71,11 +70,9 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
           containerId={dayContainerId(day.iso)}
           emptyLabel={t("emptyDay")}
           onToggle={(task) => useWeekStore.getState().toggleDone(task)}
-          onRename={(id, title) => useWeekStore.getState().renameTask(id, title)}
-          onDelete={(id) => useWeekStore.getState().removeTask(id)}
-          onMove={(task) => useUiStore.getState().openMove(task)}
         />
         <TaskComposer
+          dataDay={day.iso}
           onAdd={(title) => useWeekStore.getState().addTask(day.iso, title)}
         />
         {dayLists.map((list) => (

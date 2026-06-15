@@ -2,8 +2,6 @@ import {
   ActionIcon,
   Button,
   Group,
-  Menu,
-  Modal,
   Stack,
   Text,
   TextInput,
@@ -16,6 +14,9 @@ import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
+import { ActionMenu } from "../common/ActionMenu.tsx";
+import type { ActionItem } from "../common/ActionMenu.tsx";
+import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { LeafDoodle } from "../common/doodles.tsx";
 import { isBuiltinList } from "../../../services/repos/listsRepo.ts";
 import type { List } from "../../../services/repos/listsRepo.ts";
@@ -23,7 +24,6 @@ import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { weekDays } from "../../../services/time.ts";
 import { useListsStore } from "../../../state/listsStore.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
-import { useUiStore } from "../../../state/uiStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { listContainerId, listDragId } from "../tasks/dndIds.ts";
 import { TaskComposer } from "../tasks/TaskComposer.tsx";
@@ -36,14 +36,6 @@ interface ListSectionProps {
 }
 
 const EMPTY: Task[] = [];
-
-const KebabIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-    <circle cx="12" cy="5" r="1.7" />
-    <circle cx="12" cy="12" r="1.7" />
-    <circle cx="12" cy="19" r="1.7" />
-  </svg>
-);
 
 const GripIcon = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -87,7 +79,6 @@ export const ListSection = ({
   const weekId = useWeekStore((state) => state.weekId);
   const language = useSettingsStore((state) => state.language);
   const [renameOpened, renameHandlers] = useDisclosure(false);
-  const [deleteOpened, deleteHandlers] = useDisclosure(false);
   const [moveOpened, moveHandlers] = useDisclosure(false);
   const [collapsed, setCollapsed] = useState(collapsible);
   const [nameDraft, setNameDraft] = useState("");
@@ -127,10 +118,35 @@ export const ListSection = ({
       submitRename();
     }
   };
-  const confirmDelete = () => {
-    useListsStore.getState().removeList(list.id);
-    deleteHandlers.close();
-  };
+  const menuActions: ActionItem[] = [
+    { key: "rename", label: t("lists.rename"), onClick: openRename },
+    {
+      key: "moveToDay",
+      label: t("lists.moveToDay"),
+      disabled: days.length === 0,
+      onClick: moveHandlers.open,
+    },
+    ...(list.day !== null
+      ? [
+          {
+            key: "backToSidebar",
+            label: t("lists.backToSidebar"),
+            onClick: () => useListsStore.getState().unassignList(list.id),
+          },
+        ]
+      : []),
+    {
+      key: "delete",
+      label: t("lists.delete"),
+      danger: true,
+      onClick: () => useListsStore.getState().removeList(list.id),
+      confirm: {
+        title: t("lists.deleteTitle"),
+        body: t("lists.deleteWarning", { target: t("lists.tasks") }),
+        confirmLabel: t("lists.deleteConfirm"),
+      },
+    },
+  ];
 
   return (
     <Stack gap="xs" style={{ opacity: isDragging ? 0.5 : 1 }}>
@@ -184,42 +200,7 @@ export const ListSection = ({
               </Text>
             )}
           </Group>
-          {!builtin && (
-            <Menu position="bottom-end">
-              <Menu.Target>
-                <ActionIcon
-                  variant="subtle"
-                  color="var(--sw-ink-3)"
-                  size="sm"
-                  aria-label={name}
-                >
-                  <KebabIcon />
-                </ActionIcon>
-              </Menu.Target>
-              <Menu.Dropdown>
-                <Menu.Item onClick={openRename}>{t("lists.rename")}</Menu.Item>
-                <Menu.Item
-                  disabled={days.length === 0}
-                  onClick={moveHandlers.open}
-                >
-                  {t("lists.moveToDay")}
-                </Menu.Item>
-                {list.day !== null && (
-                  <Menu.Item
-                    onClick={() => useListsStore.getState().unassignList(list.id)}
-                  >
-                    {t("lists.backToSidebar")}
-                  </Menu.Item>
-                )}
-                <Menu.Item
-                  style={{ color: "var(--sw-danger)" }}
-                  onClick={deleteHandlers.open}
-                >
-                  {t("lists.delete")}
-                </Menu.Item>
-              </Menu.Dropdown>
-            </Menu>
-          )}
+          {!builtin && <ActionMenu label={name} actions={menuActions} />}
         </Group>
       )}
 
@@ -243,11 +224,6 @@ export const ListSection = ({
                   emptyLabel={emptyLabel}
                   emptyIcon={<LeafDoodle />}
                   onToggle={(task) => useListsStore.getState().toggleDone(task)}
-                  onRename={(id, title) =>
-                    useListsStore.getState().renameTask(id, title)
-                  }
-                  onDelete={(id) => useListsStore.getState().removeTask(id)}
-                  onMove={(task) => useUiStore.getState().openMove(task)}
                 />
                 <TaskComposer
                   onAdd={(title) =>
@@ -266,11 +242,6 @@ export const ListSection = ({
             emptyLabel={emptyLabel}
             emptyIcon={<LeafDoodle />}
             onToggle={(task) => useListsStore.getState().toggleDone(task)}
-            onRename={(id, title) =>
-              useListsStore.getState().renameTask(id, title)
-            }
-            onDelete={(id) => useListsStore.getState().removeTask(id)}
-            onMove={(task) => useUiStore.getState().openMove(task)}
           />
           <TaskComposer
             onAdd={(title) => useListsStore.getState().addTask(list.id, title)}
@@ -278,11 +249,10 @@ export const ListSection = ({
         </>
       )}
 
-      <Modal
+      <ResponsiveDialog
         opened={renameOpened}
         onClose={renameHandlers.close}
         title={t("lists.renameTitle")}
-        centered
       >
         <Stack gap="md">
           <TextInput
@@ -300,34 +270,12 @@ export const ListSection = ({
             <Button onClick={submitRename}>{t("lists.rename")}</Button>
           </Group>
         </Stack>
-      </Modal>
+      </ResponsiveDialog>
 
-      <Modal
-        opened={deleteOpened}
-        onClose={deleteHandlers.close}
-        title={t("lists.deleteTitle")}
-        centered
-      >
-        <Stack gap="md">
-          <Text c="var(--sw-ink-2)">
-            {t("lists.deleteWarning", { target: t("lists.tasks") })}
-          </Text>
-          <Group justify="flex-end">
-            <Button variant="subtle" c="var(--sw-ink-2)" onClick={deleteHandlers.close}>
-              {t("lists.cancel")}
-            </Button>
-            <Button color="var(--sw-danger)" onClick={confirmDelete}>
-              {t("lists.deleteConfirm")}
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
-
-      <Modal
+      <ResponsiveDialog
         opened={moveOpened}
         onClose={moveHandlers.close}
         title={t("lists.moveToDayTitle", { name })}
-        centered
       >
         <Group gap="xs">
           {days.map((day) => (
@@ -341,7 +289,7 @@ export const ListSection = ({
             </Button>
           ))}
         </Group>
-      </Modal>
+      </ResponsiveDialog>
     </Stack>
   );
 };

@@ -1,20 +1,13 @@
-import { ActionIcon, Box, Group, Menu, Text } from "@mantine/core";
+import { Box, Group, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { WeekDay } from "../../../services/time.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
+import { ActionMenu } from "../common/ActionMenu.tsx";
 
 interface DayHeaderProps {
   day: WeekDay;
   isOff: boolean;
 }
-
-const KebabIcon = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-    <circle cx="12" cy="5" r="1.7" />
-    <circle cx="12" cy="12" r="1.7" />
-    <circle cx="12" cy="19" r="1.7" />
-  </svg>
-);
 
 export const DayHeader = ({ day, isOff }: DayHeaderProps) => {
   const { t } = useTranslation("week");
@@ -56,25 +49,17 @@ export const DayHeader = ({ day, isOff }: DayHeaderProps) => {
         </Text>
       </Box>
       <Group gap={4} wrap="nowrap">
-        <Menu position="bottom-end">
-          <Menu.Target>
-            <ActionIcon
-              variant="subtle"
-              color="var(--sw-ink-3)"
-              size="sm"
-              aria-label={t("dayOptions", { day: day.label })}
-            >
-              <KebabIcon />
-            </ActionIcon>
-          </Menu.Target>
-          <Menu.Dropdown>
-            <Menu.Item
-              onClick={() => useWeekStore.getState().toggleDayOff(day.iso)}
-            >
-              {isOff ? t("makeWorkday") : t("makeDayOff")}
-            </Menu.Item>
-          </Menu.Dropdown>
-        </Menu>
+        <ActionMenu
+          label={t("dayOptions", { day: day.label })}
+          iconSize={16}
+          actions={[
+            {
+              key: "dayOff",
+              label: isOff ? t("makeWorkday") : t("makeDayOff"),
+              onClick: () => useWeekStore.getState().toggleDayOff(day.iso),
+            },
+          ]}
+        />
       </Group>
     </Group>
   );

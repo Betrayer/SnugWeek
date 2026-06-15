@@ -5,7 +5,9 @@
   "delete": "Видалити",
   "move": "Перемістити…",
   "done": "Позначити виконаною",
+  "completed": "Виконано",
   "reopen": "Відновити",
+  "openDetail": "Відкрити «{{title}}»",
   "emptyDay": "вільний день",
   "emptyList": "поки порожньо",
   "emptyTasks": "поки немає справ",
@@ -45,5 +47,23 @@
     "title": "Перемістити до…",
     "days": "Дні",
     "lists": "Списки"
+  },
+  "quickAdd": {
+    "label": "Додати справу",
+    "title": "Додати до {{day}}"
+  },
+  "detail": {
+    "title": "Завдання",
+    "actions": "Дії із завданням",
+    "titleLabel": "Назва",
+    "locationLabel": "Розташування",
+    "carried": "Перенесено з {{week}}",
+    "deleteTitle": "Видалити завдання?",
+    "deleteWarning": "Це завдання буде видалено.",
+    "notes": "Нотатки",
+    "subtasks": "Підзадачі",
+    "tags": "Теги",
+    "reminder": "Час і нагадування",
+    "attachments": "Вкладення"
   }
 }
