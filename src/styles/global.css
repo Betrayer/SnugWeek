@@ -214,6 +214,16 @@ html {
   display: none;
 }
 
+@keyframes sw-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
 :focus-visible {
   outline: 2px solid var(--sw-accent);
   outline-offset: 2px;

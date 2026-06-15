@@ -1,9 +1,6 @@
 import {
-  ActionIcon,
   Button,
   Group,
-  Menu,
-  Modal,
   SegmentedControl,
   Stack,
   Switch,
@@ -19,6 +16,8 @@ import type {
   TrackerType,
 } from "../../../services/repos/trackersRepo.ts";
 import { useTrackersStore } from "../../../state/trackersStore.ts";
+import { ActionMenu } from "../common/ActionMenu.tsx";
+import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { SortableItem } from "../settings/SortableItem.tsx";
 import { SortableList } from "../settings/SortableList.tsx";
 import { IconPicker } from "./IconPicker.tsx";
@@ -29,14 +28,6 @@ const MAX_NAME = 60;
 const TRACKER_TYPES: TrackerType[] = ["scale5", "emoji", "number", "checkbox"];
 const DEFAULT_DRAFT = { name: "", type: "scale5" as TrackerType, icon: "star" };
 
-const KebabIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-    <circle cx="12" cy="5" r="1.7" />
-    <circle cx="12" cy="12" r="1.7" />
-    <circle cx="12" cy="19" r="1.7" />
-  </svg>
-);
-
 export const TrackerSettings = () => {
   const { t } = useTranslation(["trackers", "common"]);
   const trackers = useTrackersStore((state) => state.trackers);
@@ -44,7 +35,6 @@ export const TrackerSettings = () => {
   const [draft, setDraft] = useState(DEFAULT_DRAFT);
   const [editing, setEditing] = useState<Tracker | null>(null);
   const [editDraft, setEditDraft] = useState({ name: "", icon: "" });
-  const [deleting, setDeleting] = useState<Tracker | null>(null);
 
   const typeLabel = (type: TrackerType): string =>
     t(`settings.type.${type}`);
@@ -73,12 +63,6 @@ export const TrackerSettings = () => {
       .getState()
       .update(editing.id, { name: editDraft.name, icon: editDraft.icon });
     setEditing(null);
-  };
-
-  const confirmDelete = () => {
-    if (!deleting) return;
-    useTrackersStore.getState().remove(deleting.id);
-    setDeleting(null);
   };
 
   const addKey = (event: KeyboardEvent<HTMLInputElement>) => {
@@ -143,29 +127,28 @@ export const TrackerSettings = () => {
                             .setEnabled(tracker.id, event.currentTarget.checked)
                         }
                       />
-                      <Menu position="bottom-end">
-                        <Menu.Target>
-                          <ActionIcon
-                            variant="subtle"
-                            color="var(--sw-ink-3)"
-                            size="sm"
-                            aria-label={t("settings.menu", { name })}
-                          >
-                            <KebabIcon />
-                          </ActionIcon>
-                        </Menu.Target>
-                        <Menu.Dropdown>
-                          <Menu.Item onClick={() => openEdit(tracker)}>
-                            {t("settings.edit")}
-                          </Menu.Item>
-                          <Menu.Item
-                            style={{ color: "var(--sw-danger)" }}
-                            onClick={() => setDeleting(tracker)}
-                          >
-                            {t("settings.delete")}
-                          </Menu.Item>
-                        </Menu.Dropdown>
-                      </Menu>
+                      <ActionMenu
+                        label={t("settings.menu", { name })}
+                        actions={[
+                          {
+                            key: "edit",
+                            label: t("settings.edit"),
+                            onClick: () => openEdit(tracker),
+                          },
+                          {
+                            key: "delete",
+                            label: t("settings.delete"),
+                            danger: true,
+                            onClick: () =>
+                              useTrackersStore.getState().remove(tracker.id),
+                            confirm: {
+                              title: t("settings.deleteTitle"),
+                              body: t("settings.deleteWarning"),
+                              confirmLabel: t("settings.deleteConfirm"),
+                            },
+                          },
+                        ]}
+                      />
                     </Group>
                   </Group>
                 </SortableItem>
@@ -186,11 +169,10 @@ export const TrackerSettings = () => {
         + {t("settings.add")}
       </Button>
 
-      <Modal
+      <ResponsiveDialog
         opened={addOpened}
         onClose={addHandlers.close}
         title={t("settings.addTitle")}
-        centered
       >
         <Stack gap="md">
           <TextInput
@@ -234,13 +216,12 @@ export const TrackerSettings = () => {
             </Button>
           </Group>
         </Stack>
-      </Modal>
+      </ResponsiveDialog>
 
-      <Modal
+      <ResponsiveDialog
         opened={editing !== null}
         onClose={() => setEditing(null)}
         title={t("settings.editTitle")}
-        centered
       >
         <Stack gap="md">
           <TextInput
@@ -270,26 +251,7 @@ export const TrackerSettings = () => {
             </Button>
           </Group>
         </Stack>
-      </Modal>
-
-      <Modal
-        opened={deleting !== null}
-        onClose={() => setDeleting(null)}
-        title={t("settings.deleteTitle")}
-        centered
-      >
-        <Stack gap="md">
-          <Text c="var(--sw-ink-2)">{t("settings.deleteWarning")}</Text>
-          <Group justify="flex-end">
-            <Button variant="subtle" c="var(--sw-ink-2)" onClick={() => setDeleting(null)}>
-              {t("settings.cancel")}
-            </Button>
-            <Button color="var(--sw-danger)" onClick={confirmDelete}>
-              {t("settings.deleteConfirm")}
-            </Button>
-          </Group>
-        </Stack>
-      </Modal>
+      </ResponsiveDialog>
     </Stack>
   );
 };

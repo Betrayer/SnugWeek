@@ -54,6 +54,12 @@ const SettingsPage = lazy(() =>
   })),
 );
 
+const PrimitivesDemoPage = lazy(() =>
+  import("./shell/pages/PrimitivesDemoPage.tsx").then((module) => ({
+    default: module.PrimitivesDemoPage,
+  })),
+);
+
 const PageFallback = () => (
   <Center mih="60vh">
     <Loader color="var(--sw-accent)" />
@@ -101,6 +107,18 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
+      ...(import.meta.env.DEV
+        ? [
+            {
+              path: "/dev/primitives",
+              element: (
+                <Suspense fallback={<PageFallback />}>
+                  <PrimitivesDemoPage />
+                </Suspense>
+              ),
+            },
+          ]
+        : []),
       { path: "*", loader: () => redirect(`/w/${currentWeekId()}`) },
     ],
   },

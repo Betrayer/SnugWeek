@@ -1,11 +1,17 @@
 import { DndContext } from "@dnd-kit/core";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router";
-import { currentWeekId, isValidWeekId, weekDays } from "../../services/time.ts";
+import {
+  currentWeekId,
+  isValidWeekId,
+  todayIsoDay,
+  weekDays,
+} from "../../services/time.ts";
 import { useAuthStore } from "../../state/authStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
+import { MobileQuickAdd } from "../components/tasks/MobileQuickAdd.tsx";
 import { TaskDragOverlay } from "../components/tasks/TaskDragOverlay.tsx";
 import { WeekTransitionHost } from "../components/transitions/WeekTransitionHost.tsx";
 import { MobileDayPager } from "../components/week/MobileDayPager.tsx";
@@ -46,6 +52,34 @@ export const WeekPage = () => {
     if (uid) useWeekStore.getState().open(uid, weekId);
   }, [uid, weekId]);
 
+  useEffect(() => {
+    if (isMobile) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== "n" && event.key !== "N") return;
+      if (event.ctrlKey || event.metaKey || event.altKey) return;
+      const active = document.activeElement;
+      const tag = active?.tagName;
+      if (
+        tag === "INPUT" ||
+        tag === "TEXTAREA" ||
+        (active instanceof HTMLElement && active.isContentEditable)
+      ) {
+        return;
+      }
+      const target = weekId === currentWeekId() ? todayIsoDay() : 1;
+      const node = document.querySelector(`[data-sw-add-day="${target}"]`);
+      if (node instanceof HTMLButtonElement) {
+        event.preventDefault();
+        node.click();
+      } else if (node instanceof HTMLInputElement) {
+        event.preventDefault();
+        node.focus();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isMobile, weekId]);
+
   const days = useMemo(() => weekDays(weekId, language), [weekId, language]);
   const daysOff = week?.daysOff ?? weekend;
 
@@ -56,6 +90,7 @@ export const WeekPage = () => {
           <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
         </div>
       </WeekTransitionHost>
+      <MobileQuickAdd />
     </div>
   ) : (
     <div

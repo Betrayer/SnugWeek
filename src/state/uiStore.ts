@@ -11,6 +11,7 @@ interface UiState {
   dragging: DraggingState | null;
   moveTarget: Task | null;
   activeMobileDay: number | null;
+  openTaskId: string | null;
   openSidebar: () => void;
   closeSidebar: () => void;
   toggleSidebar: () => void;
@@ -18,23 +19,32 @@ interface UiState {
   openMove: (task: Task) => void;
   closeMove: () => void;
   setActiveMobileDay: (day: number | null) => void;
+  openTask: (taskId: string) => void;
+  closeTask: () => void;
 }
 
 export const useUiStore = create<UiState>()(
   devtools(
-    (set) => ({
+    (set, get) => ({
       sidebarOpened: false,
       dragging: null,
       moveTarget: null,
       activeMobileDay: null,
+      openTaskId: null,
       openSidebar: () => set({ sidebarOpened: true }),
       closeSidebar: () => set({ sidebarOpened: false }),
       toggleSidebar: () =>
         set((state) => ({ sidebarOpened: !state.sidebarOpened })),
-      setDragging: (dragging) => set({ dragging }),
+      setDragging: (dragging) =>
+        set(dragging ? { dragging, openTaskId: null } : { dragging }),
       openMove: (task) => set({ moveTarget: task }),
       closeMove: () => set({ moveTarget: null }),
       setActiveMobileDay: (activeMobileDay) => set({ activeMobileDay }),
+      openTask: (taskId) => {
+        if (get().dragging) return;
+        set({ openTaskId: taskId });
+      },
+      closeTask: () => set({ openTaskId: null }),
     }),
     { name: "uiStore" },
   ),

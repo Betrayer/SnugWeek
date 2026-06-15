@@ -7,6 +7,7 @@ import { AnimatePresence, m } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
+import { useUiStore } from "../../../state/uiStore.ts";
 import { EmptyState } from "../common/EmptyState.tsx";
 import { SparkleDoodle } from "../common/doodles.tsx";
 import { SortableTaskCard } from "./SortableTaskCard.tsx";
@@ -19,9 +20,6 @@ interface TaskListProps {
   emptyIcon?: ReactNode;
   fill?: boolean;
   onToggle: (task: Task) => void;
-  onRename: (taskId: string, title: string) => void;
-  onDelete: (taskId: string) => void;
-  onMove?: (task: Task) => void;
 }
 
 const zoneStyle = (isOver: boolean, fill: boolean): CSSProperties => ({
@@ -45,9 +43,6 @@ export const TaskList = ({
   emptyIcon,
   fill = false,
   onToggle,
-  onRename,
-  onDelete,
-  onMove,
 }: TaskListProps) => {
   const { setNodeRef, isOver } = useDroppable({ id: containerId });
   const reduced = useReducedMotionPref();
@@ -75,9 +70,7 @@ export const TaskList = ({
               <SortableTaskCard
                 task={task}
                 onToggle={() => onToggle(task)}
-                onRename={(title) => onRename(task.id, title)}
-                onDelete={() => onDelete(task.id)}
-                onMove={onMove ? () => onMove(task) : undefined}
+                onOpen={() => useUiStore.getState().openTask(task.id)}
               />
             </m.div>
           ))}

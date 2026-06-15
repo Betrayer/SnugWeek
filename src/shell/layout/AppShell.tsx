@@ -2,6 +2,7 @@ import { AppShell as MantineAppShell } from "@mantine/core";
 import { Outlet } from "react-router";
 import { AccountDialogs } from "../components/account/AccountDialogs.tsx";
 import { MoveTaskMenu } from "../components/tasks/MoveTaskMenu.tsx";
+import { TaskDetail } from "../components/tasks/TaskDetail.tsx";
 import { useIsMobile } from "../hooks/useIsMobile.ts";
 import { HeaderBar } from "./HeaderBar.tsx";
 import { MobileTabBar } from "./MobileTabBar.tsx";
@@ -38,6 +39,7 @@ export const AppShell = () => {
       )}
       {isMobile && <SidebarDrawer />}
       <MoveTaskMenu />
+      <TaskDetail />
       <AccountDialogs />
     </MantineAppShell>
   );

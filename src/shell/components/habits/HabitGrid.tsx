@@ -1,17 +1,13 @@
 import {
-  ActionIcon,
-  Box,
   Button,
   Group,
-  Menu,
-  Modal,
   Stack,
   Text,
   TextInput,
   UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Habit } from "../../../services/repos/habitsRepo.ts";
@@ -19,6 +15,8 @@ import { weekDays } from "../../../services/time.ts";
 import { useHabitsStore } from "../../../state/habitsStore.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
+import { ActionMenu } from "../common/ActionMenu.tsx";
+import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { TrackerIcon } from "../trackers/TrackerIcon.tsx";
 import { HabitComposer } from "./HabitComposer.tsx";
 
@@ -41,20 +39,11 @@ const CheckGlyph = () => (
   </svg>
 );
 
-const KebabIcon = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-    <circle cx="12" cy="5" r="1.7" />
-    <circle cx="12" cy="12" r="1.7" />
-    <circle cx="12" cy="19" r="1.7" />
-  </svg>
-);
-
-const gridStyle: CSSProperties = {
+const daysGridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns: "minmax(84px, 1.4fr) repeat(7, minmax(26px, 1fr))",
+  gridTemplateColumns: "repeat(7, 1fr)",
   gap: 5,
   alignItems: "center",
-  minWidth: 300,
 };
 
 const headStyle = (today: boolean): CSSProperties => ({
@@ -135,59 +124,63 @@ export const HabitGrid = () => {
           {t("empty")}
         </Text>
       ) : (
-        <Box style={{ overflowX: "auto" }} className="sw-hide-scrollbar">
-          <div style={gridStyle}>
-            <span />
+        <Stack gap="md">
+          <div style={daysGridStyle}>
             {days.map((day) => (
               <span key={day.iso} style={headStyle(day.isToday)}>
                 {day.initial}
               </span>
             ))}
-            {active.map((habit) => {
-              const streak = streaks[habit.id] ?? 0;
-              return (
-                <Fragment key={habit.id}>
-                  <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
-                    {habit.icon && (
-                      <TrackerIcon
-                        icon={habit.icon}
-                        size={16}
-                        color="var(--sw-ink-3)"
-                      />
-                    )}
-                    <Text fz="sm" fw={600} c="var(--sw-ink)" truncate style={{ flex: 1 }}>
-                      {habit.name}
+          </div>
+          {active.map((habit) => {
+            const streak = streaks[habit.id] ?? 0;
+            return (
+              <Stack key={habit.id} gap={4}>
+                <Group gap={6} wrap="nowrap" style={{ minWidth: 0 }}>
+                  {habit.icon && (
+                    <TrackerIcon
+                      icon={habit.icon}
+                      size={16}
+                      color="var(--sw-ink-3)"
+                    />
+                  )}
+                  <Text
+                    fz="sm"
+                    fw={600}
+                    c="var(--sw-ink)"
+                    truncate
+                    style={{ flex: 1, minWidth: 0 }}
+                  >
+                    {habit.name}
+                  </Text>
+                  {streak >= 2 && (
+                    <Text
+                      fz="xs"
+                      fw={700}
+                      c="var(--sw-accent-2)"
+                      style={{ whiteSpace: "nowrap" }}
+                    >
+                      🔥{streak}
                     </Text>
-                    {streak >= 2 && (
-                      <Text fz="xs" fw={700} c="var(--sw-accent-2)" style={{ whiteSpace: "nowrap" }}>
-                        🔥{streak}
-                      </Text>
-                    )}
-                    <Menu position="bottom-end">
-                      <Menu.Target>
-                        <ActionIcon
-                          variant="subtle"
-                          color="var(--sw-ink-3)"
-                          size="sm"
-                          aria-label={t("menu", { name: habit.name })}
-                        >
-                          <KebabIcon />
-                        </ActionIcon>
-                      </Menu.Target>
-                      <Menu.Dropdown>
-                        <Menu.Item onClick={() => openRename(habit)}>
-                          {t("rename")}
-                        </Menu.Item>
-                        <Menu.Item
-                          onClick={() =>
-                            useHabitsStore.getState().setArchived(habit.id, true)
-                          }
-                        >
-                          {t("archive")}
-                        </Menu.Item>
-                      </Menu.Dropdown>
-                    </Menu>
-                  </Group>
+                  )}
+                  <ActionMenu
+                    label={t("menu", { name: habit.name })}
+                    actions={[
+                      {
+                        key: "rename",
+                        label: t("rename"),
+                        onClick: () => openRename(habit),
+                      },
+                      {
+                        key: "archive",
+                        label: t("archive"),
+                        onClick: () =>
+                          useHabitsStore.getState().setArchived(habit.id, true),
+                      },
+                    ]}
+                  />
+                </Group>
+                <div style={daysGridStyle}>
                   {days.map((day) => {
                     const checked = checks[habit.id]?.[String(day.iso)] === true;
                     return (
@@ -208,19 +201,18 @@ export const HabitGrid = () => {
                       </div>
                     );
                   })}
-                </Fragment>
-              );
-            })}
-          </div>
-        </Box>
+                </div>
+              </Stack>
+            );
+          })}
+        </Stack>
       )}
       <HabitComposer />
 
-      <Modal
+      <ResponsiveDialog
         opened={renameOpened}
         onClose={renameHandlers.close}
         title={t("renameTitle")}
-        centered
       >
         <Stack gap="md">
           <TextInput
@@ -240,7 +232,7 @@ export const HabitGrid = () => {
             </Button>
           </Group>
         </Stack>
-      </Modal>
+      </ResponsiveDialog>
     </Stack>
   );
 };
