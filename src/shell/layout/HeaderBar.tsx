@@ -9,6 +9,7 @@ import {
 import { useListsStore } from "../../state/listsStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { AccountMenu } from "../components/account/AccountMenu.tsx";
+import { HeaderFilterSlot } from "./HeaderFilterSlot.tsx";
 import { HeaderSearchSlot } from "./HeaderSearchSlot.tsx";
 import { LanguageMenu } from "./LanguageMenu.tsx";
 import { SyncBadge } from "./SyncBadge.tsx";
@@ -99,6 +100,7 @@ export const HeaderBar = () => {
       {onWeek ? <WeekNav /> : <div />}
 
       <Group gap="sm" wrap="nowrap" justify="flex-end" style={{ minWidth: 0 }}>
+        {onWeek && <HeaderFilterSlot />}
         <Group visibleFrom="md">
           <HeaderSearchSlot />
         </Group>

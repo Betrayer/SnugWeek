@@ -6,6 +6,7 @@ import type { CSSProperties, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { tagSwatchValue } from "../../../data/tagColors.ts";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
+import { formatTime } from "../../../services/time.ts";
 import { useTagsStore } from "../../../state/tagsStore.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 import { CardSubtasks } from "./CardSubtasks.tsx";
@@ -63,6 +64,55 @@ const cardStyle = (
   transform: hovered && !isOverlay ? "translateY(-1px)" : "none",
   transition: "background-color 120ms ease, transform 120ms ease",
 });
+
+const BellGlyph = () => (
+  <svg
+    width="9"
+    height="9"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.4"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden
+  >
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
+    <path d="M13.7 21a2 2 0 0 1-3.4 0" />
+  </svg>
+);
+
+const TimeChip = ({
+  time,
+  hasReminder,
+  done,
+}: {
+  time: string;
+  hasReminder: boolean;
+  done: boolean;
+}) => (
+  <span
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 3,
+      alignSelf: "flex-start",
+      fontSize: 10,
+      fontWeight: 700,
+      lineHeight: 1.6,
+      color: done ? "var(--sw-ink-3)" : "var(--sw-accent-2)",
+      backgroundColor: done
+        ? "color-mix(in srgb, var(--sw-ink-3) 10%, transparent)"
+        : "color-mix(in srgb, var(--sw-accent-2) 14%, transparent)",
+      padding: "0 6px",
+      borderRadius: 999,
+      whiteSpace: "nowrap",
+    }}
+  >
+    {formatTime(time)}
+    {hasReminder && <BellGlyph />}
+  </span>
+);
 
 const CardTags = ({ task }: { task: Task }) => {
   const tags = useTagsStore((state) => state.tags);
@@ -204,6 +254,13 @@ export const TaskCard = ({
             textAlign: "start",
           }}
         >
+          {task.time !== null && (
+            <TimeChip
+              time={task.time}
+              hasReminder={task.remindOffsetMin !== null}
+              done={done}
+            />
+          )}
           <Text
             component="span"
             style={{

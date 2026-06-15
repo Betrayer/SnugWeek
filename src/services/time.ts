@@ -3,12 +3,14 @@ import type { Dayjs } from "dayjs";
 import isoWeek from "dayjs/plugin/isoWeek.js";
 import localeData from "dayjs/plugin/localeData.js";
 import customParseFormat from "dayjs/plugin/customParseFormat.js";
+import localizedFormat from "dayjs/plugin/localizedFormat.js";
 import "dayjs/locale/uk.js";
 import "dayjs/locale/en.js";
 
 dayjs.extend(isoWeek);
 dayjs.extend(localeData);
 dayjs.extend(customParseFormat);
+dayjs.extend(localizedFormat);
 
 export type { Dayjs };
 
@@ -274,6 +276,26 @@ export const weekDays = (weekId: string, locale: string): WeekDay[] => {
       isToday: day.isSame(today, "day"),
     };
   });
+};
+
+export const dateTimeOf = (
+  weekId: string,
+  isoDay: number,
+  time: string,
+): Date => {
+  const [hour, minute] = time.split(":");
+  return mondayOf(weekId)
+    .add(isoDay - 1, "day")
+    .hour(Number(hour))
+    .minute(Number(minute))
+    .second(0)
+    .millisecond(0)
+    .toDate();
+};
+
+export const formatTime = (time: string): string => {
+  const [hour, minute] = time.split(":");
+  return dayjs().hour(Number(hour)).minute(Number(minute)).format("LT");
 };
 
 export const setTimeLocale = (locale: string): void => {

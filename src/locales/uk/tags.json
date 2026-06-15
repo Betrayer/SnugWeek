@@ -24,9 +24,7 @@
   "removeFromTask": "Зняти мітку «{{name}}»",
   "filter": "Фільтр",
   "filterTitle": "Фільтр за мітками",
-  "filterRegion": "Фільтр за мітками",
   "clear": "Очистити фільтр",
-  "removeFromFilter": "Прибрати «{{name}}» з фільтра",
   "swatch": {
     "rose": "Трояндовий",
     "coral": "Кораловий",

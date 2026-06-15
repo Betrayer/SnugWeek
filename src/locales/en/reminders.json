@@ -1,0 +1,33 @@
+{
+  "timeLabel": "Time",
+  "clearTime": "Clear time",
+  "reminderLabel": "Reminder",
+  "offsets": {
+    "none": "No reminder",
+    "at": "At the time",
+    "m5": "5 minutes before",
+    "m10": "10 minutes before",
+    "m30": "30 minutes before",
+    "m60": "1 hour before"
+  },
+  "defaultHint": "Default reminder: {{label}}",
+  "orderHint": "Time sets the order within the day.",
+  "permTitle": "Allow notifications?",
+  "permBody": "Notifications will nudge you on time, even when this tab is in the background.",
+  "permAllow": "Allow",
+  "permNotNow": "Not now",
+  "toastDue": "🔔 {{title}} — now",
+  "toastSoon": "🔔 {{title}} — in {{min}} min",
+  "dueShort": "now",
+  "soonShort": "in {{min}} min",
+  "settings": {
+    "enable": "Reminders",
+    "defaultOffset": "Default reminder",
+    "permGranted": "System notifications are on.",
+    "permDenied": "System notifications are blocked in your browser settings.",
+    "permDefault": "Allow system notifications so reminders show even when the tab is in the background.",
+    "permRequest": "Allow system notifications",
+    "permUnsupported": "This device doesn't support system notifications.",
+    "note": "Reminders fire while SnugWeek is open in a tab or installed as an app. Reminders for a fully closed app are coming in a later update."
+  }
+}

@@ -46,6 +46,12 @@ const asStringArray = (value: unknown): string[] =>
 const asCount = (value: unknown): number =>
   typeof value === "number" && value > 0 ? value : 0;
 
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+const asTimeOrNull = (value: unknown): string | null =>
+  typeof value === "string" && TIME_PATTERN.test(value) ? value : null;
+const asOffsetOrNull = (value: unknown): number | null =>
+  typeof value === "number" && value >= 0 ? value : null;
+
 const asObject = (value: unknown): Record<string, unknown> =>
   typeof value === "object" && value !== null
     ? (value as Record<string, unknown>)
@@ -87,6 +93,8 @@ interface TaskData {
   tagIds: string[];
   subtaskCount: number;
   subtaskDone: number;
+  time: string | null;
+  remindOffsetMin: number | null;
 }
 
 interface SubtaskData {
@@ -186,6 +194,8 @@ const toTaskData = (data: DocumentData): TaskData => ({
   tagIds: asStringArray(data.tagIds),
   subtaskCount: asCount(data.subtaskCount),
   subtaskDone: asCount(data.subtaskDone),
+  time: asTimeOrNull(data.time),
+  remindOffsetMin: asOffsetOrNull(data.remindOffsetMin),
 });
 
 const toSubtaskData = (data: DocumentData): SubtaskData => ({
@@ -593,6 +603,8 @@ export const runMerge = async (
         tagIds,
         subtaskCount: data.subtaskCount,
         subtaskDone: data.subtaskDone,
+        time: data.bucket === "day" ? data.time : null,
+        remindOffsetMin: data.bucket === "day" ? data.remindOffsetMin : null,
       }),
     );
   }

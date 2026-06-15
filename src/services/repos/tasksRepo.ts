@@ -40,6 +40,8 @@ export interface Task extends TaskLocation {
   tagIds: string[];
   subtaskCount: number;
   subtaskDone: number;
+  time: string | null;
+  remindOffsetMin: number | null;
 }
 
 export interface NewTaskFields extends TaskLocation {
@@ -64,6 +66,14 @@ const asStringArray = (value: unknown): string[] =>
 const asCount = (value: unknown): number =>
   typeof value === "number" && value > 0 ? value : 0;
 
+const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
+
+const asTimeOrNull = (value: unknown): string | null =>
+  typeof value === "string" && TIME_PATTERN.test(value) ? value : null;
+
+const asOffsetOrNull = (value: unknown): number | null =>
+  typeof value === "number" && value >= 0 ? value : null;
+
 const normalizeTask = (id: string, data: DocumentData): Task => ({
   id,
   title: typeof data.title === "string" ? data.title : "",
@@ -80,6 +90,8 @@ const normalizeTask = (id: string, data: DocumentData): Task => ({
   tagIds: asStringArray(data.tagIds),
   subtaskCount: asCount(data.subtaskCount),
   subtaskDone: asCount(data.subtaskDone),
+  time: asTimeOrNull(data.time),
+  remindOffsetMin: asOffsetOrNull(data.remindOffsetMin),
 });
 
 const tasksCol = (uid: string) => collection(db, "users", uid, "tasks");
@@ -162,6 +174,33 @@ export const createTask = (uid: string, fields: NewTaskFields): void => {
     tagIds: fields.tagIds,
     subtaskCount: 0,
     subtaskDone: 0,
+    time: null,
+    remindOffsetMin: null,
+  }).catch(reportWriteError);
+};
+
+export const setTaskTime = (
+  uid: string,
+  taskId: string,
+  time: string | null,
+): void => {
+  notePendingWrite();
+  void updateDoc(taskRef(uid, taskId), {
+    time,
+    ...(time === null ? { remindOffsetMin: null } : {}),
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setTaskReminder = (
+  uid: string,
+  taskId: string,
+  offsetMin: number | null,
+): void => {
+  notePendingWrite();
+  void updateDoc(taskRef(uid, taskId), {
+    remindOffsetMin: offsetMin,
+    updatedAt: Date.now(),
   }).catch(reportWriteError);
 };
 
@@ -205,6 +244,9 @@ export const moveTask = (
     listId: destination.listId,
     order: destination.order,
     carriedFrom: null,
+    ...(destination.bucket === "list"
+      ? { time: null, remindOffsetMin: null }
+      : {}),
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

@@ -6,6 +6,8 @@ import {
   createTask,
   deleteTask,
   setStatus,
+  setTaskReminder,
+  setTaskTime,
   subscribeWeekTasks,
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
@@ -39,6 +41,8 @@ interface WeekState {
   toggleDone: (task: Task) => void;
   renameTask: (taskId: string, title: string) => void;
   removeTask: (taskId: string) => void;
+  setTime: (taskId: string, time: string | null) => void;
+  setReminder: (taskId: string, offsetMin: number | null) => void;
   setTrackerValue: (day: number, trackerId: string, value: TrackerValue) => void;
   clearTrackerValue: (day: number, trackerId: string) => void;
   toggleHabit: (habitId: string, day: number) => void;
@@ -197,6 +201,14 @@ export const useWeekStore = create<WeekState>()(
         if (!activeUid) return;
         deleteTask(activeUid, taskId);
         playSwoosh();
+      },
+      setTime: (taskId, time) => {
+        if (!activeUid) return;
+        setTaskTime(activeUid, taskId, time);
+      },
+      setReminder: (taskId, offsetMin) => {
+        if (!activeUid) return;
+        setTaskReminder(activeUid, taskId, offsetMin);
       },
       setTrackerValue: (day, trackerId, value) => {
         if (!activeUid || !activeWeekId) return;
