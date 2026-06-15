@@ -1,8 +1,16 @@
-import { SegmentedControl, Stack, Switch, Text } from "@mantine/core";
+import {
+  Group,
+  SegmentedControl,
+  Select,
+  Stack,
+  Switch,
+  Text,
+} from "@mantine/core";
 import { useTranslation } from "react-i18next";
+import { THEME_ORDER, themeById } from "../../../../data/themes/registry.ts";
 import { SUPPORTED_LANGS, isSupportedLang } from "../../../../i18n/languages.ts";
+import { useProfileStore } from "../../../../state/profileStore.ts";
 import { useSettingsStore } from "../../../../state/settingsStore.ts";
-import { ComingSoon } from "../../common/ComingSoon.tsx";
 import { ThemePicker } from "../ThemePicker.tsx";
 
 export const AppearanceSection = () => {
@@ -13,12 +21,67 @@ export const AppearanceSection = () => {
   const setTransition = useSettingsStore((state) => state.setTransition);
   const reduceMotion = useSettingsStore((state) => state.reduceMotion);
   const setReduceMotion = useSettingsStore((state) => state.setReduceMotion);
+  const themeId = useProfileStore((state) => state.themeId);
+  const autoTheme = useProfileStore((state) => state.autoTheme);
+  const setAutoTheme = useProfileStore((state) => state.setAutoTheme);
+  const paperTextureEnabled = useProfileStore(
+    (state) => state.paperTextureEnabled,
+  );
+  const setPaperTextureEnabled = useProfileStore(
+    (state) => state.setPaperTextureEnabled,
+  );
+
+  const lightOptions = THEME_ORDER.filter(
+    (id) => themeById(id).kind === "light",
+  ).map((id) => ({ value: id, label: t(`settings:themeNames.${id}`) }));
+  const darkOptions = THEME_ORDER.filter(
+    (id) => themeById(id).kind === "dark",
+  ).map((id) => ({ value: id, label: t(`settings:themeNames.${id}`) }));
+
+  const toggleAuto = (enabled: boolean) => {
+    if (!enabled) {
+      setAutoTheme(null);
+      return;
+    }
+    const light = themeById(themeId).kind === "light" ? themeId : "milk";
+    setAutoTheme({ light, dark: "midnight" });
+  };
 
   return (
     <Stack gap="lg">
       <Stack gap="xs">
         <Text fw={600}>{t("settings:theme")}</Text>
-        <ThemePicker />
+        <ThemePicker disabled={autoTheme !== null} />
+        <Switch
+          checked={autoTheme !== null}
+          onChange={(event) => toggleAuto(event.currentTarget.checked)}
+          label={t("settings:autoTheme")}
+          description={t("settings:autoThemeHint")}
+        />
+        {autoTheme && (
+          <Group gap="md" grow align="flex-start">
+            <Select
+              label={t("settings:autoLight")}
+              data={lightOptions}
+              value={autoTheme.light}
+              onChange={(value) =>
+                value && setAutoTheme({ ...autoTheme, light: value })
+              }
+              allowDeselect={false}
+              comboboxProps={{ withinPortal: true }}
+            />
+            <Select
+              label={t("settings:autoDark")}
+              data={darkOptions}
+              value={autoTheme.dark}
+              onChange={(value) =>
+                value && setAutoTheme({ ...autoTheme, dark: value })
+              }
+              allowDeselect={false}
+              comboboxProps={{ withinPortal: true }}
+            />
+          </Group>
+        )}
       </Stack>
       <Stack gap="xs">
         <Text fw={600}>{t("settings:language")}</Text>
@@ -55,7 +118,13 @@ export const AppearanceSection = () => {
       </Stack>
       <Stack gap="xs">
         <Text fw={600}>{t("settings:paperTexture")}</Text>
-        <ComingSoon label={t("settings:paperTextureHint")} />
+        <Switch
+          checked={paperTextureEnabled}
+          onChange={(event) =>
+            setPaperTextureEnabled(event.currentTarget.checked)
+          }
+          label={t("settings:paperTextureHint")}
+        />
       </Stack>
     </Stack>
   );

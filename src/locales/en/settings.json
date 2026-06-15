@@ -9,14 +9,29 @@
   "remindersTitle": "Reminders",
   "remindersHint": "Task times and reminders are coming soon.",
   "paperTexture": "Paper texture",
-  "paperTextureHint": "Subtle paper textures are coming soon.",
+  "paperTextureHint": "A subtle grain on the paper (off by default).",
   "theme": "Theme",
+  "autoTheme": "Auto — follow system",
+  "autoThemeHint": "Switch between a light and dark theme when your device does.",
+  "autoLight": "Light theme",
+  "autoDark": "Dark theme",
+  "themeGroups": {
+    "light": "Light",
+    "colorful": "Colorful",
+    "minimal": "Minimal",
+    "dark": "Dark"
+  },
   "themeNames": {
     "milk": "Milk",
     "lavender": "Lavender",
     "sage": "Sage",
     "peach": "Peach",
-    "midnight": "Midnight"
+    "midnight": "Midnight",
+    "snow": "Snow",
+    "mono": "Mono",
+    "noir": "Noir",
+    "sky": "Sky",
+    "cocoa": "Cocoa"
   },
   "language": "Language",
   "animation": "Animation",

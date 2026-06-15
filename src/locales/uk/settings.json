@@ -9,14 +9,29 @@
   "remindersTitle": "Нагадування",
   "remindersHint": "Час для справ і нагадування зʼявляться згодом.",
   "paperTexture": "Текстура паперу",
-  "paperTextureHint": "Делікатні текстури паперу зʼявляться згодом.",
+  "paperTextureHint": "Делікатна зернистість на папері (типово вимкнено).",
   "theme": "Тема",
+  "autoTheme": "Авто — за системою",
+  "autoThemeHint": "Перемикати світлу й темну тему разом із пристроєм.",
+  "autoLight": "Світла тема",
+  "autoDark": "Темна тема",
+  "themeGroups": {
+    "light": "Світлі",
+    "colorful": "Кольорові",
+    "minimal": "Мінімал",
+    "dark": "Темні"
+  },
   "themeNames": {
     "milk": "Молоко",
     "lavender": "Лаванда",
     "sage": "Шавлія",
     "peach": "Персик",
-    "midnight": "Північ"
+    "midnight": "Північ",
+    "snow": "Сніг",
+    "mono": "Моно",
+    "noir": "Нуар",
+    "sky": "Небо",
+    "cocoa": "Какао"
   },
   "language": "Мова",
   "animation": "Анімація",

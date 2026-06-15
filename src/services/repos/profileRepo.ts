@@ -12,7 +12,7 @@ import {
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
 import { seedContentFor } from "../../data/defaults.ts";
-import { DEFAULT_THEME_ID } from "../../data/themes/registry.ts";
+import { DEFAULT_THEME_ID, themeById } from "../../data/themes/registry.ts";
 import type { SupportedLang } from "../../i18n/languages.ts";
 import { ORDER_SPACING } from "../ordering.ts";
 import { currentWeekId, todayIsoDay } from "../time.ts";
@@ -34,11 +34,18 @@ export interface ModuleToggles {
   weekNote: boolean;
 }
 
+export interface AutoTheme {
+  light: string;
+  dark: string;
+}
+
 export interface ProfileDoc {
   schemaVersion: number;
   createdAt: number;
   updatedAt: number;
   themeId: string;
+  autoTheme: AutoTheme | null;
+  paperTextureEnabled: boolean;
   moduleToggles: ModuleToggles;
   weekend: number[];
   columnMode: "cozy" | "equal";
@@ -69,12 +76,38 @@ const normalizeToggles = (value: unknown): ModuleToggles => {
   };
 };
 
+const DEFAULT_DARK_THEME_ID = "midnight";
+
+const coerceThemeId = (
+  id: unknown,
+  kind: "light" | "dark",
+  fallback: string,
+): string => {
+  if (typeof id !== "string") return fallback;
+  const spec = themeById(id);
+  return spec.id === id && spec.kind === kind ? id : fallback;
+};
+
+const normalizeAutoTheme = (value: unknown): AutoTheme | null => {
+  if (typeof value !== "object" || value === null) return null;
+  const source = value as Record<string, unknown>;
+  return {
+    light: coerceThemeId(source.light, "light", DEFAULT_THEME_ID),
+    dark: coerceThemeId(source.dark, "dark", DEFAULT_DARK_THEME_ID),
+  };
+};
+
 const normalizeProfile = (data: DocumentData): ProfileDoc => ({
   schemaVersion:
     typeof data.schemaVersion === "number" ? data.schemaVersion : 1,
   createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
   updatedAt: typeof data.updatedAt === "number" ? data.updatedAt : 0,
   themeId: typeof data.themeId === "string" ? data.themeId : DEFAULT_THEME_ID,
+  autoTheme: normalizeAutoTheme(data.autoTheme),
+  paperTextureEnabled:
+    typeof data.paperTextureEnabled === "boolean"
+      ? data.paperTextureEnabled
+      : false,
   moduleToggles: normalizeToggles(data.moduleToggles),
   weekend: isNumberArray(data.weekend) ? data.weekend : DEFAULT_WEEKEND,
   columnMode: data.columnMode === "equal" ? "equal" : "cozy",
@@ -175,6 +208,25 @@ export const setTheme = (uid: string, themeId: string): void => {
   notePendingWrite();
   void updateDoc(profileRef(uid), {
     themeId,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setAutoTheme = (
+  uid: string,
+  autoTheme: AutoTheme | null,
+): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    autoTheme,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setPaperTexture = (uid: string, enabled: boolean): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    paperTextureEnabled: enabled,
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

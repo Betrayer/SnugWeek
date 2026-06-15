@@ -16,6 +16,11 @@
             sage: "#f3f6f1",
             peach: "#fdf3ee",
             midnight: "#1c1f27",
+            snow: "#fcfcfb",
+            mono: "#f6f6f5",
+            noir: "#161616",
+            sky: "#f2f6fb",
+            cocoa: "#f6efe6",
           };
           var inks = {
             milk: "#7d6e5f",
@@ -23,13 +28,30 @@
             sage: "#667064",
             peach: "#79604f",
             midnight: "#b3ab9c",
+            snow: "#6b6862",
+            mono: "#5c5c5c",
+            noir: "#b0b0b0",
+            sky: "#5d6975",
+            cocoa: "#6f5d4c",
           };
-          var id = localStorage.getItem("snugweek-theme");
+          var stored = localStorage.getItem("snugweek-theme");
+          var id;
+          if (stored && stored.indexOf("auto:") === 0) {
+            var pair = stored.split(":");
+            var prefersDark =
+              window.matchMedia &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches;
+            id = prefersDark ? pair[2] : pair[1];
+          } else {
+            id = stored;
+          }
           if (!papers[id]) id = "milk";
           var root = document.documentElement;
           root.dataset.snugTheme = id;
           root.style.setProperty("--boot-paper", papers[id]);
           root.style.setProperty("--boot-ink", inks[id]);
+          if (localStorage.getItem("snugweek-paper-texture") === "on")
+            root.dataset.paperTexture = "on";
         } catch (e) {}
       })();
     </script>

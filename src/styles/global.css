@@ -181,7 +181,6 @@
 body {
   margin: 0;
   background-color: var(--sw-paper);
-  background-image: var(--sw-paper-texture);
   color: var(--sw-ink);
   font-family: var(--sw-font-body);
 }

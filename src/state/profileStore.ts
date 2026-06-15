@@ -5,18 +5,22 @@ import {
   DEFAULT_MODULE_TOGGLES,
   DEFAULT_WEEKEND,
   ensureProfile,
+  setAutoTheme,
   setColumnMode,
   setModuleToggle,
+  setPaperTexture,
   setTheme,
   setWeekend,
   subscribeProfile,
 } from "../services/repos/profileRepo.ts";
-import type { ModuleToggles } from "../services/repos/profileRepo.ts";
+import type { AutoTheme, ModuleToggles } from "../services/repos/profileRepo.ts";
 import { useSettingsStore } from "./settingsStore.ts";
 
 interface ProfileState {
   loaded: boolean;
   themeId: string;
+  autoTheme: AutoTheme | null;
+  paperTextureEnabled: boolean;
   weekend: number[];
   columnMode: "cozy" | "equal";
   moduleToggles: ModuleToggles;
@@ -24,6 +28,8 @@ interface ProfileState {
   start: (uid: string) => void;
   stop: () => void;
   setThemeId: (themeId: string) => void;
+  setAutoTheme: (autoTheme: AutoTheme | null) => void;
+  setPaperTextureEnabled: (enabled: boolean) => void;
   setWeekend: (weekend: number[]) => void;
   setColumnMode: (columnMode: "cozy" | "equal") => void;
   setModuleToggle: (key: keyof ModuleToggles, value: boolean) => void;
@@ -37,6 +43,8 @@ export const useProfileStore = create<ProfileState>()(
     (set) => ({
       loaded: false,
       themeId: DEFAULT_THEME_ID,
+      autoTheme: null,
+      paperTextureEnabled: false,
       weekend: DEFAULT_WEEKEND,
       columnMode: "cozy",
       moduleToggles: DEFAULT_MODULE_TOGGLES,
@@ -58,6 +66,8 @@ export const useProfileStore = create<ProfileState>()(
           set({
             loaded: true,
             themeId: profile.themeId,
+            autoTheme: profile.autoTheme,
+            paperTextureEnabled: profile.paperTextureEnabled,
             weekend: profile.weekend,
             columnMode: profile.columnMode,
             moduleToggles: profile.moduleToggles,
@@ -72,6 +82,8 @@ export const useProfileStore = create<ProfileState>()(
         set({
           loaded: false,
           themeId: DEFAULT_THEME_ID,
+          autoTheme: null,
+          paperTextureEnabled: false,
           weekend: DEFAULT_WEEKEND,
           columnMode: "cozy",
           moduleToggles: DEFAULT_MODULE_TOGGLES,
@@ -81,6 +93,14 @@ export const useProfileStore = create<ProfileState>()(
       setThemeId: (themeId) => {
         if (!activeUid) return;
         setTheme(activeUid, themeId);
+      },
+      setAutoTheme: (autoTheme) => {
+        if (!activeUid) return;
+        setAutoTheme(activeUid, autoTheme);
+      },
+      setPaperTextureEnabled: (enabled) => {
+        if (!activeUid) return;
+        setPaperTexture(activeUid, enabled);
       },
       setWeekend: (weekend) => {
         if (!activeUid) return;

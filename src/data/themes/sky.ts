@@ -1,0 +1,28 @@
+import type { ThemeSpec } from "./types.ts";
+
+export const sky: ThemeSpec = {
+  id: "sky",
+  kind: "light",
+  vars: {
+    "--sw-paper": "#f2f6fb",
+    "--sw-paper-2": "#e2ecf5",
+    "--sw-card": "#fbfdff",
+    "--sw-ink": "#37414c",
+    "--sw-ink-2": "#5d6975",
+    "--sw-ink-3": "#97a3b0",
+    "--sw-line": "#d6e2ee",
+    "--sw-accent": "#4076a8",
+    "--sw-accent-2": "#305f8c",
+    "--sw-accent-ink": "#f6fbff",
+    "--sw-highlight": "#d8e7f5",
+    "--sw-done": "#85b096",
+    "--sw-danger": "#c4705f",
+    "--sw-shadow": "0 2px 10px rgba(40, 60, 90, 0.1)",
+    "--sw-fold-shade": "rgba(28, 44, 66, 0.3)",
+    "--sw-paper-texture": "none",
+    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
+    "--sw-font-hand": "'Caveat', cursive",
+  },
+  mantine: {},
+  preview: { paper: "#f2f6fb", accent: "#4076a8", ink: "#37414c" },
+};
