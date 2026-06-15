@@ -42,6 +42,7 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
       gap="xs"
       style={{
         backgroundColor: isOff ? "var(--sw-paper-2)" : "var(--sw-card)",
+        backgroundImage: "var(--sw-paper-texture)",
         border: `1px solid ${borderColor}`,
         borderRadius: "var(--mantine-radius-lg)",
         padding: "var(--mantine-spacing-sm)",

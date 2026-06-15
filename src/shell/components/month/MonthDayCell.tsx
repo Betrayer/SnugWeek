@@ -50,6 +50,7 @@ export const MonthDayCell = ({
         padding: "5px 6px",
         borderRadius: "var(--mantine-radius-md)",
         backgroundColor: day.isWeekend ? "var(--sw-paper-2)" : "var(--sw-card)",
+        backgroundImage: "var(--sw-paper-texture)",
         border: day.isToday
           ? "2px solid var(--sw-accent)"
           : "1px solid var(--sw-line)",

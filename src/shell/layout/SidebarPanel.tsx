@@ -11,6 +11,7 @@ export const SidebarPanel = () => (
       flexDirection: "column",
       overflow: "hidden",
       backgroundColor: "var(--sw-paper-2)",
+      backgroundImage: "var(--sw-paper-texture)",
       borderInlineStart: "1px dashed var(--sw-line)",
       borderRadius: "var(--mantine-radius-lg)",
       boxShadow: "inset 9px 0 12px -10px var(--sw-fold-shade)",

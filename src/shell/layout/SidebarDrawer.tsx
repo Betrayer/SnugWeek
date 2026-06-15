@@ -20,7 +20,10 @@ export const SidebarDrawer = () => {
       size="85%"
       title={t("lists.open")}
       styles={{
-        content: { backgroundColor: "var(--sw-paper)" },
+        content: {
+          backgroundColor: "var(--sw-paper)",
+          backgroundImage: "var(--sw-paper-texture)",
+        },
         header: { backgroundColor: "var(--sw-paper)" },
         title: {
           fontFamily: "var(--sw-font-hand)",

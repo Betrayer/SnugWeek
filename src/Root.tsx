@@ -5,7 +5,7 @@ import { LazyMotion, domAnimation, m } from "motion/react";
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
-import { themeById } from "./data/themes/registry.ts";
+import { DEFAULT_THEME_ID, themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
 import { triggerCarryOver } from "./services/carryOver.ts";
 import { hasPendingMigration } from "./services/migration.ts";
@@ -160,6 +160,20 @@ const notifySyncError = (
   });
 };
 
+const readBootThemeId = (systemDark: boolean): string => {
+  try {
+    const stored = localStorage.getItem("snugweek-theme");
+    if (!stored) return DEFAULT_THEME_ID;
+    if (stored.startsWith("auto:")) {
+      const parts = stored.split(":");
+      return (systemDark ? parts[2] : parts[1]) ?? DEFAULT_THEME_ID;
+    }
+    return stored;
+  } catch {
+    return DEFAULT_THEME_ID;
+  }
+};
+
 const syncThemeColor = (color: string): void => {
   const existing = document.head.querySelector<HTMLMetaElement>(
     'meta[name="theme-color"]',
@@ -178,9 +192,26 @@ export const Root = () => {
   const bootstrap = useAuthStore((state) => state.bootstrap);
   const retry = useAuthStore((state) => state.retry);
   const checkedMigrationUid = useRef<string | null>(null);
+  const profileLoaded = useProfileStore((state) => state.loaded);
   const themeId = useProfileStore((state) => state.themeId);
+  const autoTheme = useProfileStore((state) => state.autoTheme);
+  const paperTextureEnabled = useProfileStore(
+    (state) => state.paperTextureEnabled,
+  );
   const reduceMotion = useSettingsStore((state) => state.reduceMotion);
-  const theme = themeById(themeId);
+  const [systemDark, setSystemDark] = useState(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-color-scheme: dark)").matches === true,
+  );
+  const effectiveThemeId = profileLoaded
+    ? autoTheme
+      ? systemDark
+        ? autoTheme.dark
+        : autoTheme.light
+      : themeId
+    : readBootThemeId(systemDark);
+  const theme = themeById(effectiveThemeId);
   const mantineTheme = useMemo(() => buildMantineTheme(theme), [theme]);
 
   useEffect(() => {
@@ -233,10 +264,22 @@ export const Root = () => {
   }, [authStatus, uid, isAnonymous]);
 
   useEffect(() => {
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onChange = (event: MediaQueryListEvent) =>
+      setSystemDark(event.matches);
+    media.addEventListener("change", onChange);
+    return () => media.removeEventListener("change", onChange);
+  }, []);
+
+  useEffect(() => {
+    if (!profileLoaded) return;
     const root = document.documentElement;
     root.dataset.snugTheme = theme.id;
+    const cache = autoTheme
+      ? `auto:${autoTheme.light}:${autoTheme.dark}`
+      : theme.id;
     try {
-      localStorage.setItem("snugweek-theme", theme.id);
+      localStorage.setItem("snugweek-theme", cache);
     } catch (error) {
       console.error(error);
     }
@@ -247,7 +290,18 @@ export const Root = () => {
       syncThemeColor(paper);
     }
     if (ink) root.style.setProperty("--boot-ink", ink);
-  }, [theme]);
+  }, [theme, autoTheme, profileLoaded]);
+
+  useEffect(() => {
+    if (!profileLoaded) return;
+    const value = paperTextureEnabled ? "on" : "off";
+    document.documentElement.dataset.paperTexture = value;
+    try {
+      localStorage.setItem("snugweek-paper-texture", value);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [paperTextureEnabled, profileLoaded]);
 
   useEffect(() => {
     document.documentElement.dataset.reduceMotion = String(reduceMotion);
