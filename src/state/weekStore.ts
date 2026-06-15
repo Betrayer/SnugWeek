@@ -10,6 +10,7 @@ import {
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
+import { playCheck, playPop, playSwoosh } from "../services/sound/soundService.ts";
 import { isoDateKeyOf } from "../services/time.ts";
 import {
   clearTrackerValue,
@@ -167,6 +168,7 @@ export const useWeekStore = create<WeekState>()(
           listId: null,
           order,
         });
+        playPop();
       },
       toggleDone: (task) => {
         if (!activeUid) return;
@@ -180,6 +182,7 @@ export const useWeekStore = create<WeekState>()(
         const now = Date.now();
         setStatus(activeUid, task.id, "done", now);
         bumpCompletion(activeUid, isoDateKeyOf(now), 1);
+        playCheck();
       },
       renameTask: (taskId, title) => {
         const trimmed = title.trim();
@@ -189,6 +192,7 @@ export const useWeekStore = create<WeekState>()(
       removeTask: (taskId) => {
         if (!activeUid) return;
         deleteTask(activeUid, taskId);
+        playSwoosh();
       },
       setTrackerValue: (day, trackerId, value) => {
         if (!activeUid || !activeWeekId) return;

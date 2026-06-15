@@ -1,6 +1,7 @@
 import { Center, Loader, Popover, UnstyledButton } from "@mantine/core";
 import { Suspense, lazy, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { playFlip } from "../../../services/sound/soundService.ts";
 import { weekIdFromKey, weekTitle } from "../../../services/time.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 
@@ -26,6 +27,7 @@ export const WeekJumpPopover = ({ weekId, onPick }: WeekJumpPopoverProps) => {
   const pick = (dateKey: string) => {
     setOpened(false);
     setHovered(null);
+    playFlip();
     onPick(weekIdFromKey(dateKey));
   };
 

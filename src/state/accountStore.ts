@@ -1,5 +1,3 @@
-import { notifications } from "@mantine/notifications";
-import i18next from "i18next";
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import {
@@ -21,6 +19,7 @@ import {
   runMerge,
 } from "../services/migration.ts";
 import type { ExportCounts, ExportedData } from "../services/migration.ts";
+import { notifySuccess } from "../services/notify.ts";
 import { setAccountInfo } from "../services/repos/profileRepo.ts";
 import { useAuthStore } from "./authStore.ts";
 
@@ -99,10 +98,6 @@ const isMergeConflict = (code: string): boolean =>
   code === "auth/credential-already-in-use" ||
   code === "auth/email-already-in-use";
 
-const notify = (key: string): void => {
-  notifications.show({ message: i18next.t(key) });
-};
-
 const finishLink = async (uid: string): Promise<void> => {
   const user = currentAuthUser();
   await setAccountInfo(uid, user?.email ?? null, user?.displayName ?? null);
@@ -137,7 +132,7 @@ export const useAccountStore = create<AccountState>()(
           await linkGooglePopup();
           await finishLink(uid);
           set({ busy: false, authModalOpen: false });
-          notify("auth:saved");
+          notifySuccess("auth:accountSavedToast");
         } catch (error) {
           const code = authErrorCode(error);
           if (isMergeConflict(code)) {
@@ -169,7 +164,7 @@ export const useAccountStore = create<AccountState>()(
           await linkEmailPassword(email, password);
           await finishLink(uid);
           set({ busy: false, authModalOpen: false });
-          notify("auth:saved");
+          notifySuccess("auth:accountSavedToast");
         } catch (error) {
           const code = authErrorCode(error);
           if (isMergeConflict(code)) {
@@ -299,7 +294,7 @@ export const useAccountStore = create<AccountState>()(
           );
           useAuthStore.getState().refresh();
           set({ mergePhase: "done" });
-          notify("auth:merged");
+          notifySuccess("auth:mergeDoneToast");
         } catch (error) {
           set({
             mergePhase: "error",

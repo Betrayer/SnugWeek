@@ -13,6 +13,7 @@
   "emptyWeek": "a quiet week ahead",
   "carriedFrom": "from {{week}}",
   "charLimit": "{{n}}/500",
+  "listDeletedToast": "List deleted — its tasks moved to Tasks",
   "count": {
     "open_one": "{{count}} open",
     "open_other": "{{count}} open"

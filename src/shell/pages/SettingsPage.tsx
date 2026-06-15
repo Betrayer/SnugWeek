@@ -4,6 +4,7 @@ import {
   Divider,
   Group,
   SegmentedControl,
+  Slider,
   Stack,
   Switch,
   Text,
@@ -13,6 +14,7 @@ import { notifications } from "@mantine/notifications";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { SUPPORTED_LANGS, isSupportedLang } from "../../i18n/languages.ts";
+import { playPop, setVolume } from "../../services/sound/soundService.ts";
 import { isoDateKeyOf, weekdayInitials } from "../../services/time.ts";
 import { useAuthStore } from "../../state/authStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
@@ -33,6 +35,10 @@ export const SettingsPage = () => {
   const setTransition = useSettingsStore((state) => state.setTransition);
   const reduceMotion = useSettingsStore((state) => state.reduceMotion);
   const setReduceMotion = useSettingsStore((state) => state.setReduceMotion);
+  const soundEnabled = useSettingsStore((state) => state.soundEnabled);
+  const setSoundEnabled = useSettingsStore((state) => state.setSoundEnabled);
+  const soundVolume = useSettingsStore((state) => state.soundVolume);
+  const setSoundVolume = useSettingsStore((state) => state.setSoundVolume);
   const weekend = useProfileStore((state) => state.weekend);
   const columnMode = useProfileStore((state) => state.columnMode);
   const moduleToggles = useProfileStore((state) => state.moduleToggles);
@@ -103,6 +109,32 @@ export const SettingsPage = () => {
             checked={reduceMotion}
             onChange={(event) => setReduceMotion(event.currentTarget.checked)}
             label={t("settings:reduceMotion")}
+          />
+        </Stack>
+        <Stack gap="xs">
+          <Text fw={600}>{t("settings:sound")}</Text>
+          <Switch
+            checked={soundEnabled}
+            onChange={(event) => setSoundEnabled(event.currentTarget.checked)}
+            label={t("settings:soundEnable")}
+          />
+          <Text fz="sm" c="var(--sw-ink-2)">
+            {t("settings:soundVolume")}
+          </Text>
+          <Slider
+            value={Math.round(soundVolume * 100)}
+            onChange={(value) => setSoundVolume(value / 100)}
+            onChangeEnd={(value) => {
+              setVolume(value / 100);
+              playPop();
+            }}
+            min={0}
+            max={100}
+            step={1}
+            disabled={!soundEnabled}
+            label={(value) => `${value}%`}
+            color="var(--sw-accent)"
+            aria-label={t("settings:soundVolume")}
           />
         </Stack>
       </Stack>

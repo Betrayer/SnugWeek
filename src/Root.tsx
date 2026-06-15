@@ -1,7 +1,7 @@
-import { Center, Loader, MantineProvider, Stack, Text } from "@mantine/core";
+import { Center, Loader, MantineProvider, Text } from "@mantine/core";
 import { Notifications, notifications } from "@mantine/notifications";
 import i18next from "i18next";
-import { LazyMotion, domAnimation } from "motion/react";
+import { LazyMotion, domAnimation, m } from "motion/react";
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
@@ -25,8 +25,10 @@ import { useMonthStore } from "./state/monthStore.ts";
 import { useStatsStore } from "./state/statsStore.ts";
 import { useTrackersStore } from "./state/trackersStore.ts";
 import { useWeekStore } from "./state/weekStore.ts";
+import { unlockSound } from "./services/sound/soundService.ts";
 import { AuthErrorScreen } from "./shell/components/account/AuthErrorScreen.tsx";
 import { ErrorBoundary } from "./shell/components/common/ErrorBoundary.tsx";
+import { useReducedMotionPref } from "./shell/hooks/useReducedMotionPref.ts";
 import { UpdatePrompt } from "./shell/components/pwa/UpdatePrompt.tsx";
 import { AppShell } from "./shell/layout/AppShell.tsx";
 import { WeekPage } from "./shell/pages/WeekPage.tsx";
@@ -104,13 +106,30 @@ const router = createBrowserRouter([
   },
 ]);
 
-const Splash = () => (
-  <Stack align="center" justify="center" mih="100vh">
-    <Text ff="var(--sw-font-hand)" fz={44} c="var(--sw-ink-2)">
-      SnugWeek
-    </Text>
-  </Stack>
-);
+const Splash = () => {
+  const reduced = useReducedMotionPref();
+  return (
+    <Center mih="100vh" style={{ backgroundColor: "var(--sw-paper)" }}>
+      <m.div
+        initial={reduced ? false : { opacity: 0.72, scale: 0.985 }}
+        animate={
+          reduced
+            ? { opacity: 1, scale: 1 }
+            : { opacity: [0.72, 1, 0.72], scale: [0.985, 1, 0.985] }
+        }
+        transition={
+          reduced
+            ? { duration: 0 }
+            : { duration: 1.6, ease: "easeInOut", repeat: Infinity }
+        }
+      >
+        <Text ff="var(--sw-font-hand)" fw={600} fz={44} c="var(--sw-ink-2)">
+          SnugWeek
+        </Text>
+      </m.div>
+    </Center>
+  );
+};
 
 let lastSyncNotice = 0;
 
@@ -212,14 +231,39 @@ export const Root = () => {
   }, [authStatus, uid, isAnonymous]);
 
   useEffect(() => {
-    document.documentElement.dataset.snugTheme = theme.id;
+    const root = document.documentElement;
+    root.dataset.snugTheme = theme.id;
+    try {
+      localStorage.setItem("snugweek-theme", theme.id);
+    } catch (error) {
+      console.error(error);
+    }
     const paper = theme.vars["--sw-paper"];
-    if (paper) syncThemeColor(paper);
+    const ink = theme.vars["--sw-ink-2"];
+    if (paper) {
+      root.style.setProperty("--boot-paper", paper);
+      syncThemeColor(paper);
+    }
+    if (ink) root.style.setProperty("--boot-ink", ink);
   }, [theme]);
 
   useEffect(() => {
     document.documentElement.dataset.reduceMotion = String(reduceMotion);
   }, [reduceMotion]);
+
+  useEffect(() => {
+    const unlock = () => {
+      unlockSound();
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+    window.addEventListener("pointerdown", unlock);
+    window.addEventListener("keydown", unlock);
+    return () => {
+      window.removeEventListener("pointerdown", unlock);
+      window.removeEventListener("keydown", unlock);
+    };
+  }, []);
 
   const ready = i18nReady && authStatus === "ready";
 

@@ -13,6 +13,7 @@
   "emptyWeek": "спокійний тиждень попереду",
   "carriedFrom": "з {{week}}",
   "charLimit": "{{n}}/500",
+  "listDeletedToast": "Список видалено — його справи переїхали до «Задачі»",
   "count": {
     "open_one": "{{count}} відкрита",
     "open_few": "{{count}} відкриті",

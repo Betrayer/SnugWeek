@@ -16,6 +16,7 @@ import type {
   QuerySnapshot,
 } from "firebase/firestore";
 import { db } from "./firebase.ts";
+import { notifyInfo } from "./notify.ts";
 import { ORDER_SPACING } from "./ordering.ts";
 import { reportWriteError } from "./repos/writeError.ts";
 import { currentWeekId } from "./time.ts";
@@ -36,7 +37,7 @@ const numberOrZero = (value: unknown): number =>
 const stringOrEmpty = (value: unknown): string =>
   typeof value === "string" ? value : "";
 
-export const runCarryOver = async (uid: string): Promise<void> => {
+export const runCarryOver = async (uid: string): Promise<number> => {
   const cur = currentWeekId();
   const tasksCol = collection(db, "users", uid, "tasks");
 
@@ -67,7 +68,7 @@ export const runCarryOver = async (uid: string): Promise<void> => {
     if (!cursor) break;
   }
 
-  if (candidates.length === 0) return;
+  if (candidates.length === 0) return 0;
 
   const topSnap = await getDocs(
     query(
@@ -98,6 +99,8 @@ export const runCarryOver = async (uid: string): Promise<void> => {
     }
     void batch.commit().catch(reportWriteError);
   }
+
+  return candidates.length;
 };
 
 let lastRun = 0;
@@ -110,8 +113,9 @@ export const triggerCarryOver = (uid: string): void => {
   running = true;
   lastRunUid = uid;
   void runCarryOver(uid)
-    .then(() => {
+    .then((moved) => {
       lastRun = Date.now();
+      if (moved > 0) notifyInfo("common:carriedToast", { count: moved });
     })
     .catch((error: unknown) => {
       console.error(error);
