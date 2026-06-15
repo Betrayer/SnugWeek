@@ -16,6 +16,7 @@ import { isBuiltinList } from "../../../services/repos/listsRepo.ts";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { weekDays } from "../../../services/time.ts";
 import { useListsStore } from "../../../state/listsStore.ts";
+import { useRoutinesStore } from "../../../state/routinesStore.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useUiStore } from "../../../state/uiStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
@@ -87,10 +88,16 @@ const DoneToggle = ({ task }: { task: Task }) => {
 };
 
 const TaskDetailContent = ({ task }: { task: Task }) => {
-  const { t } = useTranslation(["tasks", "week"]);
+  const { t } = useTranslation(["tasks", "week", "routines"]);
   const language = useSettingsStore((state) => state.language);
   const lists = useListsStore((state) => state.lists);
+  const routines = useRoutinesStore((state) => state.routines);
   const [draft, setDraft] = useState(task.title);
+
+  const routine =
+    task.routineId !== null
+      ? routines.find((item) => item.id === task.routineId)
+      : undefined;
 
   const commit = () => {
     const trimmed = draft.trim();
@@ -187,6 +194,13 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
         {task.carriedFrom && (
           <Text fz="sm" c="var(--sw-accent-2)" mt={2}>
             {t("tasks:detail.carried", { week: task.carriedFrom.slice(5) })}
+          </Text>
+        )}
+        {task.routineId !== null && (
+          <Text fz="sm" c="var(--sw-ink-3)" mt={2}>
+            {routine
+              ? t("routines:fromRoutine", { name: routine.title })
+              : t("routines:repeats")}
           </Text>
         )}
       </Box>

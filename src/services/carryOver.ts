@@ -95,6 +95,7 @@ export const runCarryOver = async (uid: string): Promise<number> => {
         carriedFrom: candidate.weekId,
         time: null,
         remindOffsetMin: null,
+        routineId: null,
         order,
         updatedAt: now,
       });

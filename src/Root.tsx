@@ -8,6 +8,7 @@ import { RouterProvider } from "react-router/dom";
 import { DEFAULT_THEME_ID, themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
 import { triggerCarryOver } from "./services/carryOver.ts";
+import { triggerRoutineMaterialization } from "./services/routines/materializeRoutines.ts";
 import {
   startReminderScheduler,
   stopReminderScheduler,
@@ -26,6 +27,7 @@ import { useAuthStore } from "./state/authStore.ts";
 import { useHabitsStore } from "./state/habitsStore.ts";
 import { useListsStore } from "./state/listsStore.ts";
 import { useMonthStore } from "./state/monthStore.ts";
+import { useRoutinesStore } from "./state/routinesStore.ts";
 import { useStatsStore } from "./state/statsStore.ts";
 import { useSubtasksStore } from "./state/subtasksStore.ts";
 import { useTagsStore } from "./state/tagsStore.ts";
@@ -240,6 +242,7 @@ export const Root = () => {
       useTrackersStore.getState().stop();
       useHabitsStore.getState().stop();
       useTagsStore.getState().stop();
+      useRoutinesStore.getState().stop();
       useSubtasksStore.getState().stop();
       useWeekStore.getState().stop();
       useMonthStore.getState().stop();
@@ -252,10 +255,15 @@ export const Root = () => {
     useTrackersStore.getState().start(uid);
     useHabitsStore.getState().start(uid);
     useTagsStore.getState().start(uid);
+    useRoutinesStore.getState().start(uid);
     triggerCarryOver(uid);
+    triggerRoutineMaterialization(uid);
     startReminderScheduler(uid);
     const onVisible = () => {
-      if (document.visibilityState === "visible") triggerCarryOver(uid);
+      if (document.visibilityState === "visible") {
+        triggerCarryOver(uid);
+        triggerRoutineMaterialization(uid);
+      }
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => document.removeEventListener("visibilitychange", onVisible);
@@ -271,7 +279,7 @@ export const Root = () => {
           notifications.show({ message: i18next.t("auth:pendingMigration") });
         }
       })
-      .catch(() => {});
+      .catch(() => { });
   }, [authStatus, uid, isAnonymous]);
 
   useEffect(() => {

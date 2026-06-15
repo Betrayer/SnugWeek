@@ -42,6 +42,7 @@ export interface Task extends TaskLocation {
   subtaskDone: number;
   time: string | null;
   remindOffsetMin: number | null;
+  routineId: string | null;
 }
 
 export interface NewTaskFields extends TaskLocation {
@@ -92,6 +93,7 @@ const normalizeTask = (id: string, data: DocumentData): Task => ({
   subtaskDone: asCount(data.subtaskDone),
   time: asTimeOrNull(data.time),
   remindOffsetMin: asOffsetOrNull(data.remindOffsetMin),
+  routineId: asStringOrNull(data.routineId),
 });
 
 const tasksCol = (uid: string) => collection(db, "users", uid, "tasks");
@@ -176,6 +178,7 @@ export const createTask = (uid: string, fields: NewTaskFields): void => {
     subtaskDone: 0,
     time: null,
     remindOffsetMin: null,
+    routineId: null,
   }).catch(reportWriteError);
 };
 
@@ -245,7 +248,7 @@ export const moveTask = (
     order: destination.order,
     carriedFrom: null,
     ...(destination.bucket === "list"
-      ? { time: null, remindOffsetMin: null }
+      ? { time: null, remindOffsetMin: null, routineId: null }
       : {}),
     updatedAt: Date.now(),
   }).catch(reportWriteError);

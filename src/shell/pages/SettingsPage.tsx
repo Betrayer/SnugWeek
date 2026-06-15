@@ -7,12 +7,13 @@ import { AccountSection } from "../components/settings/sections/AccountSection.t
 import { AppearanceSection } from "../components/settings/sections/AppearanceSection.tsx";
 import { ModulesSection } from "../components/settings/sections/ModulesSection.tsx";
 import { RemindersSection } from "../components/settings/sections/RemindersSection.tsx";
+import { RoutinesSection } from "../components/settings/sections/RoutinesSection.tsx";
 import { ScheduleSection } from "../components/settings/sections/ScheduleSection.tsx";
 import { SoundSection } from "../components/settings/sections/SoundSection.tsx";
 import { TagsSection } from "../components/settings/sections/TagsSection.tsx";
 
 export const SettingsPage = () => {
-  const { t } = useTranslation(["settings", "tags"]);
+  const { t } = useTranslation(["settings", "tags", "routines"]);
 
   const sections: SettingsSection[] = [
     {
@@ -22,6 +23,11 @@ export const SettingsPage = () => {
     },
     { value: "modules", label: t("modules"), content: <ModulesSection /> },
     { value: "tags", label: t("tags:settingsTab"), content: <TagsSection /> },
+    {
+      value: "routines",
+      label: t("routines:settingsTab"),
+      content: <RoutinesSection />,
+    },
     { value: "schedule", label: t("schedule"), content: <ScheduleSection /> },
     { value: "sound", label: t("sound"), content: <SoundSection /> },
     {

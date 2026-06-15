@@ -65,6 +65,47 @@ const cardStyle = (
   transition: "background-color 120ms ease, transform 120ms ease",
 });
 
+const RepeatGlyph = () => (
+  <svg
+    width="9"
+    height="9"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.4"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden
+  >
+    <path d="M17 2.1 21 6l-4 3.9" />
+    <path d="M3 12.5V11a5 5 0 0 1 5-5h13" />
+    <path d="M7 21.9 3 18l4-3.9" />
+    <path d="M21 11.5V13a5 5 0 0 1-5 5H3" />
+  </svg>
+);
+
+const RepeatChip = ({ label }: { label: string }) => (
+  <span
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 3,
+      alignSelf: "flex-start",
+      fontSize: 10,
+      fontWeight: 700,
+      lineHeight: 1.5,
+      color: "var(--sw-ink-3)",
+      backgroundColor: "color-mix(in srgb, var(--sw-ink-3) 10%, transparent)",
+      padding: "0 6px",
+      borderRadius: 999,
+      whiteSpace: "nowrap",
+    }}
+  >
+    <RepeatGlyph />
+    {label}
+  </span>
+);
+
 const BellGlyph = () => (
   <svg
     width="9"
@@ -192,7 +233,7 @@ export const TaskCard = ({
   onOpen,
   isOverlay = false,
 }: TaskCardProps) => {
-  const { t } = useTranslation("tasks");
+  const { t } = useTranslation(["tasks", "routines"]);
   const { hovered, ref } = useHover();
   const reduced = useReducedMotionPref();
   const checkControls = useAnimationControls();
@@ -290,8 +331,11 @@ export const TaskCard = ({
                 whiteSpace: "nowrap",
               }}
             >
-              {t("carriedFrom", { week: task.carriedFrom.slice(5) })}
+              {t("tasks:carriedFrom", { week: task.carriedFrom.slice(5) })}
             </span>
+          )}
+          {task.routineId !== null && (
+            <RepeatChip label={t("routines:repeats")} />
           )}
         </UnstyledButton>
       </div>
