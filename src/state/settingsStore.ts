@@ -13,6 +13,8 @@ interface PersistedSettings {
   transition: TransitionSetting;
   soundEnabled: boolean;
   soundVolume: number;
+  remindersEnabled: boolean;
+  defaultReminderOffsetMin: number;
 }
 
 interface SettingsState extends PersistedSettings {
@@ -21,6 +23,8 @@ interface SettingsState extends PersistedSettings {
   setTransition: (transition: TransitionSetting) => void;
   setSoundEnabled: (soundEnabled: boolean) => void;
   setSoundVolume: (soundVolume: number) => void;
+  setRemindersEnabled: (remindersEnabled: boolean) => void;
+  setDefaultReminderOffsetMin: (defaultReminderOffsetMin: number) => void;
 }
 
 const defaultSettings: PersistedSettings = {
@@ -29,6 +33,8 @@ const defaultSettings: PersistedSettings = {
   transition: "curl",
   soundEnabled: true,
   soundVolume: 0.6,
+  remindersEnabled: true,
+  defaultReminderOffsetMin: 10,
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -45,16 +51,21 @@ export const useSettingsStore = create<SettingsState>()(
         setTransition: (transition) => set({ transition }),
         setSoundEnabled: (soundEnabled) => set({ soundEnabled }),
         setSoundVolume: (soundVolume) => set({ soundVolume }),
+        setRemindersEnabled: (remindersEnabled) => set({ remindersEnabled }),
+        setDefaultReminderOffsetMin: (defaultReminderOffsetMin) =>
+          set({ defaultReminderOffsetMin }),
       }),
       {
         name: "snugweek-settings",
-        version: 3,
+        version: 4,
         partialize: (state): PersistedSettings => ({
           language: state.language,
           reduceMotion: state.reduceMotion,
           transition: state.transition,
           soundEnabled: state.soundEnabled,
           soundVolume: state.soundVolume,
+          remindersEnabled: state.remindersEnabled,
+          defaultReminderOffsetMin: state.defaultReminderOffsetMin,
         }),
         migrate: (persisted) => {
           const stored = persisted as Partial<PersistedSettings> | undefined;

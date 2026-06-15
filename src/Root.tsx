@@ -8,6 +8,10 @@ import { RouterProvider } from "react-router/dom";
 import { DEFAULT_THEME_ID, themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
 import { triggerCarryOver } from "./services/carryOver.ts";
+import {
+  startReminderScheduler,
+  stopReminderScheduler,
+} from "./services/reminders/reminderScheduler.ts";
 import { hasPendingMigration } from "./services/migration.ts";
 import { setReadErrorHandler } from "./services/repos/readError.ts";
 import { setWriteErrorHandler } from "./services/repos/writeError.ts";
@@ -240,6 +244,7 @@ export const Root = () => {
       useWeekStore.getState().stop();
       useMonthStore.getState().stop();
       useStatsStore.getState().stop();
+      stopReminderScheduler();
       return;
     }
     useProfileStore.getState().start(uid);
@@ -248,6 +253,7 @@ export const Root = () => {
     useHabitsStore.getState().start(uid);
     useTagsStore.getState().start(uid);
     triggerCarryOver(uid);
+    startReminderScheduler(uid);
     const onVisible = () => {
       if (document.visibilityState === "visible") triggerCarryOver(uid);
     };

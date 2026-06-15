@@ -25,6 +25,7 @@ import { BottomSheet } from "../common/BottomSheet.tsx";
 import { ComingSoon } from "../common/ComingSoon.tsx";
 import { SubtaskList } from "./SubtaskList.tsx";
 import { TaskTagPicker } from "./TaskTagPicker.tsx";
+import { TaskTimeReminder } from "./TaskTimeReminder.tsx";
 
 const MAX_TITLE = 500;
 
@@ -148,7 +149,6 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
 
   const placeholders: { key: string; label: string; icon: string }[] = [
     { key: "notes", label: t("tasks:detail.notes"), icon: "📝" },
-    { key: "reminder", label: t("tasks:detail.reminder"), icon: "⏰" },
     { key: "attachments", label: t("tasks:detail.attachments"), icon: "📎" },
   ];
 
@@ -202,6 +202,13 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
         <SectionLabel>{subtaskLabel}</SectionLabel>
         <SubtaskList taskId={task.id} />
       </Stack>
+
+      {task.bucket === "day" && (
+        <Stack gap={8}>
+          <SectionLabel>{t("tasks:detail.reminder")}</SectionLabel>
+          <TaskTimeReminder task={task} />
+        </Stack>
+      )}
 
       <Divider color="var(--sw-line)" />
 

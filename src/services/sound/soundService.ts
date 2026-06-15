@@ -69,13 +69,19 @@ export const setVolume = (volume: number): void => {
   if (master) master.gain.value = volume;
 };
 
-const beginSound = (key: string, minGapMs: number): AudioContext | null => {
+const beginSound = (
+  key: string,
+  minGapMs: number,
+  ignoreHidden = false,
+): AudioContext | null => {
   const { soundEnabled, soundVolume } = useSettingsStore.getState();
-  if (!soundEnabled || !unlocked || document.hidden) return null;
+  if (!soundEnabled || !unlocked) return null;
+  if (!ignoreHidden && document.hidden) return null;
   if (!context || !master) return null;
   const now = Date.now();
   if (now - (lastPlayedAt[key] ?? 0) < minGapMs) return null;
   lastPlayedAt[key] = now;
+  if (context.state === "suspended") void context.resume();
   master.gain.value = soundVolume;
   return context;
 };
@@ -149,6 +155,32 @@ export const playSwoosh = (): void => {
   const ctx = beginSound("swoosh", 70);
   if (!ctx) return;
   swoosh(ctx);
+};
+
+export const playReminder = (): void => {
+  const ctx = beginSound("reminder", 500, true);
+  if (!ctx) return;
+  tone(ctx, {
+    type: "sine",
+    from: 880,
+    start: 0,
+    duration: 0.18,
+    peak: 0.18,
+  });
+  tone(ctx, {
+    type: "sine",
+    from: 1175,
+    start: 0.14,
+    duration: 0.22,
+    peak: 0.16,
+  });
+  tone(ctx, {
+    type: "sine",
+    from: 1568,
+    start: 0.3,
+    duration: 0.26,
+    peak: 0.14,
+  });
 };
 
 export const playFlip = (): void => {

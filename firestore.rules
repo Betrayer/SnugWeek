@@ -10,7 +10,7 @@ service cloud.firestore {
       return d.keys().hasOnly([
           'title', 'status', 'bucket', 'weekId', 'day', 'listId',
           'order', 'createdAt', 'updatedAt', 'completedAt', 'carriedFrom',
-          'tagIds', 'subtaskCount', 'subtaskDone'
+          'tagIds', 'subtaskCount', 'subtaskDone', 'time', 'remindOffsetMin'
         ])
         && d.title is string && d.title.size() >= 1 && d.title.size() <= 500
         && (d.status == 'open' || d.status == 'done')
@@ -24,6 +24,12 @@ service cloud.firestore {
           || (d.subtaskCount is number && d.subtaskCount >= 0 && d.subtaskCount <= 200))
         && (!('subtaskDone' in d)
           || (d.subtaskDone is number && d.subtaskDone >= 0 && d.subtaskDone <= 200))
+        && (!('time' in d) || d.time == null
+          || (d.time is string && d.time.matches('^([01][0-9]|2[0-3]):[0-5][0-9]$')))
+        && (!('remindOffsetMin' in d) || d.remindOffsetMin == null
+          || (d.remindOffsetMin is number && d.remindOffsetMin >= 0))
+        && (d.bucket != 'list'
+          || !('remindOffsetMin' in d) || d.remindOffsetMin == null)
         && (
           (d.bucket == 'day'
             && d.weekId is string

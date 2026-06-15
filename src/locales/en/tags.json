@@ -24,9 +24,7 @@
   "removeFromTask": "Remove tag {{name}}",
   "filter": "Filter",
   "filterTitle": "Filter by tag",
-  "filterRegion": "Tag filter",
   "clear": "Clear filter",
-  "removeFromFilter": "Remove {{name}} from filter",
   "swatch": {
     "rose": "Rose",
     "coral": "Coral",

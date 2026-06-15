@@ -12,7 +12,6 @@ import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
 import { MobileQuickAdd } from "../components/tasks/MobileQuickAdd.tsx";
-import { TagFilterBar } from "../components/tasks/TagFilterBar.tsx";
 import { TaskDragOverlay } from "../components/tasks/TaskDragOverlay.tsx";
 import { WeekTransitionHost } from "../components/transitions/WeekTransitionHost.tsx";
 import { MobileDayPager } from "../components/week/MobileDayPager.tsx";
@@ -93,7 +92,6 @@ export const WeekPage = () => {
         gap: "var(--mantine-spacing-sm)",
       }}
     >
-      <TagFilterBar />
       <div style={{ flex: 1, minHeight: 0 }}>
         <WeekTransitionHost weekId={weekId}>
           <div style={surfaceStyle}>
@@ -112,7 +110,6 @@ export const WeekPage = () => {
         height: DESKTOP_HEIGHT,
       }}
     >
-      <TagFilterBar />
       <div
         style={{
           flex: 1,
