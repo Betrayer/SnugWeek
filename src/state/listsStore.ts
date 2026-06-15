@@ -21,7 +21,9 @@ import {
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
+import { playCheck, playPop, playSwoosh } from "../services/sound/soundService.ts";
 import { isoDateKeyOf } from "../services/time.ts";
+import { notifyInfo } from "../services/notify.ts";
 
 const TASKS_LIST_ID = "tasks";
 
@@ -97,6 +99,7 @@ export const useListsStore = create<ListsState>()(
           listId,
           order,
         });
+        playPop();
       },
       toggleDone: (task) => {
         if (!activeUid) return;
@@ -110,6 +113,7 @@ export const useListsStore = create<ListsState>()(
         const now = Date.now();
         setStatus(activeUid, task.id, "done", now);
         bumpCompletion(activeUid, isoDateKeyOf(now), 1);
+        playCheck();
       },
       renameTask: (taskId, title) => {
         const trimmed = title.trim();
@@ -119,6 +123,7 @@ export const useListsStore = create<ListsState>()(
       removeTask: (taskId) => {
         if (!activeUid) return;
         deleteTask(activeUid, taskId);
+        playSwoosh();
       },
       addList: (name) => {
         const trimmed = name.trim();
@@ -143,6 +148,7 @@ export const useListsStore = create<ListsState>()(
           order: ceiling - (tasks.length - index) * ORDER_SPACING,
         }));
         deleteListAndRehomeTasks(activeUid, listId, rehomed);
+        notifyInfo("tasks:listDeletedToast");
       },
       assignListToDay: (listId, day) => {
         if (!activeUid || isBuiltinList(listId)) return;

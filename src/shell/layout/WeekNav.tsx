@@ -1,6 +1,7 @@
 import { ActionIcon, Button, Group } from "@mantine/core";
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { playFlip } from "../../services/sound/soundService.ts";
 import { todayIsoDay } from "../../services/time.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { WeekJumpPopover } from "../components/calendar/WeekJumpPopover.tsx";
@@ -40,7 +41,18 @@ export const WeekNav = () => {
   const { t } = useTranslation(["week", "common"]);
   const { weekId, isCurrent, goTo, next, prev, today } = useWeekParam();
 
+  const goPrev = () => {
+    playFlip();
+    prev();
+  };
+
+  const goNext = () => {
+    playFlip();
+    next();
+  };
+
   const goToday = () => {
+    playFlip();
     useUiStore.getState().setActiveMobileDay(todayIsoDay());
     today();
   };
@@ -50,9 +62,11 @@ export const WeekNav = () => {
       if (!event.altKey || event.ctrlKey || event.metaKey) return;
       if (event.key === "ArrowLeft") {
         event.preventDefault();
+        playFlip();
         prev();
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
+        playFlip();
         next();
       }
     };
@@ -66,7 +80,7 @@ export const WeekNav = () => {
         variant="subtle"
         color="var(--sw-ink-2)"
         aria-label={t("week:prevWeek")}
-        onClick={prev}
+        onClick={goPrev}
       >
         <ChevronLeftIcon />
       </ActionIcon>
@@ -75,7 +89,7 @@ export const WeekNav = () => {
         variant="subtle"
         color="var(--sw-ink-2)"
         aria-label={t("week:nextWeek")}
-        onClick={next}
+        onClick={goNext}
       >
         <ChevronRightIcon />
       </ActionIcon>

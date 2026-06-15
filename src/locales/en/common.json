@@ -16,6 +16,8 @@
   "loadError": "Couldn't load your data — try reloading the page",
   "today": "Today",
   "todayWeek": "Go to the current week",
+  "carriedToast_one": "Carried over {{count}} unfinished task to this week",
+  "carriedToast_other": "Carried over {{count}} unfinished tasks to this week",
   "languageNames": {
     "uk": "Українська",
     "en": "English"

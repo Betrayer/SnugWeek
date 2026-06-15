@@ -1,0 +1,7 @@
+Optional cozy sound assets live here.
+
+flip.webm / flip.mp3 — soft page-turn sample for week navigation.
+Both are optional: when absent, the page-turn falls back to a synthesized
+swoosh in src/services/sound/soundService.ts and nothing errors.
+
+check / pop / swoosh are fully synthesized (no asset needed).
