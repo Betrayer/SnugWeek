@@ -106,7 +106,11 @@ export const subscribeTrackers = (
   onSnapshot(
     query(trackersCol(uid), orderBy("order")),
     (snap) => {
-      cb(snap.docs.map((docSnap) => normalizeTracker(docSnap.id, docSnap.data())));
+      cb(
+        snap.docs.map((docSnap) =>
+          normalizeTracker(docSnap.id, docSnap.data()),
+        ),
+      );
     },
     reportReadError,
   );

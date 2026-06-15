@@ -24,8 +24,11 @@ import type { Task } from "../services/repos/tasksRepo.ts";
 import { playCheck, playPop, playSwoosh } from "../services/sound/soundService.ts";
 import { isoDateKeyOf } from "../services/time.ts";
 import { notifyInfo } from "../services/notify.ts";
+import { useUiStore } from "./uiStore.ts";
 
 const TASKS_LIST_ID = "tasks";
+
+const activeFilterTagIds = (): string[] => useUiStore.getState().tagFilter;
 
 interface ListsState {
   lists: List[];
@@ -98,6 +101,7 @@ export const useListsStore = create<ListsState>()(
           day: null,
           listId,
           order,
+          tagIds: activeFilterTagIds(),
         });
         playPop();
       },

@@ -12,6 +12,7 @@ import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
 import { MobileQuickAdd } from "../components/tasks/MobileQuickAdd.tsx";
+import { TagFilterBar } from "../components/tasks/TagFilterBar.tsx";
 import { TaskDragOverlay } from "../components/tasks/TaskDragOverlay.tsx";
 import { WeekTransitionHost } from "../components/transitions/WeekTransitionHost.tsx";
 import { MobileDayPager } from "../components/week/MobileDayPager.tsx";
@@ -84,31 +85,54 @@ export const WeekPage = () => {
   const daysOff = week?.daysOff ?? weekend;
 
   const content = isMobile ? (
-    <div style={{ height: MOBILE_HEIGHT }}>
-      <WeekTransitionHost weekId={weekId}>
-        <div style={surfaceStyle}>
-          <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
-        </div>
-      </WeekTransitionHost>
+    <div
+      style={{
+        height: MOBILE_HEIGHT,
+        display: "flex",
+        flexDirection: "column",
+        gap: "var(--mantine-spacing-sm)",
+      }}
+    >
+      <TagFilterBar />
+      <div style={{ flex: 1, minHeight: 0 }}>
+        <WeekTransitionHost weekId={weekId}>
+          <div style={surfaceStyle}>
+            <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
+          </div>
+        </WeekTransitionHost>
+      </div>
       <MobileQuickAdd />
     </div>
   ) : (
     <div
       style={{
         display: "flex",
-        gap: "var(--mantine-spacing-lg)",
+        flexDirection: "column",
+        gap: "var(--mantine-spacing-sm)",
         height: DESKTOP_HEIGHT,
       }}
     >
-      <div style={{ flex: 1, minWidth: 0, minHeight: 0, position: "relative" }}>
-        <WeekTransitionHost weekId={weekId}>
-          <div style={surfaceStyle}>
-            <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
-          </div>
-        </WeekTransitionHost>
-      </div>
-      <div style={{ flex: "0 0 320px", minHeight: 0, display: "flex" }}>
-        <SidebarPanel />
+      <TagFilterBar />
+      <div
+        style={{
+          flex: 1,
+          minHeight: 0,
+          display: "flex",
+          gap: "var(--mantine-spacing-lg)",
+        }}
+      >
+        <div
+          style={{ flex: 1, minWidth: 0, minHeight: 0, position: "relative" }}
+        >
+          <WeekTransitionHost weekId={weekId}>
+            <div style={surfaceStyle}>
+              <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
+            </div>
+          </WeekTransitionHost>
+        </div>
+        <div style={{ flex: "0 0 320px", minHeight: 0, display: "flex" }}>
+          <SidebarPanel />
+        </div>
       </div>
     </div>
   );

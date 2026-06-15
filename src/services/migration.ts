@@ -39,6 +39,12 @@ const asNumberArrayOrNull = (value: unknown): number[] | null =>
   Array.isArray(value) && value.every((item) => typeof item === "number")
     ? value
     : null;
+const asStringArray = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+const asCount = (value: unknown): number =>
+  typeof value === "number" && value > 0 ? value : 0;
 
 const asObject = (value: unknown): Record<string, unknown> =>
   typeof value === "object" && value !== null
@@ -78,6 +84,23 @@ interface TaskData {
   updatedAt: number;
   completedAt: number | null;
   carriedFrom: string | null;
+  tagIds: string[];
+  subtaskCount: number;
+  subtaskDone: number;
+}
+
+interface SubtaskData {
+  title: string;
+  done: boolean;
+  order: number;
+  createdAt: number;
+}
+
+interface TagData {
+  name: string;
+  color: string;
+  order: number;
+  createdAt: number;
 }
 
 interface ListData {
@@ -123,6 +146,11 @@ interface Entity<T> {
   data: T;
 }
 
+interface TaskSubtasks {
+  taskId: string;
+  items: Entity<SubtaskData>[];
+}
+
 export interface ExportedData {
   anonUid: string;
   tasks: Entity<TaskData>[];
@@ -131,6 +159,8 @@ export interface ExportedData {
   trackers: Entity<TrackerData>[];
   habits: Entity<HabitData>[];
   stats: Entity<StatsData>[];
+  tags: Entity<TagData>[];
+  subtasks: TaskSubtasks[];
 }
 
 export interface ExportCounts {
@@ -153,11 +183,27 @@ const toTaskData = (data: DocumentData): TaskData => ({
   updatedAt: asNumber(data.updatedAt, 0),
   completedAt: asNumberOrNull(data.completedAt),
   carriedFrom: asStringOrNull(data.carriedFrom),
+  tagIds: asStringArray(data.tagIds),
+  subtaskCount: asCount(data.subtaskCount),
+  subtaskDone: asCount(data.subtaskDone),
+});
+
+const toSubtaskData = (data: DocumentData): SubtaskData => ({
+  title: asString(data.title, ""),
+  done: data.done === true,
+  order: asNumber(data.order, 0),
+  createdAt: asNumber(data.createdAt, 0),
+});
+
+const toTagData = (data: DocumentData): TagData => ({
+  name: asString(data.name, ""),
+  color: asString(data.color, "rose"),
+  order: asNumber(data.order, 0),
+  createdAt: asNumber(data.createdAt, 0),
 });
 
 const toListData = (data: DocumentData): ListData => ({
-  kind:
-    data.kind === "tasks" || data.kind === "ideas" ? data.kind : "custom",
+  kind: data.kind === "tasks" || data.kind === "ideas" ? data.kind : "custom",
   name: asStringOrNull(data.name),
   order: asNumber(data.order, 0),
   createdAt: asNumber(data.createdAt, 0),
@@ -209,7 +255,9 @@ const toTrackerValues = (
   return result;
 };
 
-const toHabitChecks = (value: unknown): Record<string, Record<string, true>> => {
+const toHabitChecks = (
+  value: unknown,
+): Record<string, Record<string, true>> => {
   const result: Record<string, Record<string, true>> = {};
   for (const [habitId, byDay] of Object.entries(asObject(value))) {
     const dayMap: Record<string, true> = {};
@@ -238,14 +286,30 @@ const userCol = (uid: string, name: string) =>
   collection(db, "users", uid, name);
 
 export const exportAnonData = async (uid: string): Promise<ExportedData> => {
-  const [tasks, lists, weeks, trackers, habits, stats] = await Promise.all([
-    getDocs(userCol(uid, "tasks")),
-    getDocs(userCol(uid, "lists")),
-    getDocs(userCol(uid, "weeks")),
-    getDocs(userCol(uid, "trackers")),
-    getDocs(userCol(uid, "habits")),
-    getDocs(userCol(uid, "stats")),
-  ]);
+  const [tasks, lists, weeks, trackers, habits, stats, tags] =
+    await Promise.all([
+      getDocs(userCol(uid, "tasks")),
+      getDocs(userCol(uid, "lists")),
+      getDocs(userCol(uid, "weeks")),
+      getDocs(userCol(uid, "trackers")),
+      getDocs(userCol(uid, "habits")),
+      getDocs(userCol(uid, "stats")),
+      getDocs(userCol(uid, "tags")),
+    ]);
+  const subtasks = await Promise.all(
+    tasks.docs.map(async (taskDoc) => {
+      const items = await getDocs(
+        collection(db, "users", uid, "tasks", taskDoc.id, "items"),
+      );
+      return {
+        taskId: taskDoc.id,
+        items: items.docs.map((d) => ({
+          id: d.id,
+          data: toSubtaskData(d.data()),
+        })),
+      };
+    }),
+  );
   const exported: ExportedData = {
     anonUid: uid,
     tasks: tasks.docs.map((d) => ({ id: d.id, data: toTaskData(d.data()) })),
@@ -257,6 +321,8 @@ export const exportAnonData = async (uid: string): Promise<ExportedData> => {
     })),
     habits: habits.docs.map((d) => ({ id: d.id, data: toHabitData(d.data()) })),
     stats: stats.docs.map((d) => ({ id: d.id, data: toStatsData(d.data()) })),
+    tags: tags.docs.map((d) => ({ id: d.id, data: toTagData(d.data()) })),
+    subtasks: subtasks.filter((entry) => entry.items.length > 0),
   };
   console.info("[merge] exported anon data", {
     tasks: exported.tasks.length,
@@ -265,6 +331,7 @@ export const exportAnonData = async (uid: string): Promise<ExportedData> => {
     trackers: exported.trackers.length,
     habits: exported.habits.length,
     stats: exported.stats.length,
+    tags: exported.tags.length,
   });
   return exported;
 };
@@ -392,6 +459,10 @@ export const runMerge = async (
   for (const entry of exported.habits) {
     habitIdMap[entry.id] = migratedId(anonUid, entry.id);
   }
+  const tagIdMap: Record<string, string> = {};
+  for (const entry of exported.tags) {
+    tagIdMap[entry.id] = migratedId(anonUid, entry.id);
+  }
 
   const counts = countsOf(exported);
   notePendingWrite();
@@ -401,7 +472,9 @@ export const runMerge = async (
     counts,
   });
 
-  const customLists = exported.lists.filter((entry) => !isBuiltinList(entry.id));
+  const customLists = exported.lists.filter(
+    (entry) => !isBuiltinList(entry.id),
+  );
   const customTrackers = exported.trackers.filter(
     (entry) => !isDefaultTracker(entry.id),
   );
@@ -409,7 +482,13 @@ export const runMerge = async (
   const ops: ((batch: WriteBatch) => void)[] = [];
 
   for (const entry of customLists) {
-    const ref = doc(db, "users", targetUid, "lists", listIdMap[entry.id] ?? entry.id);
+    const ref = doc(
+      db,
+      "users",
+      targetUid,
+      "lists",
+      listIdMap[entry.id] ?? entry.id,
+    );
     const data = entry.data;
     ops.push((batch) =>
       batch.set(ref, {
@@ -463,6 +542,25 @@ export const runMerge = async (
     );
   }
 
+  for (const entry of exported.tags) {
+    const ref = doc(
+      db,
+      "users",
+      targetUid,
+      "tags",
+      tagIdMap[entry.id] ?? entry.id,
+    );
+    const data = entry.data;
+    ops.push((batch) =>
+      batch.set(ref, {
+        name: data.name,
+        color: data.color,
+        order: data.order,
+        createdAt: data.createdAt,
+      }),
+    );
+  }
+
   for (const entry of exported.tasks) {
     const ref = doc(
       db,
@@ -473,9 +571,12 @@ export const runMerge = async (
     );
     const data = entry.data;
     const listId =
-      data.bucket === "list" && data.listId !== null && !isBuiltinList(data.listId)
+      data.bucket === "list" &&
+      data.listId !== null &&
+      !isBuiltinList(data.listId)
         ? (listIdMap[data.listId] ?? data.listId)
         : data.listId;
+    const tagIds = data.tagIds.map((id) => tagIdMap[id] ?? id);
     ops.push((batch) =>
       batch.set(ref, {
         title: data.title,
@@ -489,8 +590,35 @@ export const runMerge = async (
         updatedAt: data.updatedAt,
         completedAt: data.completedAt,
         carriedFrom: data.carriedFrom,
+        tagIds,
+        subtaskCount: data.subtaskCount,
+        subtaskDone: data.subtaskDone,
       }),
     );
+  }
+
+  for (const entry of exported.subtasks) {
+    const taskId = migratedId(anonUid, entry.taskId);
+    for (const item of entry.items) {
+      const ref = doc(
+        db,
+        "users",
+        targetUid,
+        "tasks",
+        taskId,
+        "items",
+        item.id,
+      );
+      const data = item.data;
+      ops.push((batch) =>
+        batch.set(ref, {
+          title: data.title,
+          done: data.done,
+          order: data.order,
+          createdAt: data.createdAt,
+        }),
+      );
+    }
   }
 
   const total = ops.length + exported.weeks.length + exported.stats.length;
@@ -504,7 +632,12 @@ export const runMerge = async (
     await runTransaction(db, async (tx) => {
       const snap = await tx.get(ref);
       const targetWeek = snap.exists() ? toWeekData(snap.data()) : null;
-      const merged = mergeWeek(targetWeek, entry.data, trackerIdMap, habitIdMap);
+      const merged = mergeWeek(
+        targetWeek,
+        entry.data,
+        trackerIdMap,
+        habitIdMap,
+      );
       tx.set(ref, {
         note: merged.note,
         dayNotes: merged.dayNotes,

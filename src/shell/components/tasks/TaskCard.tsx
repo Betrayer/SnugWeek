@@ -4,8 +4,13 @@ import { m, useAnimationControls } from "motion/react";
 import { useEffect, useRef } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
+import { tagSwatchValue } from "../../../data/tagColors.ts";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
+import { useTagsStore } from "../../../state/tagsStore.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
+import { CardSubtasks } from "./CardSubtasks.tsx";
+
+const MAX_CARD_TAGS = 4;
 
 interface TaskCardProps {
   task: Task;
@@ -43,8 +48,8 @@ const cardStyle = (
   isOverlay: boolean,
 ): CSSProperties => ({
   display: "flex",
-  alignItems: "flex-start",
-  gap: 8,
+  flexDirection: "column",
+  gap: 2,
   padding: "6px 8px",
   borderRadius: "var(--mantine-radius-md)",
   backgroundColor: isOverlay
@@ -58,6 +63,78 @@ const cardStyle = (
   transform: hovered && !isOverlay ? "translateY(-1px)" : "none",
   transition: "background-color 120ms ease, transform 120ms ease",
 });
+
+const CardTags = ({ task }: { task: Task }) => {
+  const tags = useTagsStore((state) => state.tags);
+  const taskTags = task.tagIds
+    .map((id) => tags.find((tag) => tag.id === id))
+    .filter((tag): tag is NonNullable<typeof tag> => tag !== undefined);
+
+  if (taskTags.length === 0) return null;
+
+  const visible = taskTags.slice(0, MAX_CARD_TAGS);
+  const overflow = taskTags.length - visible.length;
+
+  return (
+    <span
+      style={{
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: 4,
+        marginTop: 1,
+      }}
+    >
+      {visible.map((tag) => (
+        <span
+          key={tag.id}
+          role="img"
+          aria-label={tag.name}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            maxWidth: "100%",
+            height: 18,
+            paddingInline: 7,
+            borderRadius: 999,
+            backgroundColor: `color-mix(in srgb, ${tagSwatchValue(tag.color)} 16%, transparent)`,
+            border: `1px solid color-mix(in srgb, ${tagSwatchValue(tag.color)} 42%, transparent)`,
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: "50%",
+              backgroundColor: tagSwatchValue(tag.color),
+              flex: "0 0 auto",
+            }}
+          />
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              lineHeight: 1.5,
+              color: "var(--sw-ink-2)",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {tag.name}
+          </span>
+        </span>
+      ))}
+      {overflow > 0 && (
+        <span style={{ fontSize: 10, fontWeight: 700, color: "var(--sw-ink-3)" }}>
+          +{overflow}
+        </span>
+      )}
+    </span>
+  );
+};
 
 export const TaskCard = ({
   task,
@@ -84,78 +161,86 @@ export const TaskCard = ({
 
   return (
     <Box ref={isOverlay ? undefined : ref} style={cardStyle(done, hovered, isOverlay)}>
-      <m.div
-        animate={checkControls}
-        style={{ marginTop: 2, flex: "0 0 auto", display: "inline-flex" }}
-      >
-        <UnstyledButton
-          onClick={onToggle}
-          onPointerDown={(event) => event.stopPropagation()}
-          onKeyDown={(event) => event.stopPropagation()}
-          aria-label={done ? t("reopen") : t("done")}
-          style={{
-            width: 20,
-            height: 20,
-            borderRadius: "50%",
-            border: `2px solid ${done ? "var(--sw-done)" : "var(--sw-line)"}`,
-            backgroundColor: done ? "var(--sw-done)" : "transparent",
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            transition: "background-color 150ms ease, border-color 150ms ease",
-          }}
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+        <m.div
+          animate={checkControls}
+          style={{ marginTop: 2, flex: "0 0 auto", display: "inline-flex" }}
         >
-          <CheckMark done={done} />
-        </UnstyledButton>
-      </m.div>
-      <UnstyledButton
-        onClick={isOverlay ? undefined : onOpen}
-        onKeyDown={(event: KeyboardEvent<HTMLElement>) =>
-          event.stopPropagation()
-        }
-        component={isOverlay ? "div" : "button"}
-        aria-label={isOverlay ? undefined : t("openDetail", { title: task.title })}
-        style={{
-          flex: 1,
-          minWidth: 0,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          gap: 2,
-          cursor: isOverlay ? "default" : "pointer",
-          textAlign: "start",
-        }}
-      >
-        <Text
-          style={{
-            color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
-            textDecoration: "line-through",
-            textDecorationColor: done ? "var(--sw-ink-3)" : "transparent",
-            lineHeight: 1.4,
-            wordBreak: "break-word",
-            transition: "color 150ms ease, text-decoration-color 250ms ease",
-          }}
-        >
-          {task.title}
-        </Text>
-        {task.carriedFrom && (
-          <span
+          <UnstyledButton
+            onClick={onToggle}
+            onPointerDown={(event) => event.stopPropagation()}
+            onKeyDown={(event) => event.stopPropagation()}
+            aria-label={done ? t("reopen") : t("done")}
             style={{
-              fontSize: 10,
-              fontWeight: 700,
-              lineHeight: 1.5,
-              color: "var(--sw-accent-2)",
-              backgroundColor:
-                "color-mix(in srgb, var(--sw-accent-2) 12%, transparent)",
-              padding: "0 6px",
-              borderRadius: 999,
-              whiteSpace: "nowrap",
+              width: 20,
+              height: 20,
+              borderRadius: "50%",
+              border: `2px solid ${done ? "var(--sw-done)" : "var(--sw-line)"}`,
+              backgroundColor: done ? "var(--sw-done)" : "transparent",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              transition: "background-color 150ms ease, border-color 150ms ease",
             }}
           >
-            {t("carriedFrom", { week: task.carriedFrom.slice(5) })}
-          </span>
-        )}
-      </UnstyledButton>
+            <CheckMark done={done} />
+          </UnstyledButton>
+        </m.div>
+        <UnstyledButton
+          onClick={isOverlay ? undefined : onOpen}
+          onKeyDown={(event: KeyboardEvent<HTMLElement>) =>
+            event.stopPropagation()
+          }
+          component={isOverlay ? "div" : "button"}
+          aria-label={isOverlay ? undefined : t("openDetail", { title: task.title })}
+          style={{
+            flex: 1,
+            minWidth: 0,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start",
+            gap: 3,
+            cursor: isOverlay ? "default" : "pointer",
+            textAlign: "start",
+          }}
+        >
+          <Text
+            component="span"
+            style={{
+              width: "100%",
+              color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
+              textDecoration: "line-through",
+              textDecorationColor: done ? "var(--sw-ink-3)" : "transparent",
+              lineHeight: 1.4,
+              wordBreak: "break-word",
+              transition: "color 150ms ease, text-decoration-color 250ms ease",
+            }}
+          >
+            {task.title}
+          </Text>
+          <CardTags task={task} />
+          {task.carriedFrom && (
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                lineHeight: 1.5,
+                color: "var(--sw-accent-2)",
+                backgroundColor:
+                  "color-mix(in srgb, var(--sw-accent-2) 12%, transparent)",
+                padding: "0 6px",
+                borderRadius: 999,
+                whiteSpace: "nowrap",
+              }}
+            >
+              {t("carriedFrom", { week: task.carriedFrom.slice(5) })}
+            </span>
+          )}
+        </UnstyledButton>
+      </div>
+      {!isOverlay && task.subtaskCount > 0 && (
+        <CardSubtasks taskId={task.id} onOpen={onOpen} />
+      )}
     </Box>
   );
 };

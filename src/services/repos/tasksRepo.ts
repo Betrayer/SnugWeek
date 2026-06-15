@@ -1,5 +1,7 @@
 import {
   addDoc,
+  arrayRemove,
+  arrayUnion,
   collection,
   deleteDoc,
   doc,
@@ -35,11 +37,15 @@ export interface Task extends TaskLocation {
   updatedAt: number;
   completedAt: number | null;
   carriedFrom: string | null;
+  tagIds: string[];
+  subtaskCount: number;
+  subtaskDone: number;
 }
 
 export interface NewTaskFields extends TaskLocation {
   title: string;
   order: number;
+  tagIds: string[];
 }
 
 const BATCH_LIMIT = 450;
@@ -49,6 +55,14 @@ const asStringOrNull = (value: unknown): string | null =>
 
 const asNumberOrNull = (value: unknown): number | null =>
   typeof value === "number" ? value : null;
+
+const asStringArray = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
+
+const asCount = (value: unknown): number =>
+  typeof value === "number" && value > 0 ? value : 0;
 
 const normalizeTask = (id: string, data: DocumentData): Task => ({
   id,
@@ -63,6 +77,9 @@ const normalizeTask = (id: string, data: DocumentData): Task => ({
   updatedAt: typeof data.updatedAt === "number" ? data.updatedAt : 0,
   completedAt: asNumberOrNull(data.completedAt),
   carriedFrom: asStringOrNull(data.carriedFrom),
+  tagIds: asStringArray(data.tagIds),
+  subtaskCount: asCount(data.subtaskCount),
+  subtaskDone: asCount(data.subtaskDone),
 });
 
 const tasksCol = (uid: string) => collection(db, "users", uid, "tasks");
@@ -142,6 +159,9 @@ export const createTask = (uid: string, fields: NewTaskFields): void => {
     updatedAt: now,
     completedAt: null,
     carriedFrom: null,
+    tagIds: fields.tagIds,
+    subtaskCount: 0,
+    subtaskDone: 0,
   }).catch(reportWriteError);
 };
 
@@ -211,4 +231,28 @@ export const applyOrders = (
     }
     void batch.commit().catch(reportWriteError);
   }
+};
+
+export const addTagToTask = (
+  uid: string,
+  taskId: string,
+  tagId: string,
+): void => {
+  notePendingWrite();
+  void updateDoc(taskRef(uid, taskId), {
+    tagIds: arrayUnion(tagId),
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const removeTagFromTask = (
+  uid: string,
+  taskId: string,
+  tagId: string,
+): void => {
+  notePendingWrite();
+  void updateDoc(taskRef(uid, taskId), {
+    tagIds: arrayRemove(tagId),
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
 };

@@ -44,7 +44,9 @@ export const subscribeHabits = (
   onSnapshot(
     query(habitsCol(uid), orderBy("order")),
     (snap) => {
-      cb(snap.docs.map((docSnap) => normalizeHabit(docSnap.id, docSnap.data())));
+      cb(
+        snap.docs.map((docSnap) => normalizeHabit(docSnap.id, docSnap.data())),
+      );
     },
     reportReadError,
   );
