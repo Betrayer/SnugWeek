@@ -1,4 +1,4 @@
-import { Center, Loader, MantineProvider, Text } from "@mantine/core";
+import { Center, MantineProvider, Stack, Text } from "@mantine/core";
 import { Notifications, notifications } from "@mantine/notifications";
 import i18next from "i18next";
 import { LazyMotion, domAnimation, m } from "motion/react";
@@ -28,6 +28,7 @@ import { useWeekStore } from "./state/weekStore.ts";
 import { unlockSound } from "./services/sound/soundService.ts";
 import { AuthErrorScreen } from "./shell/components/account/AuthErrorScreen.tsx";
 import { ErrorBoundary } from "./shell/components/common/ErrorBoundary.tsx";
+import { SkeletonBlock } from "./shell/components/common/SkeletonBlock.tsx";
 import { useReducedMotionPref } from "./shell/hooks/useReducedMotionPref.ts";
 import { UpdatePrompt } from "./shell/components/pwa/UpdatePrompt.tsx";
 import { AppShell } from "./shell/layout/AppShell.tsx";
@@ -54,16 +55,11 @@ const SettingsPage = lazy(() =>
   })),
 );
 
-const PrimitivesDemoPage = lazy(() =>
-  import("./shell/pages/PrimitivesDemoPage.tsx").then((module) => ({
-    default: module.PrimitivesDemoPage,
-  })),
-);
-
 const PageFallback = () => (
-  <Center mih="60vh">
-    <Loader color="var(--sw-accent)" />
-  </Center>
+  <Stack gap="md" maw={760}>
+    <SkeletonBlock height={28} width="40%" />
+    <SkeletonBlock height={16} count={6} />
+  </Stack>
 );
 
 const router = createBrowserRouter([
@@ -107,18 +103,6 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      ...(import.meta.env.DEV
-        ? [
-            {
-              path: "/dev/primitives",
-              element: (
-                <Suspense fallback={<PageFallback />}>
-                  <PrimitivesDemoPage />
-                </Suspense>
-              ),
-            },
-          ]
-        : []),
       { path: "*", loader: () => redirect(`/w/${currentWeekId()}`) },
     ],
   },
