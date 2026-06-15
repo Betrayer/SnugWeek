@@ -12,6 +12,7 @@ interface UiState {
   moveTarget: Task | null;
   activeMobileDay: number | null;
   openTaskId: string | null;
+  tagFilter: string[];
   openSidebar: () => void;
   closeSidebar: () => void;
   toggleSidebar: () => void;
@@ -21,6 +22,9 @@ interface UiState {
   setActiveMobileDay: (day: number | null) => void;
   openTask: (taskId: string) => void;
   closeTask: () => void;
+  toggleTagFilter: (tagId: string) => void;
+  clearTagFilter: () => void;
+  removeFromTagFilter: (tagId: string) => void;
 }
 
 export const useUiStore = create<UiState>()(
@@ -31,6 +35,7 @@ export const useUiStore = create<UiState>()(
       moveTarget: null,
       activeMobileDay: null,
       openTaskId: null,
+      tagFilter: [],
       openSidebar: () => set({ sidebarOpened: true }),
       closeSidebar: () => set({ sidebarOpened: false }),
       toggleSidebar: () =>
@@ -45,6 +50,17 @@ export const useUiStore = create<UiState>()(
         set({ openTaskId: taskId });
       },
       closeTask: () => set({ openTaskId: null }),
+      toggleTagFilter: (tagId) =>
+        set((state) => ({
+          tagFilter: state.tagFilter.includes(tagId)
+            ? state.tagFilter.filter((id) => id !== tagId)
+            : [...state.tagFilter, tagId],
+        })),
+      removeFromTagFilter: (tagId) =>
+        set((state) => ({
+          tagFilter: state.tagFilter.filter((id) => id !== tagId),
+        })),
+      clearTagFilter: () => set({ tagFilter: [] }),
     }),
     { name: "uiStore" },
   ),

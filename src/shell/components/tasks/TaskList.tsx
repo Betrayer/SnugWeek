@@ -46,7 +46,14 @@ export const TaskList = ({
 }: TaskListProps) => {
   const { setNodeRef, isOver } = useDroppable({ id: containerId });
   const reduced = useReducedMotionPref();
-  const display = sortForDisplay(tasks);
+  const tagFilter = useUiStore((state) => state.tagFilter);
+  const sorted = sortForDisplay(tasks);
+  const filtering = tagFilter.length > 0;
+  const display = filtering
+    ? sorted.filter((task) =>
+      task.tagIds.some((id) => tagFilter.includes(id)),
+    )
+    : sorted;
 
   return (
     <SortableContext
@@ -75,7 +82,7 @@ export const TaskList = ({
             </m.div>
           ))}
         </AnimatePresence>
-        {display.length === 0 && emptyLabel && (
+        {display.length === 0 && emptyLabel && !filtering && (
           <EmptyState icon={emptyIcon ?? <SparkleDoodle />} label={emptyLabel} />
         )}
       </div>

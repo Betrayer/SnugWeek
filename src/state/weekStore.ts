@@ -22,6 +22,7 @@ import {
 } from "../services/repos/weeksRepo.ts";
 import type { TrackerValue, WeekDoc } from "../services/repos/weeksRepo.ts";
 import { useProfileStore } from "./profileStore.ts";
+import { useUiStore } from "./uiStore.ts";
 
 type NoteSaveState = "idle" | "saving" | "saved";
 
@@ -54,6 +55,8 @@ let activeWeekId: string | null = null;
 let noteTimers: Record<number, ReturnType<typeof setTimeout>> = {};
 let savedTimers: Record<number, ReturnType<typeof setTimeout>> = {};
 let pendingNotes: Record<number, string> = {};
+
+const activeFilterTagIds = (): string[] => useUiStore.getState().tagFilter;
 
 const groupByDay = (tasks: Task[]): Record<number, Task[]> => {
   const grouped: Record<number, Task[]> = {};
@@ -167,6 +170,7 @@ export const useWeekStore = create<WeekState>()(
           day,
           listId: null,
           order,
+          tagIds: activeFilterTagIds(),
         });
         playPop();
       },

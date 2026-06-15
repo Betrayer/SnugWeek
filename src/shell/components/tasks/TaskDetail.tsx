@@ -23,8 +23,16 @@ import { useIsMobile } from "../../hooks/useIsMobile.ts";
 import { ActionMenu } from "../common/ActionMenu.tsx";
 import { BottomSheet } from "../common/BottomSheet.tsx";
 import { ComingSoon } from "../common/ComingSoon.tsx";
+import { SubtaskList } from "./SubtaskList.tsx";
+import { TaskTagPicker } from "./TaskTagPicker.tsx";
 
 const MAX_TITLE = 500;
+
+const SectionLabel = ({ children }: { children: string }) => (
+  <Text fz="xs" fw={700} c="var(--sw-ink-3)" tt="uppercase">
+    {children}
+  </Text>
+);
 
 const ownerOf = (task: Task) =>
   task.bucket === "day" ? useWeekStore.getState() : useListsStore.getState();
@@ -140,11 +148,14 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
 
   const placeholders: { key: string; label: string; icon: string }[] = [
     { key: "notes", label: t("tasks:detail.notes"), icon: "📝" },
-    { key: "subtasks", label: t("tasks:detail.subtasks"), icon: "☑️" },
-    { key: "tags", label: t("tasks:detail.tags"), icon: "🏷️" },
     { key: "reminder", label: t("tasks:detail.reminder"), icon: "⏰" },
     { key: "attachments", label: t("tasks:detail.attachments"), icon: "📎" },
   ];
+
+  const subtaskLabel =
+    task.subtaskCount > 0
+      ? `${t("tasks:detail.subtasks")} · ${task.subtaskDone}/${task.subtaskCount}`
+      : t("tasks:detail.subtasks");
 
   return (
     <Stack gap="lg" pb="md">
@@ -171,9 +182,7 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
       />
 
       <Box>
-        <Text fz="xs" fw={700} c="var(--sw-ink-3)" tt="uppercase">
-          {t("tasks:detail.locationLabel")}
-        </Text>
+        <SectionLabel>{t("tasks:detail.locationLabel")}</SectionLabel>
         <Text c="var(--sw-ink)">{locationLabel()}</Text>
         {task.carriedFrom && (
           <Text fz="sm" c="var(--sw-accent-2)" mt={2}>
@@ -181,6 +190,18 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
           </Text>
         )}
       </Box>
+
+      <Divider color="var(--sw-line)" />
+
+      <Stack gap={8}>
+        <SectionLabel>{t("tasks:detail.tags")}</SectionLabel>
+        <TaskTagPicker task={task} />
+      </Stack>
+
+      <Stack gap={8}>
+        <SectionLabel>{subtaskLabel}</SectionLabel>
+        <SubtaskList taskId={task.id} />
+      </Stack>
 
       <Divider color="var(--sw-line)" />
 

@@ -159,6 +159,7 @@ const seedFirstRun = async (
       day: null,
       listId: TASKS_LIST_ID,
       order: (index + 1) * ORDER_SPACING,
+      tagIds: [],
     });
   });
   createHabit(uid, content.habit, content.habitIcon, ORDER_SPACING);

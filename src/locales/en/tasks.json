@@ -63,5 +63,15 @@
     "tags": "Tags",
     "reminder": "Time & reminder",
     "attachments": "Attachments"
+  },
+  "subtasks": {
+    "check": "Mark done",
+    "reopen": "Reopen",
+    "itemLabel": "Subtask",
+    "remove": "Remove subtask",
+    "reorder": "Reorder subtask",
+    "addPlaceholder": "Add a subtask…",
+    "cap": "Up to {{max}} subtasks",
+    "progress": "{{done}} of {{total}} subtasks done"
   }
 }

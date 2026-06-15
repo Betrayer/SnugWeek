@@ -9,7 +9,8 @@ service cloud.firestore {
     function validTask(d) {
       return d.keys().hasOnly([
           'title', 'status', 'bucket', 'weekId', 'day', 'listId',
-          'order', 'createdAt', 'updatedAt', 'completedAt', 'carriedFrom'
+          'order', 'createdAt', 'updatedAt', 'completedAt', 'carriedFrom',
+          'tagIds', 'subtaskCount', 'subtaskDone'
         ])
         && d.title is string && d.title.size() >= 1 && d.title.size() <= 500
         && (d.status == 'open' || d.status == 'done')
@@ -18,6 +19,11 @@ service cloud.firestore {
         && d.updatedAt is number
         && (d.completedAt == null || d.completedAt is number)
         && (d.carriedFrom == null || d.carriedFrom is string)
+        && (!('tagIds' in d) || (d.tagIds is list && d.tagIds.size() <= 20))
+        && (!('subtaskCount' in d)
+          || (d.subtaskCount is number && d.subtaskCount >= 0 && d.subtaskCount <= 200))
+        && (!('subtaskDone' in d)
+          || (d.subtaskDone is number && d.subtaskDone >= 0 && d.subtaskDone <= 200))
         && (
           (d.bucket == 'day'
             && d.weekId is string
@@ -28,6 +34,23 @@ service cloud.firestore {
             && d.weekId == null
             && d.day == null)
         );
+    }
+
+    function validSubtask(d) {
+      return d.keys().hasOnly(['title', 'done', 'order', 'createdAt'])
+        && d.title is string && d.title.size() >= 1 && d.title.size() <= 200
+        && d.done is bool
+        && d.order is number
+        && d.createdAt is number;
+    }
+
+    function validTag(d) {
+      return d.keys().hasOnly(['name', 'color', 'order', 'createdAt'])
+        && d.name is string && d.name.size() >= 1 && d.name.size() <= 40
+        && d.color in ['rose', 'coral', 'amber', 'olive', 'fern',
+          'teal', 'azure', 'violet', 'plum', 'mocha']
+        && d.order is number
+        && d.createdAt is number;
     }
 
     function validList(d) {
@@ -83,6 +106,16 @@ service cloud.firestore {
       match /tasks/{taskId} {
         allow read, delete: if owner(uid);
         allow create, update: if owner(uid) && validTask(request.resource.data);
+
+        match /items/{itemId} {
+          allow read, delete: if owner(uid);
+          allow create, update: if owner(uid) && validSubtask(request.resource.data);
+        }
+      }
+
+      match /tags/{tagId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid) && validTag(request.resource.data);
       }
 
       match /lists/{listId} {

@@ -23,6 +23,8 @@ import { useHabitsStore } from "./state/habitsStore.ts";
 import { useListsStore } from "./state/listsStore.ts";
 import { useMonthStore } from "./state/monthStore.ts";
 import { useStatsStore } from "./state/statsStore.ts";
+import { useSubtasksStore } from "./state/subtasksStore.ts";
+import { useTagsStore } from "./state/tagsStore.ts";
 import { useTrackersStore } from "./state/trackersStore.ts";
 import { useWeekStore } from "./state/weekStore.ts";
 import { unlockSound } from "./services/sound/soundService.ts";
@@ -233,6 +235,8 @@ export const Root = () => {
       useListsStore.getState().stop();
       useTrackersStore.getState().stop();
       useHabitsStore.getState().stop();
+      useTagsStore.getState().stop();
+      useSubtasksStore.getState().stop();
       useWeekStore.getState().stop();
       useMonthStore.getState().stop();
       useStatsStore.getState().stop();
@@ -242,6 +246,7 @@ export const Root = () => {
     useListsStore.getState().start(uid);
     useTrackersStore.getState().start(uid);
     useHabitsStore.getState().start(uid);
+    useTagsStore.getState().start(uid);
     triggerCarryOver(uid);
     const onVisible = () => {
       if (document.visibilityState === "visible") triggerCarryOver(uid);
