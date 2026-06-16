@@ -6,12 +6,18 @@ interface DraggingState {
   taskId: string;
 }
 
+interface PendingOpenTask {
+  taskId: string;
+  weekId: string;
+}
+
 interface UiState {
   sidebarOpened: boolean;
   dragging: DraggingState | null;
   moveTarget: Task | null;
   activeMobileDay: number | null;
   openTaskId: string | null;
+  pendingOpenTask: PendingOpenTask | null;
   tagFilter: string[];
   openSidebar: () => void;
   closeSidebar: () => void;
@@ -22,6 +28,8 @@ interface UiState {
   setActiveMobileDay: (day: number | null) => void;
   openTask: (taskId: string) => void;
   closeTask: () => void;
+  requestOpenTask: (taskId: string, weekId: string) => void;
+  clearPendingOpenTask: () => void;
   toggleTagFilter: (tagId: string) => void;
   clearTagFilter: () => void;
   removeFromTagFilter: (tagId: string) => void;
@@ -35,6 +43,7 @@ export const useUiStore = create<UiState>()(
       moveTarget: null,
       activeMobileDay: null,
       openTaskId: null,
+      pendingOpenTask: null,
       tagFilter: [],
       openSidebar: () => set({ sidebarOpened: true }),
       closeSidebar: () => set({ sidebarOpened: false }),
@@ -50,6 +59,9 @@ export const useUiStore = create<UiState>()(
         set({ openTaskId: taskId });
       },
       closeTask: () => set({ openTaskId: null }),
+      requestOpenTask: (taskId, weekId) =>
+        set({ pendingOpenTask: { taskId, weekId } }),
+      clearPendingOpenTask: () => set({ pendingOpenTask: null }),
       toggleTagFilter: (tagId) =>
         set((state) => ({
           tagFilter: state.tagFilter.includes(tagId)

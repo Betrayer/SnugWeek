@@ -106,7 +106,7 @@ export const CardSubtasks = ({ taskId, onOpen }: CardSubtasksProps) => {
               fontSize: 13,
               lineHeight: 1.35,
               color: item.done ? "var(--sw-ink-3)" : "var(--sw-ink-2)",
-              textDecoration: item.done ? "line-through" : "none",
+              textDecorationLine: item.done ? "line-through" : "none",
               textDecorationColor: "var(--sw-ink-3)",
               wordBreak: "break-word",
               cursor: onOpen ? "pointer" : "default",

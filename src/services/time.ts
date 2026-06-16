@@ -298,6 +298,75 @@ export const formatTime = (time: string): string => {
   return dayjs().hour(Number(hour)).minute(Number(minute)).format("LT");
 };
 
+export interface ParsedDate {
+  weekId: string;
+  isoDay: number;
+  dateKey: string;
+}
+
+const DATE_INPUT_FORMATS = [
+  "YYYY-MM-DD",
+  "YYYY-M-D",
+  "DD.MM.YYYY",
+  "D.M.YYYY",
+  "DD.MM.YY",
+  "D.M.YY",
+  "DD.MM",
+  "D.M",
+  "DD/MM/YYYY",
+  "D/M/YYYY",
+  "DD/MM",
+  "D/M",
+  "D MMMM YYYY",
+  "D MMMM",
+  "D MMM YYYY",
+  "D MMM",
+  "MMMM D YYYY",
+  "MMMM D",
+  "MMM D YYYY",
+  "MMM D",
+];
+
+const DAY_KEYWORD_OFFSETS: Record<string, number> = {
+  today: 0,
+  tomorrow: 1,
+  yesterday: -1,
+  сьогодні: 0,
+  завтра: 1,
+  вчора: -1,
+};
+
+const parsedDateFrom = (date: Dayjs): ParsedDate => ({
+  weekId: weekIdFromDate(date),
+  isoDay: date.isoWeekday(),
+  dateKey: date.format("YYYY-MM-DD"),
+});
+
+export const parseDateInput = (
+  input: string,
+  locale: string,
+): ParsedDate | null => {
+  const raw = input.trim();
+  if (raw.length === 0) return null;
+
+  const asWeekId = raw.toUpperCase();
+  if (isValidWeekId(asWeekId)) return parsedDateFrom(mondayOf(asWeekId));
+
+  const keywordOffset = DAY_KEYWORD_OFFSETS[raw.toLowerCase()];
+  if (keywordOffset !== undefined) {
+    return parsedDateFrom(dayjs().add(keywordOffset, "day"));
+  }
+
+  for (const format of DATE_INPUT_FORMATS) {
+    const parsed = dayjs(raw, format, locale, true);
+    if (!parsed.isValid()) continue;
+    const dated = format.includes("Y") ? parsed : parsed.year(dayjs().year());
+    if (isYearInRange(dated.year())) return parsedDateFrom(dated);
+  }
+
+  return null;
+};
+
 export const setTimeLocale = (locale: string): void => {
   dayjs.locale(locale);
 };

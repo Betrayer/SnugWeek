@@ -5,6 +5,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocsFromCache,
   onSnapshot,
   orderBy,
   query,
@@ -156,6 +157,21 @@ export const subscribeWeeksTasks = (
     },
     reportReadError,
   );
+};
+
+export const fetchCachedWeeksTasks = async (
+  uid: string,
+  weekIds: string[],
+): Promise<Task[]> => {
+  if (weekIds.length === 0) return [];
+  const snap = await getDocsFromCache(
+    query(
+      tasksCol(uid),
+      where("bucket", "==", "day"),
+      where("weekId", "in", weekIds),
+    ),
+  );
+  return snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data()));
 };
 
 export const createTask = (uid: string, fields: NewTaskFields): void => {

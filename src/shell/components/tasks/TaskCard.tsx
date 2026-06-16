@@ -307,7 +307,7 @@ export const TaskCard = ({
             style={{
               width: "100%",
               color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
-              textDecoration: "line-through",
+              textDecorationLine: "line-through",
               textDecorationColor: done ? "var(--sw-ink-3)" : "transparent",
               lineHeight: 1.4,
               wordBreak: "break-word",
