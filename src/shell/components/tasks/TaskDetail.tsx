@@ -21,6 +21,7 @@ import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useUiStore } from "../../../state/uiStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { useIsMobile } from "../../hooks/useIsMobile.ts";
+import { AttachmentsArea } from "../attachments/AttachmentsArea.tsx";
 import { ActionMenu } from "../common/ActionMenu.tsx";
 import { BottomSheet } from "../common/BottomSheet.tsx";
 import { ComingSoon } from "../common/ComingSoon.tsx";
@@ -154,11 +155,6 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
     },
   ];
 
-  const placeholders: { key: string; label: string; icon: string }[] = [
-    { key: "notes", label: t("tasks:detail.notes"), icon: "📝" },
-    { key: "attachments", label: t("tasks:detail.attachments"), icon: "📎" },
-  ];
-
   const subtaskLabel =
     task.subtaskCount > 0
       ? `${t("tasks:detail.subtasks")} · ${task.subtaskDone}/${task.subtaskCount}`
@@ -226,14 +222,16 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
 
       <Divider color="var(--sw-line)" />
 
+      <Stack gap={8}>
+        <SectionLabel>{t("tasks:detail.attachments")}</SectionLabel>
+        <AttachmentsArea scope="task" taskId={task.id} />
+      </Stack>
+
       <Stack gap="sm">
-        {placeholders.map((item) => (
-          <ComingSoon
-            key={item.key}
-            label={item.label}
-            icon={<span style={{ fontSize: 18 }}>{item.icon}</span>}
-          />
-        ))}
+        <ComingSoon
+          label={t("tasks:detail.notes")}
+          icon={<span style={{ fontSize: 18 }}>📝</span>}
+        />
       </Stack>
     </Stack>
   );

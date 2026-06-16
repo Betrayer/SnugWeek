@@ -11,7 +11,7 @@ service cloud.firestore {
           'title', 'status', 'bucket', 'weekId', 'day', 'listId',
           'order', 'createdAt', 'updatedAt', 'completedAt', 'carriedFrom',
           'tagIds', 'subtaskCount', 'subtaskDone', 'time', 'remindOffsetMin',
-          'routineId'
+          'routineId', 'attachmentCount'
         ])
         && d.title is string && d.title.size() >= 1 && d.title.size() <= 500
         && (d.status == 'open' || d.status == 'done')
@@ -32,6 +32,9 @@ service cloud.firestore {
         && (d.bucket != 'list'
           || !('remindOffsetMin' in d) || d.remindOffsetMin == null)
         && (!('routineId' in d) || d.routineId == null || d.routineId is string)
+        && (!('attachmentCount' in d)
+          || (d.attachmentCount is number && d.attachmentCount >= 0
+            && d.attachmentCount <= 200))
         && (
           (d.bucket == 'day'
             && d.weekId is string
@@ -83,12 +86,52 @@ service cloud.firestore {
     }
 
     function validList(d) {
-      return d.keys().hasOnly(['kind', 'name', 'order', 'createdAt', 'day'])
+      return d.keys().hasOnly([
+          'kind', 'name', 'order', 'createdAt', 'day', 'attachmentCount'
+        ])
         && (d.kind == 'tasks' || d.kind == 'ideas' || d.kind == 'custom')
         && (d.name == null || d.name is string)
         && d.order is number
         && d.createdAt is number
-        && (!('day' in d) || d.day == null || d.day is number);
+        && (!('day' in d) || d.day == null || d.day is number)
+        && (!('attachmentCount' in d)
+          || (d.attachmentCount is number && d.attachmentCount >= 0
+            && d.attachmentCount <= 200));
+    }
+
+    function validAttachment(d) {
+      return d.keys().hasOnly([
+          'targetType', 'taskId', 'listId', 'weekId', 'day', 'kind',
+          'order', 'createdAt', 'storagePath', 'url', 'name', 'mime',
+          'size', 'thumbPath', 'thumbUrl', 'width', 'height', 'durationMs',
+          'href', 'title', 'previewImage'
+        ])
+        && d.targetType in ['task', 'list', 'day']
+        && d.kind in ['image', 'audio', 'video', 'file', 'link']
+        && d.order is number
+        && d.createdAt is number
+        && (d.taskId == null || d.taskId is string)
+        && (d.listId == null || d.listId is string)
+        && (d.weekId == null || d.weekId is string)
+        && (d.day == null || (d.day is number && d.day >= 1 && d.day <= 7))
+        && (d.storagePath == null || d.storagePath is string)
+        && (d.url == null || d.url is string)
+        && (d.name == null || (d.name is string && d.name.size() <= 512))
+        && (d.mime == null || d.mime is string)
+        && (d.size == null || (d.size is number && d.size >= 0))
+        && (d.thumbPath == null || d.thumbPath is string)
+        && (d.thumbUrl == null || d.thumbUrl is string)
+        && (d.width == null || d.width is number)
+        && (d.height == null || d.height is number)
+        && (d.durationMs == null || d.durationMs is number)
+        && (d.href == null || (d.href is string && d.href.size() <= 2048))
+        && (d.title == null || (d.title is string && d.title.size() <= 512))
+        && (d.previewImage == null || d.previewImage is string)
+        && (
+          (d.targetType == 'task' && d.taskId is string)
+          || (d.targetType == 'list' && d.listId is string)
+          || (d.targetType == 'day' && d.weekId is string && d.day is number)
+        );
     }
 
     function validWeek(d) {
@@ -140,6 +183,12 @@ service cloud.firestore {
           allow read, delete: if owner(uid);
           allow create, update: if owner(uid) && validSubtask(request.resource.data);
         }
+      }
+
+      match /attachments/{attachmentId} {
+        allow read, delete: if owner(uid);
+        allow create, update: if owner(uid)
+          && validAttachment(request.resource.data);
       }
 
       match /tags/{tagId} {

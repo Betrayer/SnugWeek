@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { ORDER_SPACING, orderForBottom } from "../services/ordering.ts";
+import {
+  purgeListAttachments,
+  purgeTaskAttachments,
+} from "../services/repos/attachmentsRepo.ts";
 import { bumpCompletion } from "../services/repos/statsRepo.ts";
 import {
   assignListToDay,
@@ -126,6 +130,12 @@ export const useListsStore = create<ListsState>()(
       },
       removeTask: (taskId) => {
         if (!activeUid) return;
+        const task = Object.values(get().tasksByList)
+          .flat()
+          .find((entry) => entry.id === taskId);
+        if (task && task.attachmentCount > 0) {
+          purgeTaskAttachments(activeUid, taskId);
+        }
         deleteTask(activeUid, taskId);
         playSwoosh();
       },
@@ -151,6 +161,10 @@ export const useListsStore = create<ListsState>()(
           id: task.id,
           order: ceiling - (tasks.length - index) * ORDER_SPACING,
         }));
+        const list = get().lists.find((item) => item.id === listId);
+        if (list && list.attachmentCount > 0) {
+          purgeListAttachments(activeUid, listId);
+        }
         deleteListAndRehomeTasks(activeUid, listId, rehomed);
         notifyInfo("tasks:listDeletedToast");
       },
