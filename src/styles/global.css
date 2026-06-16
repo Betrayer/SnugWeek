@@ -213,6 +213,32 @@ html {
   display: none;
 }
 
+.mantine-Spotlight-actionDescription {
+  color: var(--sw-ink-3);
+}
+
+.mantine-Spotlight-actionsGroup::before {
+  color: var(--sw-ink-3);
+}
+
+.mantine-Spotlight-empty {
+  color: var(--sw-ink-3);
+}
+
+.mantine-Spotlight-action:where(:not([data-selected])):hover {
+  background-color: var(--sw-card);
+}
+
+.mantine-Spotlight-action[data-selected] {
+  background-color: var(--sw-accent);
+  color: var(--sw-accent-ink);
+}
+
+.mantine-Spotlight-action[data-selected] .mantine-Spotlight-actionDescription {
+  color: var(--sw-accent-ink);
+  opacity: 0.8;
+}
+
 @keyframes sw-pulse {
   0%,
   100% {

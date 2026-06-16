@@ -4,6 +4,7 @@ import {
   doc,
   documentId,
   getDocs,
+  getDocsFromCache,
   onSnapshot,
   query,
   setDoc,
@@ -128,6 +129,21 @@ export const fetchWeeks = async (
 ): Promise<Record<string, WeekDoc>> => {
   if (weekIds.length === 0) return {};
   const snap = await getDocs(
+    query(weeksCol(uid), where(documentId(), "in", weekIds)),
+  );
+  const result: Record<string, WeekDoc> = {};
+  for (const docSnap of snap.docs) {
+    result[docSnap.id] = normalizeWeek(docSnap.data());
+  }
+  return result;
+};
+
+export const fetchCachedWeeks = async (
+  uid: string,
+  weekIds: string[],
+): Promise<Record<string, WeekDoc>> => {
+  if (weekIds.length === 0) return {};
+  const snap = await getDocsFromCache(
     query(weeksCol(uid), where(documentId(), "in", weekIds)),
   );
   const result: Record<string, WeekDoc> = {};

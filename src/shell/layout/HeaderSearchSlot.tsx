@@ -1,4 +1,5 @@
 import { ActionIcon, Tooltip } from "@mantine/core";
+import { spotlight } from "@mantine/spotlight";
 import { useTranslation } from "react-i18next";
 
 const SearchIcon = () => (
@@ -21,13 +22,12 @@ const SearchIcon = () => (
 export const HeaderSearchSlot = () => {
   const { t } = useTranslation("common");
   return (
-    <Tooltip label={t("soon")} withArrow>
+    <Tooltip label={t("search")} withArrow>
       <ActionIcon
         variant="subtle"
-        color="var(--sw-ink-3)"
-        aria-label={`${t("search")} · ${t("soon")}`}
-        aria-disabled
-        style={{ cursor: "default" }}
+        color="var(--sw-ink-2)"
+        aria-label={t("search")}
+        onClick={() => spotlight.open()}
       >
         <SearchIcon />
       </ActionIcon>

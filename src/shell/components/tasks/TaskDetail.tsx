@@ -243,6 +243,7 @@ export const TaskDetail = () => {
   const { t } = useTranslation("tasks");
   const isMobile = useIsMobile();
   const openTaskId = useUiStore((state) => state.openTaskId);
+  const pendingOpenTask = useUiStore((state) => state.pendingOpenTask);
   const close = useUiStore((state) => state.closeTask);
   const tasksByDay = useWeekStore((state) => state.tasksByDay);
   const tasksByList = useListsStore((state) => state.tasksByList);
@@ -263,11 +264,31 @@ export const TaskDetail = () => {
 
   useEffect(() => {
     close();
+    const pending = useUiStore.getState().pendingOpenTask;
+    if (pending && location.pathname !== `/w/${pending.weekId}`) {
+      useUiStore.getState().clearPendingOpenTask();
+    }
   }, [location.pathname, close]);
 
   useEffect(() => {
     if (openTaskId && !task) close();
   }, [openTaskId, task, close]);
+
+  useEffect(() => {
+    if (!pendingOpenTask) return;
+    const id = pendingOpenTask.taskId;
+    const found =
+      Object.values(tasksByDay).some((tasks) =>
+        tasks.some((item) => item.id === id),
+      ) ||
+      Object.values(tasksByList).some((tasks) =>
+        tasks.some((item) => item.id === id),
+      );
+    if (!found) return;
+    const ui = useUiStore.getState();
+    ui.clearPendingOpenTask();
+    ui.openTask(id);
+  }, [pendingOpenTask, tasksByDay, tasksByList]);
 
   const opened = openTaskId !== null && task !== null;
 

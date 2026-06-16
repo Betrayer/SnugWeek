@@ -1,0 +1,17 @@
+{
+  "placeholder": "Search tasks, notes, or jump anywhere…",
+  "groups": {
+    "tasks": "Tasks",
+    "notes": "Notes",
+    "goto": "Go to",
+    "add": "Add",
+    "recent": "Recent"
+  },
+  "close": "Close search",
+  "noteWeek": "Week note",
+  "noteDay": "Day note",
+  "gotoDate": "Go to {{date}}",
+  "goToday": "Go to today",
+  "openRoute": "Open",
+  "addAction": "Add “{{query}}”"
+}

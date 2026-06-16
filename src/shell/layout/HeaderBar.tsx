@@ -101,9 +101,7 @@ export const HeaderBar = () => {
 
       <Group gap="sm" wrap="nowrap" justify="flex-end" style={{ minWidth: 0 }}>
         {onWeek && <HeaderFilterSlot />}
-        <Group visibleFrom="md">
-          <HeaderSearchSlot />
-        </Group>
+        <HeaderSearchSlot />
         {onWeek && (
           <ActionIcon
             hiddenFrom="md"
