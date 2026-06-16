@@ -7,10 +7,11 @@ import { ActionMenu } from "../common/ActionMenu.tsx";
 interface DayHeaderProps {
   day: WeekDay;
   isOff: boolean;
+  onAddMemory?: () => void;
 }
 
-export const DayHeader = ({ day, isOff }: DayHeaderProps) => {
-  const { t } = useTranslation("week");
+export const DayHeader = ({ day, isOff, onAddMemory }: DayHeaderProps) => {
+  const { t } = useTranslation(["week", "attachments"]);
   const color = isOff
     ? "var(--sw-ink-3)"
     : day.isToday
@@ -58,6 +59,15 @@ export const DayHeader = ({ day, isOff }: DayHeaderProps) => {
               label: isOff ? t("makeWorkday") : t("makeDayOff"),
               onClick: () => useWeekStore.getState().toggleDayOff(day.iso),
             },
+            ...(onAddMemory
+              ? [
+                  {
+                    key: "addMemory",
+                    label: t("attachments:addMemory"),
+                    onClick: onAddMemory,
+                  },
+                ]
+              : []),
           ]}
         />
       </Group>

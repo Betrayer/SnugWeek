@@ -23,6 +23,7 @@ import {
   isValidWeekId,
   setTimeLocale,
 } from "./services/time.ts";
+import { useAttachmentsStore } from "./state/attachmentsStore.ts";
 import { useAuthStore } from "./state/authStore.ts";
 import { useHabitsStore } from "./state/habitsStore.ts";
 import { useListsStore } from "./state/listsStore.ts";
@@ -244,6 +245,7 @@ export const Root = () => {
       useTagsStore.getState().stop();
       useRoutinesStore.getState().stop();
       useSubtasksStore.getState().stop();
+      useAttachmentsStore.getState().stop();
       useWeekStore.getState().stop();
       useMonthStore.getState().stop();
       useStatsStore.getState().stop();

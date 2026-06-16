@@ -26,6 +26,7 @@ export interface List {
   order: number;
   createdAt: number;
   day: number | null;
+  attachmentCount: number;
 }
 
 export const isBuiltinList = (listId: string): boolean =>
@@ -41,6 +42,10 @@ const normalizeList = (id: string, data: DocumentData): List => ({
   order: typeof data.order === "number" ? data.order : 0,
   createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
   day: typeof data.day === "number" ? data.day : null,
+  attachmentCount:
+    typeof data.attachmentCount === "number" && data.attachmentCount > 0
+      ? data.attachmentCount
+      : 0,
 });
 
 const listsCol = (uid: string) => collection(db, "users", uid, "lists");
@@ -60,7 +65,13 @@ const ensureBuiltin = async (
   const ref = listRef(uid, listId);
   const snap = await getDoc(ref);
   if (snap.exists()) return;
-  await setDoc(ref, { kind, name: null, order, createdAt: Date.now() });
+  await setDoc(ref, {
+    kind,
+    name: null,
+    order,
+    createdAt: Date.now(),
+    attachmentCount: 0,
+  });
 };
 
 export const ensureBuiltinLists = async (uid: string): Promise<void> => {
@@ -90,6 +101,7 @@ export const createList = (uid: string, name: string, order: number): void => {
     order,
     createdAt: Date.now(),
     day: null,
+    attachmentCount: 0,
   }).catch(reportWriteError);
 };
 

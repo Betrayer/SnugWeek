@@ -5,23 +5,13 @@ import {
   isPendingWrite,
   subscribePendingWrites,
 } from "../../services/syncSignal.ts";
+import { useOnlineStatus } from "../hooks/useOnlineStatus.ts";
 
 const SYNCED_VISIBLE_MS = 1500;
 
-const subscribeToNetwork = (onChange: () => void): (() => void) => {
-  window.addEventListener("online", onChange);
-  window.addEventListener("offline", onChange);
-  return () => {
-    window.removeEventListener("online", onChange);
-    window.removeEventListener("offline", onChange);
-  };
-};
-
-const isOnline = (): boolean => navigator.onLine;
-
 export const SyncBadge = () => {
   const { t } = useTranslation("common");
-  const online = useSyncExternalStore(subscribeToNetwork, isOnline);
+  const online = useOnlineStatus();
   const pending = useSyncExternalStore(subscribePendingWrites, isPendingWrite);
   const [showSynced, setShowSynced] = useState(false);
   const wasPending = useRef(false);

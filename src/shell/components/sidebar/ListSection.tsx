@@ -14,6 +14,7 @@ import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
+import { ListReferences } from "../attachments/ListReferences.tsx";
 import { ActionMenu } from "../common/ActionMenu.tsx";
 import type { ActionItem } from "../common/ActionMenu.tsx";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
@@ -230,6 +231,12 @@ export const ListSection = ({
                     useListsStore.getState().addTask(list.id, title)
                   }
                 />
+                {!builtin && (
+                  <ListReferences
+                    listId={list.id}
+                    count={list.attachmentCount}
+                  />
+                )}
               </Stack>
             </m.div>
           )}
@@ -246,6 +253,9 @@ export const ListSection = ({
           <TaskComposer
             onAdd={(title) => useListsStore.getState().addTask(list.id, title)}
           />
+          {!builtin && (
+            <ListReferences listId={list.id} count={list.attachmentCount} />
+          )}
         </>
       )}
 

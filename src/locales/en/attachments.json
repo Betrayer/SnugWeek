@@ -1,0 +1,53 @@
+{
+  "title": "Attachments",
+  "memories": "Memories",
+  "addMemory": "Add a memory",
+  "add": "Add",
+  "addImage": "Photo",
+  "addAudio": "Audio",
+  "addVideo": "Video",
+  "addFile": "File",
+  "addLink": "Link",
+  "record": "Record a voice note",
+  "stop": "Stop",
+  "save": "Save",
+  "discard": "Discard",
+  "micDenied": "Microphone access denied — you can still attach an audio file",
+  "uploading": "Uploading…",
+  "uploadError": "Couldn’t upload — please try again",
+  "typeError": "This file type isn’t supported",
+  "tooBig": "File is too large (max {{size}} MB)",
+  "limitReached": "Up to {{max}} attachments here",
+  "offlineHint": "Files can’t be added offline — links still work",
+  "empty": {
+    "task": "no keepsakes yet",
+    "list": "no references yet",
+    "day": "no memories yet"
+  },
+  "deleteTitle": "Delete attachment?",
+  "deleteWarning": "This file will be removed for good.",
+  "delete": "Delete",
+  "remove": "Remove",
+  "download": "Download",
+  "open": "Open",
+  "kind": {
+    "image": "Image",
+    "audio": "Voice note",
+    "video": "Video",
+    "file": "File"
+  },
+  "lightbox": {
+    "prev": "Previous",
+    "next": "Next",
+    "close": "Close",
+    "counter": "{{index}} of {{total}}"
+  },
+  "linkDialog": {
+    "title": "Add a link",
+    "placeholder": "https://…",
+    "invalid": "Enter a valid web address",
+    "action": "Add link"
+  },
+  "play": "Play",
+  "pause": "Pause"
+}

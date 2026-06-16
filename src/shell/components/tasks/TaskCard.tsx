@@ -9,6 +9,7 @@ import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { formatTime } from "../../../services/time.ts";
 import { useTagsStore } from "../../../state/tagsStore.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
+import { PaperclipGlyph } from "../attachments/icons.tsx";
 import { CardSubtasks } from "./CardSubtasks.tsx";
 
 const MAX_CARD_TAGS = 4;
@@ -103,6 +104,28 @@ const RepeatChip = ({ label }: { label: string }) => (
   >
     <RepeatGlyph />
     {label}
+  </span>
+);
+
+const AttachmentChip = ({ count }: { count: number }) => (
+  <span
+    style={{
+      display: "inline-flex",
+      alignItems: "center",
+      gap: 3,
+      alignSelf: "flex-start",
+      fontSize: 10,
+      fontWeight: 700,
+      lineHeight: 1.5,
+      color: "var(--sw-ink-3)",
+      backgroundColor: "color-mix(in srgb, var(--sw-ink-3) 10%, transparent)",
+      padding: "0 6px",
+      borderRadius: 999,
+      whiteSpace: "nowrap",
+    }}
+  >
+    <PaperclipGlyph size={9} />
+    {count}
   </span>
 );
 
@@ -336,6 +359,9 @@ export const TaskCard = ({
           )}
           {task.routineId !== null && (
             <RepeatChip label={t("routines:repeats")} />
+          )}
+          {task.attachmentCount > 0 && (
+            <AttachmentChip count={task.attachmentCount} />
           )}
         </UnstyledButton>
       </div>

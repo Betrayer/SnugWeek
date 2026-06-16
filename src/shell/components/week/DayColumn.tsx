@@ -1,11 +1,15 @@
 import { useDroppable } from "@dnd-kit/core";
 import { Stack } from "@mantine/core";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import type { WeekDay } from "../../../services/time.ts";
 import { useListsStore } from "../../../state/listsStore.ts";
 import { useProfileStore } from "../../../state/profileStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
+import { AttachmentsArea } from "../attachments/AttachmentsArea.tsx";
+import { MemoriesStrip } from "../attachments/MemoriesStrip.tsx";
+import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { DayNote } from "../note/DayNote.tsx";
 import { ListSection } from "../sidebar/ListSection.tsx";
 import { dayColumnId, dayContainerId } from "../tasks/dndIds.ts";
@@ -22,13 +26,15 @@ interface DayColumnProps {
 const EMPTY: Task[] = [];
 
 export const DayColumn = ({ day, isOff }: DayColumnProps) => {
-  const { t } = useTranslation("tasks");
+  const { t } = useTranslation(["tasks", "attachments"]);
   const tasks = useWeekStore((state) => state.tasksByDay[day.iso] ?? EMPTY);
+  const weekId = useWeekStore((state) => state.weekId);
   const lists = useListsStore((state) => state.lists);
   const showTrackers = useProfileStore(
     (state) => state.moduleToggles.dayTrackers,
   );
   const showNote = useProfileStore((state) => state.moduleToggles.weekNote);
+  const [memoriesOpen, setMemoriesOpen] = useState(false);
   const { setNodeRef, isOver } = useDroppable({ id: dayColumnId(day.iso) });
   const dayLists = lists.filter(
     (list) => list.kind === "custom" && list.day === day.iso,
@@ -53,8 +59,19 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
         transition: "border-color 120ms ease",
       }}
     >
-      <DayHeader day={day} isOff={isOff} />
+      <DayHeader
+        day={day}
+        isOff={isOff}
+        onAddMemory={weekId ? () => setMemoriesOpen(true) : undefined}
+      />
       {showTrackers && <DayTrackerRow day={day.iso} />}
+      {weekId && (
+        <MemoriesStrip
+          weekId={weekId}
+          day={day.iso}
+          onOpen={() => setMemoriesOpen(true)}
+        />
+      )}
       <div
         className="sw-hide-scrollbar"
         style={{
@@ -81,6 +98,15 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
         ))}
       </div>
       {showNote && <DayNote day={day.iso} />}
+      {weekId && (
+        <ResponsiveDialog
+          opened={memoriesOpen}
+          onClose={() => setMemoriesOpen(false)}
+          title={t("attachments:memories")}
+        >
+          <AttachmentsArea scope="day" weekId={weekId} day={day.iso} />
+        </ResponsiveDialog>
+      )}
     </Stack>
   );
 };

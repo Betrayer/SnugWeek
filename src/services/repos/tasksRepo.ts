@@ -41,6 +41,7 @@ export interface Task extends TaskLocation {
   tagIds: string[];
   subtaskCount: number;
   subtaskDone: number;
+  attachmentCount: number;
   time: string | null;
   remindOffsetMin: number | null;
   routineId: string | null;
@@ -92,6 +93,7 @@ const normalizeTask = (id: string, data: DocumentData): Task => ({
   tagIds: asStringArray(data.tagIds),
   subtaskCount: asCount(data.subtaskCount),
   subtaskDone: asCount(data.subtaskDone),
+  attachmentCount: asCount(data.attachmentCount),
   time: asTimeOrNull(data.time),
   remindOffsetMin: asOffsetOrNull(data.remindOffsetMin),
   routineId: asStringOrNull(data.routineId),
@@ -192,6 +194,7 @@ export const createTask = (uid: string, fields: NewTaskFields): void => {
     tagIds: fields.tagIds,
     subtaskCount: 0,
     subtaskDone: 0,
+    attachmentCount: 0,
     time: null,
     remindOffsetMin: null,
     routineId: null,

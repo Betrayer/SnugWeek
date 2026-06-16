@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { orderForBottom } from "../services/ordering.ts";
+import { purgeTaskAttachments } from "../services/repos/attachmentsRepo.ts";
 import { bumpCompletion } from "../services/repos/statsRepo.ts";
 import {
   createTask,
@@ -199,6 +200,12 @@ export const useWeekStore = create<WeekState>()(
       },
       removeTask: (taskId) => {
         if (!activeUid) return;
+        const task = Object.values(get().tasksByDay)
+          .flat()
+          .find((entry) => entry.id === taskId);
+        if (task && task.attachmentCount > 0) {
+          purgeTaskAttachments(activeUid, taskId);
+        }
         deleteTask(activeUid, taskId);
         playSwoosh();
       },
