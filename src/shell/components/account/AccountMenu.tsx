@@ -27,9 +27,9 @@ export const AccountMenu = () => {
         size="compact-sm"
         radius="xl"
         color="var(--sw-accent)"
-        onClick={() => useAccountStore.getState().openAuthModal("save")}
+        onClick={() => useAccountStore.getState().openAuthModal()}
       >
-        {t("save")}
+        {t("logIn")}
       </Button>
     );
   }

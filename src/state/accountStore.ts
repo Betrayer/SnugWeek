@@ -15,7 +15,6 @@ import { currentAuthUser } from "../services/firebase.ts";
 import {
   countsOf,
   exportAnonData,
-  hasMeaningfulData,
   runMerge,
 } from "../services/migration.ts";
 import type { ExportCounts, ExportedData } from "../services/migration.ts";
@@ -24,13 +23,10 @@ import { setAccountInfo } from "../services/repos/profileRepo.ts";
 import { useAuthStore } from "./authStore.ts";
 
 type MergeKind = "google" | "email";
-type MergeEntry = "link" | "signin";
 type MergePhase = "idle" | "signing-in" | "transferring" | "done" | "error";
-type AuthMode = "save" | "signin";
 
 interface PendingMerge {
   kind: MergeKind;
-  entry: MergeEntry;
   credential: unknown;
   email: string | null;
   password: string | null;
@@ -42,24 +38,22 @@ interface AccountState {
   error: string | null;
   resetSent: boolean;
   authModalOpen: boolean;
-  authMode: AuthMode;
   signOutOpen: boolean;
   pendingMerge: PendingMerge | null;
   exported: ExportedData | null;
   mergePhase: MergePhase;
+  mergeSkip: boolean;
   mergeDone: number;
   mergeTotal: number;
   mergeError: string | null;
-  openAuthModal: (mode: AuthMode) => void;
+  openAuthModal: () => void;
   closeAuthModal: () => void;
-  setAuthMode: (mode: AuthMode) => void;
   clearError: () => void;
   linkGoogle: () => Promise<void>;
   linkEmail: (email: string, password: string) => Promise<void>;
-  signInGoogle: () => Promise<void>;
-  signInEmail: (email: string, password: string) => Promise<void>;
   sendReset: (email: string) => Promise<void>;
   confirmMerge: () => Promise<void>;
+  signInWithoutMerge: () => Promise<void>;
   cancelMerge: () => void;
   dismissMerge: () => void;
   openSignOut: () => void;
@@ -98,10 +92,29 @@ const isMergeConflict = (code: string): boolean =>
   code === "auth/credential-already-in-use" ||
   code === "auth/email-already-in-use";
 
-const finishLink = async (uid: string): Promise<void> => {
+const recordAccount = async (uid: string): Promise<void> => {
   const user = currentAuthUser();
   await setAccountInfo(uid, user?.email ?? null, user?.displayName ?? null);
   useAuthStore.getState().refresh();
+};
+
+const signInForPending = async (pending: PendingMerge): Promise<string> => {
+  const current = currentAuthUser();
+  if (current && !current.isAnonymous) return current.uid;
+  if (pending.kind === "google") {
+    if (pending.credential) {
+      await signInWithGoogleCredential(pending.credential);
+    } else {
+      await signInGooglePopup();
+    }
+  } else if (pending.email !== null && pending.password !== null) {
+    await signInEmailPassword(pending.email, pending.password);
+  } else {
+    throw new Error("missing-credential");
+  }
+  const after = currentAuthUser();
+  if (!after) throw new Error("sign-in-failed");
+  return after.uid;
 };
 
 export const useAccountStore = create<AccountState>()(
@@ -111,18 +124,17 @@ export const useAccountStore = create<AccountState>()(
       error: null,
       resetSent: false,
       authModalOpen: false,
-      authMode: "save",
       signOutOpen: false,
       pendingMerge: null,
       exported: null,
       mergePhase: "idle",
+      mergeSkip: false,
       mergeDone: 0,
       mergeTotal: 0,
       mergeError: null,
-      openAuthModal: (mode) =>
-        set({ authModalOpen: true, authMode: mode, error: null, resetSent: false }),
+      openAuthModal: () =>
+        set({ authModalOpen: true, error: null, resetSent: false }),
       closeAuthModal: () => set({ authModalOpen: false }),
-      setAuthMode: (mode) => set({ authMode: mode, error: null, resetSent: false }),
       clearError: () => set({ error: null }),
       linkGoogle: async () => {
         const uid = useAuthStore.getState().uid;
@@ -130,7 +142,7 @@ export const useAccountStore = create<AccountState>()(
         set({ busy: true, error: null });
         try {
           await linkGooglePopup();
-          await finishLink(uid);
+          await recordAccount(uid);
           set({ busy: false, authModalOpen: false });
           notifySuccess("auth:accountSavedToast");
         } catch (error) {
@@ -144,7 +156,6 @@ export const useAccountStore = create<AccountState>()(
               mergePhase: "idle",
               pendingMerge: {
                 kind: "google",
-                entry: "link",
                 credential: googleCredentialFromError(error),
                 email: null,
                 password: null,
@@ -162,7 +173,7 @@ export const useAccountStore = create<AccountState>()(
         set({ busy: true, error: null });
         try {
           await linkEmailPassword(email, password);
-          await finishLink(uid);
+          await recordAccount(uid);
           set({ busy: false, authModalOpen: false });
           notifySuccess("auth:accountSavedToast");
         } catch (error) {
@@ -176,7 +187,6 @@ export const useAccountStore = create<AccountState>()(
               mergePhase: "idle",
               pendingMerge: {
                 kind: "email",
-                entry: "link",
                 credential: null,
                 email,
                 password,
@@ -186,59 +196,6 @@ export const useAccountStore = create<AccountState>()(
             return;
           }
           set({ busy: false, error: mapAuthError(code) });
-        }
-      },
-      signInGoogle: async () => {
-        const uid = useAuthStore.getState().uid;
-        if (!uid || get().busy) return;
-        set({ busy: true, error: null });
-        try {
-          const exported = await exportAnonData(uid);
-          set({
-            busy: false,
-            authModalOpen: false,
-            exported,
-            mergePhase: "idle",
-            pendingMerge: {
-              kind: "google",
-              entry: "signin",
-              credential: null,
-              email: null,
-              password: null,
-              counts: countsOf(exported),
-            },
-          });
-        } catch (error) {
-          set({ busy: false, error: mapAuthError(authErrorCode(error)) });
-        }
-      },
-      signInEmail: async (email, password) => {
-        const uid = useAuthStore.getState().uid;
-        if (!uid || get().busy) return;
-        set({ busy: true, error: null });
-        try {
-          const exported = await exportAnonData(uid);
-          if (hasMeaningfulData(exported)) {
-            set({
-              busy: false,
-              authModalOpen: false,
-              exported,
-              mergePhase: "idle",
-              pendingMerge: {
-                kind: "email",
-                entry: "signin",
-                credential: null,
-                email,
-                password,
-                counts: countsOf(exported),
-              },
-            });
-            return;
-          }
-          await signInEmailPassword(email, password);
-          set({ busy: false, authModalOpen: false });
-        } catch (error) {
-          set({ busy: false, error: mapAuthError(authErrorCode(error)) });
         }
       },
       sendReset: async (email) => {
@@ -256,45 +213,37 @@ export const useAccountStore = create<AccountState>()(
         const exported = get().exported;
         if (!pending || !exported) return;
         set({
+          mergeSkip: false,
           mergePhase: "signing-in",
           mergeError: null,
           mergeDone: 0,
           mergeTotal: 0,
         });
         try {
-          const current = currentAuthUser();
-          let targetUid: string;
-          if (current && !current.isAnonymous) {
-            targetUid = current.uid;
-          } else {
-            if (pending.kind === "google") {
-              if (pending.credential) {
-                await signInWithGoogleCredential(pending.credential);
-              } else {
-                await signInGooglePopup();
-              }
-            } else if (pending.email !== null && pending.password !== null) {
-              await signInEmailPassword(pending.email, pending.password);
-            } else {
-              throw new Error("missing-credential");
-            }
-            const after = currentAuthUser();
-            if (!after) throw new Error("sign-in-failed");
-            targetUid = after.uid;
-          }
+          const targetUid = await signInForPending(pending);
           set({ mergePhase: "transferring" });
           await runMerge(exported, targetUid, (done, total) =>
             set({ mergeDone: done, mergeTotal: total }),
           );
-          const user = currentAuthUser();
-          await setAccountInfo(
-            targetUid,
-            user?.email ?? null,
-            user?.displayName ?? null,
-          );
-          useAuthStore.getState().refresh();
+          await recordAccount(targetUid);
           set({ mergePhase: "done" });
           notifySuccess("auth:mergeDoneToast");
+        } catch (error) {
+          set({
+            mergePhase: "error",
+            mergeError: mapAuthError(authErrorCode(error)),
+          });
+        }
+      },
+      signInWithoutMerge: async () => {
+        const pending = get().pendingMerge;
+        if (!pending) return;
+        set({ mergeSkip: true, mergePhase: "signing-in", mergeError: null });
+        try {
+          const targetUid = await signInForPending(pending);
+          await recordAccount(targetUid);
+          set({ pendingMerge: null, exported: null, mergePhase: "idle" });
+          notifySuccess("auth:signedInToast");
         } catch (error) {
           set({
             mergePhase: "error",

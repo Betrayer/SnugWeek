@@ -136,12 +136,25 @@ interface HabitData {
   createdAt: number;
 }
 
+interface DecorationData {
+  id: string;
+  kind: string;
+  asset: string;
+  target: "week" | number;
+  x: number;
+  y: number;
+  rotation: number;
+  scale: number;
+  animation: string;
+}
+
 interface WeekData {
   note: string;
   dayNotes: Record<string, string>;
   daysOff: number[] | null;
   trackerValues: Record<string, Record<string, TrackerValue>>;
   habitChecks: Record<string, Record<string, true>>;
+  decorations: DecorationData[];
 }
 
 interface StatsData {
@@ -279,12 +292,54 @@ const toHabitChecks = (
   return result;
 };
 
+const DECORATION_KINDS = new Set(["sticker", "washi", "doodle"]);
+const MAX_DECORATIONS = 120;
+
+const toDecorations = (value: unknown): DecorationData[] => {
+  if (!Array.isArray(value)) return [];
+  const result: DecorationData[] = [];
+  for (const item of value) {
+    const d = asObject(item);
+    if (typeof d.id !== "string") continue;
+    if (typeof d.kind !== "string" || !DECORATION_KINDS.has(d.kind)) continue;
+    if (typeof d.asset !== "string") continue;
+    const target =
+      d.target === "week"
+        ? "week"
+        : typeof d.target === "number" && d.target >= 1 && d.target <= 7
+          ? d.target
+          : null;
+    if (target === null) continue;
+    if (
+      typeof d.x !== "number" ||
+      typeof d.y !== "number" ||
+      typeof d.rotation !== "number" ||
+      typeof d.scale !== "number"
+    ) {
+      continue;
+    }
+    result.push({
+      id: d.id,
+      kind: d.kind,
+      asset: d.asset,
+      target,
+      x: d.x,
+      y: d.y,
+      rotation: d.rotation,
+      scale: d.scale,
+      animation: typeof d.animation === "string" ? d.animation : "none",
+    });
+  }
+  return result;
+};
+
 const toWeekData = (data: DocumentData): WeekData => ({
   note: asString(data.note, ""),
   dayNotes: asStringRecord(data.dayNotes),
   daysOff: asNumberArrayOrNull(data.daysOff),
   trackerValues: toTrackerValues(data.trackerValues),
   habitChecks: toHabitChecks(data.habitChecks),
+  decorations: toDecorations(data.decorations),
 });
 
 const toStatsData = (data: DocumentData): StatsData => ({
@@ -381,6 +436,7 @@ const mergeWeek = (
     daysOff: null,
     trackerValues: {},
     habitChecks: {},
+    decorations: [],
   };
 
   const dayNotes: Record<string, string> = { ...base.dayNotes };
@@ -412,12 +468,22 @@ const mergeWeek = (
     habitChecks[mapped] = dayMap;
   }
 
+  const decorations: DecorationData[] = [];
+  const seenDecorations = new Set<string>();
+  for (const decoration of [...base.decorations, ...anon.decorations]) {
+    if (seenDecorations.has(decoration.id)) continue;
+    if (decorations.length >= MAX_DECORATIONS) break;
+    seenDecorations.add(decoration.id);
+    decorations.push(decoration);
+  }
+
   return {
     note: mergeNote(base.note, anon.note),
     dayNotes,
     daysOff: base.daysOff ?? anon.daysOff,
     trackerValues,
     habitChecks,
+    decorations,
   };
 };
 
@@ -656,6 +722,7 @@ export const runMerge = async (
         daysOff: merged.daysOff,
         trackerValues: merged.trackerValues,
         habitChecks: merged.habitChecks,
+        decorations: merged.decorations,
         updatedAt: Date.now(),
       });
     });

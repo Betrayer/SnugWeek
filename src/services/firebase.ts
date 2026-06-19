@@ -1,5 +1,12 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signInAnonymously } from "firebase/auth";
+import {
+  browserLocalPersistence,
+  browserPopupRedirectResolver,
+  indexedDBLocalPersistence,
+  initializeAuth,
+  onAuthStateChanged,
+  signInAnonymously,
+} from "firebase/auth";
 import type { User } from "firebase/auth";
 import {
   initializeFirestore,
@@ -18,7 +25,10 @@ const app = initializeApp({
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 });
 
-export const auth = getAuth(app);
+export const auth = initializeAuth(app, {
+  persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+  popupRedirectResolver: browserPopupRedirectResolver,
+});
 
 export const db = initializeFirestore(app, {
   localCache: persistentLocalCache({

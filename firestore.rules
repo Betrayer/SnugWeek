@@ -136,13 +136,16 @@ service cloud.firestore {
 
     function validWeek(d) {
       return d.keys().hasOnly([
-          'note', 'dayNotes', 'daysOff', 'trackerValues', 'habitChecks', 'updatedAt'
+          'note', 'dayNotes', 'daysOff', 'trackerValues', 'habitChecks',
+          'decorations', 'updatedAt'
         ])
         && (!('note' in d) || d.note is string)
         && (!('dayNotes' in d) || d.dayNotes is map)
         && (!('daysOff' in d) || d.daysOff == null || d.daysOff is list)
         && (!('trackerValues' in d) || d.trackerValues is map)
         && (!('habitChecks' in d) || d.habitChecks is map)
+        && (!('decorations' in d) || d.decorations == null
+          || (d.decorations is list && d.decorations.size() <= 120))
         && (!('updatedAt' in d) || d.updatedAt is number);
     }
 

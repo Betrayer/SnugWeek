@@ -7,6 +7,18 @@
   "accountSignedIn": "Ви увійшли як",
   "aboutTagline": "Затишний тижневий планер-щоденник.",
   "remindersTitle": "Нагадування",
+  "notebookName": "Назва зошита",
+  "notebookNamePlaceholder": "Назвіть свій зошит",
+  "coverStyle": "Обкладинка",
+  "coverNames": {
+    "plain": "Проста",
+    "cream": "Вершкова",
+    "accent": "Акцент",
+    "blush": "Рум’янець",
+    "dots": "Крапки",
+    "grid": "Клітинка",
+    "stripes": "Смужки"
+  },
   "paperTexture": "Текстура паперу",
   "paperTextureHint": "Делікатна зернистість на папері (типово вимкнено).",
   "theme": "Тема",

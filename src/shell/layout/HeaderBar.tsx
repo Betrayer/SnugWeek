@@ -7,8 +7,10 @@ import {
   isValidWeekId,
 } from "../../services/time.ts";
 import { useListsStore } from "../../state/listsStore.ts";
+import { useProfileStore } from "../../state/profileStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { AccountMenu } from "../components/account/AccountMenu.tsx";
+import { DecorateButton } from "../components/decor/DecorateButton.tsx";
 import { HeaderFilterSlot } from "./HeaderFilterSlot.tsx";
 import { HeaderSearchSlot } from "./HeaderSearchSlot.tsx";
 import { LanguageMenu } from "./LanguageMenu.tsx";
@@ -41,6 +43,7 @@ const navLinkProps = {
 
 export const HeaderBar = () => {
   const { t } = useTranslation(["common", "week", "tasks"]);
+  const notebookName = useProfileStore((state) => state.notebookName);
   const toggleSidebar = useUiStore((state) => state.toggleSidebar);
   const listOpenCount = useListsStore((state) =>
     Object.values(state.tasksByList).reduce(
@@ -74,8 +77,14 @@ export const HeaderBar = () => {
           fz={28}
           fw={600}
           visibleFrom="sm"
+          style={{
+            maxWidth: 220,
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
         >
-          {t("common:appName")}
+          {notebookName ?? t("common:appName")}
         </Anchor>
         <Group gap="sm" visibleFrom="md" wrap="nowrap">
           <Anchor component={Link} to={`/w/${currentWeekId()}`} {...navLinkProps}>
@@ -101,6 +110,7 @@ export const HeaderBar = () => {
 
       <Group gap="sm" wrap="nowrap" justify="flex-end" style={{ minWidth: 0 }}>
         {onWeek && <HeaderFilterSlot />}
+        {onWeek && <DecorateButton />}
         <HeaderSearchSlot />
         {onWeek && (
           <ActionIcon
