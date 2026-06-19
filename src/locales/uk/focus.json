@@ -1,0 +1,24 @@
+{
+  "title": "Фокус",
+  "open": "Таймер фокусу",
+  "presetFocus": "Фокус 25",
+  "presetBreak": "Пауза 5",
+  "customMinutes": "Хвилини",
+  "startCustom": "Почати",
+  "pause": "Пауза",
+  "resume": "Продовжити",
+  "reset": "Скинути",
+  "phase": {
+    "focus": "Фокус",
+    "break": "Пауза"
+  },
+  "focusingOn": "Фокус на: {{title}}",
+  "chooseTask": "Зосередитись на справі",
+  "clearTask": "Прибрати справу",
+  "doneFocus": "Готово — гарна робота!",
+  "doneBreak": "Пауза завершена — готовий зосередитись?",
+  "startBreak": "Зробити паузу",
+  "startFocus": "Почати фокус",
+  "sessionsToday": "Сьогодні: {{n}}",
+  "sessionsWeek": "Цього тижня: {{n}}"
+}

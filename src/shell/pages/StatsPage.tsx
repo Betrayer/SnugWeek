@@ -14,6 +14,7 @@ import {
 } from "../../services/time.ts";
 import { useAuthStore } from "../../state/authStore.ts";
 import { useStatsStore } from "../../state/statsStore.ts";
+import { StatsRecapPanel } from "../components/recap/StatsRecapPanel.tsx";
 import { MonthStatsView } from "../components/stats/MonthStatsView.tsx";
 import { YearStatsView } from "../components/stats/YearStatsView.tsx";
 
@@ -89,6 +90,7 @@ export const StatsPage = () => {
 
   return (
     <Stack gap="md">
+      <StatsRecapPanel />
       <Group justify="space-between" wrap="wrap" gap="sm">
         <Group gap={4} wrap="nowrap">
           <ActionIcon

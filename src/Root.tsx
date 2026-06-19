@@ -29,6 +29,7 @@ import { useAuthStore } from "./state/authStore.ts";
 import { useHabitsStore } from "./state/habitsStore.ts";
 import { useListsStore } from "./state/listsStore.ts";
 import { useMonthStore } from "./state/monthStore.ts";
+import { useRecapStore } from "./state/recapStore.ts";
 import { useRoutinesStore } from "./state/routinesStore.ts";
 import { useStatsStore } from "./state/statsStore.ts";
 import { useSubtasksStore } from "./state/subtasksStore.ts";
@@ -291,6 +292,7 @@ export const Root = () => {
       useWeekStore.getState().stop();
       useMonthStore.getState().stop();
       useStatsStore.getState().stop();
+      useRecapStore.getState().stop();
       stopReminderScheduler();
       return;
     }

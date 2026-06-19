@@ -1,6 +1,7 @@
 import { AppShell as MantineAppShell } from "@mantine/core";
 import { Outlet } from "react-router";
 import { AccountDialogs } from "../components/account/AccountDialogs.tsx";
+import { FocusTimerHost } from "../components/focus/FocusTimerHost.tsx";
 import { CommandSurface } from "../components/search/CommandSurface.tsx";
 import { MoveTaskMenu } from "../components/tasks/MoveTaskMenu.tsx";
 import { TaskDetail } from "../components/tasks/TaskDetail.tsx";
@@ -43,6 +44,7 @@ export const AppShell = () => {
       <TaskDetail />
       <CommandSurface />
       <AccountDialogs />
+      <FocusTimerHost />
     </MantineAppShell>
   );
 };

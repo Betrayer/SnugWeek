@@ -1,0 +1,24 @@
+{
+  "title": "Focus",
+  "open": "Focus timer",
+  "presetFocus": "Focus 25",
+  "presetBreak": "Break 5",
+  "customMinutes": "Minutes",
+  "startCustom": "Start",
+  "pause": "Pause",
+  "resume": "Resume",
+  "reset": "Reset",
+  "phase": {
+    "focus": "Focus",
+    "break": "Break"
+  },
+  "focusingOn": "Focusing on {{title}}",
+  "chooseTask": "Focus on a task",
+  "clearTask": "Clear task",
+  "doneFocus": "Done — nice work!",
+  "doneBreak": "Break over — ready to focus?",
+  "startBreak": "Start a break",
+  "startFocus": "Start focusing",
+  "sessionsToday": "Today: {{n}}",
+  "sessionsWeek": "This week: {{n}}"
+}

@@ -11,6 +11,7 @@ import { useProfileStore } from "../../state/profileStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { AccountMenu } from "../components/account/AccountMenu.tsx";
 import { DecorateButton } from "../components/decor/DecorateButton.tsx";
+import { FocusTimerButton } from "../components/focus/FocusTimerButton.tsx";
 import { HeaderFilterSlot } from "./HeaderFilterSlot.tsx";
 import { HeaderSearchSlot } from "./HeaderSearchSlot.tsx";
 import { LanguageMenu } from "./LanguageMenu.tsx";
@@ -111,6 +112,7 @@ export const HeaderBar = () => {
       <Group gap="sm" wrap="nowrap" justify="flex-end" style={{ minWidth: 0 }}>
         {onWeek && <HeaderFilterSlot />}
         {onWeek && <DecorateButton />}
+        <FocusTimerButton />
         <HeaderSearchSlot />
         {onWeek && (
           <ActionIcon
