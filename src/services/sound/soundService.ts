@@ -183,6 +183,38 @@ export const playReminder = (): void => {
   });
 };
 
+export const playFocusStart = (): void => {
+  const ctx = beginSound("focusStart", 300);
+  if (!ctx) return;
+  tone(ctx, {
+    type: "sine",
+    from: 523,
+    to: 784,
+    start: 0,
+    duration: 0.18,
+    peak: 0.16,
+  });
+};
+
+export const playFocusEnd = (): void => {
+  const ctx = beginSound("focusEnd", 300, true);
+  if (!ctx) return;
+  tone(ctx, {
+    type: "sine",
+    from: 784,
+    start: 0,
+    duration: 0.2,
+    peak: 0.16,
+  });
+  tone(ctx, {
+    type: "sine",
+    from: 1047,
+    start: 0.16,
+    duration: 0.3,
+    peak: 0.14,
+  });
+};
+
 export const playFlip = (): void => {
   const ctx = beginSound("flip", 130);
   if (!ctx) return;

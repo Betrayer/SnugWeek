@@ -16,6 +16,7 @@ import { useWeekStore } from "../../state/weekStore.ts";
 import { DecorEditBar } from "../components/decor/DecorEditBar.tsx";
 import { DecorationLayer } from "../components/decor/DecorationLayer.tsx";
 import { DecorationPalette } from "../components/decor/DecorationPalette.tsx";
+import { WeekRecapBanner } from "../components/recap/WeekRecapBanner.tsx";
 import { MobileQuickAdd } from "../components/tasks/MobileQuickAdd.tsx";
 import { TaskDragOverlay } from "../components/tasks/TaskDragOverlay.tsx";
 import { WeekTransitionHost } from "../components/transitions/WeekTransitionHost.tsx";
@@ -100,6 +101,7 @@ export const WeekPage = () => {
 
   const days = useMemo(() => weekDays(weekId, language), [weekId, language]);
   const daysOff = week?.daysOff ?? weekend;
+  const showRecap = weekId === currentWeekId() && todayIsoDay() === 7;
 
   const content = isMobile ? (
     <div
@@ -170,6 +172,7 @@ export const WeekPage = () => {
       </DndContext>
       <DecorationPalette />
       <DecorEditBar />
+      {showRecap && <WeekRecapBanner weekId={weekId} />}
     </>
   );
 };
