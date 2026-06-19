@@ -5,12 +5,16 @@ import {
   Stack,
   Switch,
   Text,
+  TextInput,
 } from "@mantine/core";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { THEME_ORDER, themeById } from "../../../../data/themes/registry.ts";
 import { SUPPORTED_LANGS, isSupportedLang } from "../../../../i18n/languages.ts";
+import { NOTEBOOK_NAME_MAX } from "../../../../services/repos/profileRepo.ts";
 import { useProfileStore } from "../../../../state/profileStore.ts";
 import { useSettingsStore } from "../../../../state/settingsStore.ts";
+import { CoverPicker } from "../CoverPicker.tsx";
 import { ThemePicker } from "../ThemePicker.tsx";
 
 export const AppearanceSection = () => {
@@ -30,6 +34,20 @@ export const AppearanceSection = () => {
   const setPaperTextureEnabled = useProfileStore(
     (state) => state.setPaperTextureEnabled,
   );
+  const notebookName = useProfileStore((state) => state.notebookName);
+  const [nameDraft, setNameDraft] = useState(notebookName ?? "");
+  const [seenName, setSeenName] = useState(notebookName);
+
+  if (seenName !== notebookName) {
+    setSeenName(notebookName);
+    setNameDraft(notebookName ?? "");
+  }
+
+  const commitName = () => {
+    const trimmed = nameDraft.trim().slice(0, NOTEBOOK_NAME_MAX);
+    const next = trimmed.length > 0 ? trimmed : null;
+    if (next !== notebookName) useProfileStore.getState().setNotebookName(next);
+  };
 
   const lightOptions = THEME_ORDER.filter(
     (id) => themeById(id).kind === "light",
@@ -49,6 +67,24 @@ export const AppearanceSection = () => {
 
   return (
     <Stack gap="lg">
+      <Stack gap="xs">
+        <Text fw={600}>{t("settings:notebookName")}</Text>
+        <TextInput
+          value={nameDraft}
+          maxLength={NOTEBOOK_NAME_MAX}
+          placeholder={t("settings:notebookNamePlaceholder")}
+          aria-label={t("settings:notebookName")}
+          onChange={(event) => setNameDraft(event.currentTarget.value)}
+          onBlur={commitName}
+          onKeyDown={(event) => {
+            if (event.key === "Enter") event.currentTarget.blur();
+          }}
+        />
+      </Stack>
+      <Stack gap="xs">
+        <Text fw={600}>{t("settings:coverStyle")}</Text>
+        <CoverPicker />
+      </Stack>
       <Stack gap="xs">
         <Text fw={600}>{t("settings:theme")}</Text>
         <ThemePicker disabled={autoTheme !== null} />

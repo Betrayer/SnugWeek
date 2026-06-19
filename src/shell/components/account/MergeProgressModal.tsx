@@ -85,7 +85,12 @@ export const MergeProgressModal = () => {
               </Button>
               <Button
                 color="var(--sw-accent)"
-                onClick={() => void useAccountStore.getState().confirmMerge()}
+                onClick={() => {
+                  const store = useAccountStore.getState();
+                  void (store.mergeSkip
+                    ? store.signInWithoutMerge()
+                    : store.confirmMerge());
+                }}
               >
                 {t("progress.retry")}
               </Button>

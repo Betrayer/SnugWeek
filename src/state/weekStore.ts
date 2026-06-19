@@ -13,17 +13,31 @@ import {
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
-import { playCheck, playPop, playSwoosh } from "../services/sound/soundService.ts";
+import {
+  playCheck,
+  playPop,
+  playSwoosh,
+} from "../services/sound/soundService.ts";
 import { isoDateKeyOf } from "../services/time.ts";
 import {
+  MAX_DECORATIONS,
   clearTrackerValue,
+  newDecorationId,
   setDayNote as setDayNoteDoc,
   setDaysOff,
+  setDecorations,
   setHabitCheck,
   setTrackerValue,
   subscribeWeek,
 } from "../services/repos/weeksRepo.ts";
-import type { TrackerValue, WeekDoc } from "../services/repos/weeksRepo.ts";
+import type {
+  Decoration,
+  TrackerValue,
+  WeekDoc,
+} from "../services/repos/weeksRepo.ts";
+import { DEFAULT_DECORATION_ANIMATION } from "../data/decorations.tsx";
+import type { DecorationKind } from "../data/decorations.tsx";
+import { useDecorStore } from "./decorStore.ts";
 import { useProfileStore } from "./profileStore.ts";
 import { useUiStore } from "./uiStore.ts";
 
@@ -44,11 +58,27 @@ interface WeekState {
   removeTask: (taskId: string) => void;
   setTime: (taskId: string, time: string | null) => void;
   setReminder: (taskId: string, offsetMin: number | null) => void;
-  setTrackerValue: (day: number, trackerId: string, value: TrackerValue) => void;
+  setTrackerValue: (
+    day: number,
+    trackerId: string,
+    value: TrackerValue,
+  ) => void;
   clearTrackerValue: (day: number, trackerId: string) => void;
   toggleHabit: (habitId: string, day: number) => void;
   toggleDayOff: (day: number) => void;
+  addDecoration: (assetId: string, kind: DecorationKind) => void;
+  updateDecoration: (
+    id: string,
+    patch: Partial<
+      Pick<Decoration, "x" | "y" | "rotation" | "scale" | "animation">
+    >,
+  ) => void;
+  removeDecoration: (id: string) => void;
 }
+
+const DECORATION_TILTS = [-6, 5, -3, 7, -8, 2];
+
+const clampPct = (value: number): number => Math.min(94, Math.max(6, value));
 
 const NOTE_DEBOUNCE_MS = 400;
 const SAVED_VISIBLE_MS = 1500;
@@ -242,6 +272,52 @@ export const useWeekStore = create<WeekState>()(
           ? effective.filter((value) => value !== day)
           : [...effective, day].sort((a, b) => a - b);
         setDaysOff(activeUid, activeWeekId, next);
+      },
+      addDecoration: (assetId, kind) => {
+        if (!activeUid || !activeWeekId || get().status !== "ready") return;
+        const current = get().week?.decorations ?? [];
+        if (current.length >= MAX_DECORATIONS) return;
+        const target = useDecorStore.getState().target;
+        const sameTarget = current.filter(
+          (item) => item.target === target,
+        ).length;
+        const tilt =
+          DECORATION_TILTS[sameTarget % DECORATION_TILTS.length] ?? 0;
+        const decoration: Decoration = {
+          id: newDecorationId(activeUid),
+          kind,
+          asset: assetId,
+          target,
+          x: clampPct(46 + ((sameTarget % 3) - 1) * 9),
+          y: clampPct(34 + (sameTarget % 4) * 7),
+          rotation: kind === "washi" ? Math.round(tilt / 2) : tilt,
+          scale: 1,
+          animation: DEFAULT_DECORATION_ANIMATION,
+        };
+        setDecorations(activeUid, activeWeekId, [...current, decoration]);
+        useDecorStore.getState().select(decoration.id);
+      },
+      updateDecoration: (id, patch) => {
+        if (!activeUid || !activeWeekId || get().status !== "ready") return;
+        const current = get().week?.decorations ?? [];
+        if (!current.some((item) => item.id === id)) return;
+        const next = current.map((item) =>
+          item.id === id ? { ...item, ...patch } : item,
+        );
+        setDecorations(activeUid, activeWeekId, next);
+      },
+      removeDecoration: (id) => {
+        if (!activeUid || !activeWeekId || get().status !== "ready") return;
+        const current = get().week?.decorations ?? [];
+        if (!current.some((item) => item.id === id)) return;
+        setDecorations(
+          activeUid,
+          activeWeekId,
+          current.filter((item) => item.id !== id),
+        );
+        if (useDecorStore.getState().selectedId === id) {
+          useDecorStore.getState().select(null);
+        }
       },
     }),
     { name: "weekStore" },

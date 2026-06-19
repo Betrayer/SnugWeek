@@ -1,4 +1,4 @@
-import { Button, Group, List, Modal, Stack, Text } from "@mantine/core";
+import { Button, List, Modal, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useAccountStore } from "../../../state/accountStore.ts";
 import type { ExportCounts } from "../../../services/migration.ts";
@@ -37,7 +37,7 @@ export const MergeDialog = () => {
     >
       <Stack gap="md">
         <Text fz="sm" c="var(--sw-ink-2)">
-          {t(pending?.entry === "signin" ? "merge.bodySignin" : "merge.bodyLink")}
+          {t("merge.body")}
         </Text>
 
         {items.length > 0 && counts && (
@@ -50,7 +50,19 @@ export const MergeDialog = () => {
           </List>
         )}
 
-        <Group justify="flex-end" gap="sm">
+        <Stack gap="sm">
+          <Button
+            color="var(--sw-accent)"
+            onClick={() => void useAccountStore.getState().confirmMerge()}
+          >
+            {t("merge.confirm")}
+          </Button>
+          <Button
+            variant="default"
+            onClick={() => void useAccountStore.getState().signInWithoutMerge()}
+          >
+            {t("merge.signInOnly")}
+          </Button>
           <Button
             variant="subtle"
             color="var(--sw-ink-2)"
@@ -58,13 +70,7 @@ export const MergeDialog = () => {
           >
             {t("merge.cancel")}
           </Button>
-          <Button
-            color="var(--sw-accent)"
-            onClick={() => void useAccountStore.getState().confirmMerge()}
-          >
-            {t("merge.confirm")}
-          </Button>
-        </Group>
+        </Stack>
       </Stack>
     </Modal>
   );

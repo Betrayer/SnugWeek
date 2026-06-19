@@ -10,6 +10,7 @@ import { useWeekStore } from "../../../state/weekStore.ts";
 import { AttachmentsArea } from "../attachments/AttachmentsArea.tsx";
 import { MemoriesStrip } from "../attachments/MemoriesStrip.tsx";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
+import { DecorationLayer } from "../decor/DecorationLayer.tsx";
 import { DayNote } from "../note/DayNote.tsx";
 import { ListSection } from "../sidebar/ListSection.tsx";
 import { dayColumnId, dayContainerId } from "../tasks/dndIds.ts";
@@ -47,6 +48,7 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
       ref={setNodeRef}
       gap="xs"
       style={{
+        position: "relative",
         backgroundColor: isOff ? "var(--sw-paper-2)" : "var(--sw-card)",
         backgroundImage: "var(--sw-paper-texture)",
         border: `1px solid ${borderColor}`,
@@ -98,6 +100,7 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
         ))}
       </div>
       {showNote && <DayNote day={day.iso} />}
+      <DecorationLayer scope={day.iso} />
       {weekId && (
         <ResponsiveDialog
           opened={memoriesOpen}

@@ -1,0 +1,32 @@
+{
+  "decorate": "Прикрасити",
+  "paletteTitle": "Прикраси",
+  "addDecoration": "Додати",
+  "done": "Готово",
+  "editToolbar": "Інструменти прикрас",
+  "target": "Розмістити на",
+  "targetWeek": "Увесь тиждень",
+  "kind": {
+    "sticker": "наліпка",
+    "washi": "стрічка washi",
+    "doodle": "малюнок"
+  },
+  "kindPlural": {
+    "sticker": "Наліпки",
+    "washi": "Стрічки washi",
+    "doodle": "Малюнки"
+  },
+  "addAsset": "Додати — {{kind}}",
+  "itemLabel": "Прикраса: {{kind}}",
+  "rotate": "Поворот",
+  "scale": "Розмір",
+  "animation": "Анімація",
+  "anim": {
+    "none": "Без",
+    "sway": "Гойдання",
+    "spin": "Обертання",
+    "bob": "Плавання",
+    "pulse": "Пульсація"
+  },
+  "remove": "Видалити"
+}

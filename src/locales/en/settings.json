@@ -7,6 +7,18 @@
   "accountSignedIn": "Signed in as",
   "aboutTagline": "A cozy weekly planner-journal.",
   "remindersTitle": "Reminders",
+  "notebookName": "Notebook name",
+  "notebookNamePlaceholder": "Name your notebook",
+  "coverStyle": "Cover",
+  "coverNames": {
+    "plain": "Plain",
+    "cream": "Cream",
+    "accent": "Accent",
+    "blush": "Blush",
+    "dots": "Dots",
+    "grid": "Grid",
+    "stripes": "Stripes"
+  },
   "paperTexture": "Paper texture",
   "paperTextureHint": "A subtle grain on the paper (off by default).",
   "theme": "Theme",

@@ -1,0 +1,32 @@
+{
+  "decorate": "Decorate",
+  "paletteTitle": "Decorations",
+  "addDecoration": "Add",
+  "done": "Done",
+  "editToolbar": "Decoration tools",
+  "target": "Place on",
+  "targetWeek": "Whole week",
+  "kind": {
+    "sticker": "sticker",
+    "washi": "washi tape",
+    "doodle": "doodle"
+  },
+  "kindPlural": {
+    "sticker": "Stickers",
+    "washi": "Washi tape",
+    "doodle": "Doodles"
+  },
+  "addAsset": "Add {{kind}}",
+  "itemLabel": "{{kind}} decoration",
+  "rotate": "Rotate",
+  "scale": "Size",
+  "animation": "Animation",
+  "anim": {
+    "none": "None",
+    "sway": "Sway",
+    "spin": "Spin",
+    "bob": "Float",
+    "pulse": "Pulse"
+  },
+  "remove": "Remove"
+}

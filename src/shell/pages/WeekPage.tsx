@@ -7,10 +7,15 @@ import {
   todayIsoDay,
   weekDays,
 } from "../../services/time.ts";
+import { coverBackground } from "../../data/covers.ts";
 import { useAuthStore } from "../../state/authStore.ts";
+import { useDecorStore } from "../../state/decorStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
+import { DecorEditBar } from "../components/decor/DecorEditBar.tsx";
+import { DecorationLayer } from "../components/decor/DecorationLayer.tsx";
+import { DecorationPalette } from "../components/decor/DecorationPalette.tsx";
 import { MobileQuickAdd } from "../components/tasks/MobileQuickAdd.tsx";
 import { TaskDragOverlay } from "../components/tasks/TaskDragOverlay.tsx";
 import { WeekTransitionHost } from "../components/transitions/WeekTransitionHost.tsx";
@@ -26,6 +31,7 @@ const MOBILE_HEIGHT =
   "calc(100vh - var(--app-shell-header-height, 56px) - var(--app-shell-footer-height, 64px) - var(--mantine-spacing-md) * 2)";
 
 const surfaceStyle = {
+  position: "relative",
   flex: 1,
   minWidth: 0,
   minHeight: 0,
@@ -44,13 +50,25 @@ export const WeekPage = () => {
   const language = useSettingsStore((state) => state.language);
   const columnMode = useProfileStore((state) => state.columnMode);
   const weekend = useProfileStore((state) => state.weekend);
+  const coverStyle = useProfileStore((state) => state.coverStyle);
   const week = useWeekStore((state) => state.week);
   const isMobile = useIsMobile();
   const dnd = useTaskDnd();
 
+  const cover = coverBackground(coverStyle);
+  const coverStyleProps = cover
+    ? {
+        background: cover,
+        borderRadius: "var(--mantine-radius-lg)",
+        padding: 6,
+      }
+    : null;
+
   useEffect(() => {
     if (uid) useWeekStore.getState().open(uid, weekId);
   }, [uid, weekId]);
+
+  useEffect(() => () => useDecorStore.getState().exitEdit(), []);
 
   useEffect(() => {
     if (isMobile) return;
@@ -90,12 +108,14 @@ export const WeekPage = () => {
         display: "flex",
         flexDirection: "column",
         gap: "var(--mantine-spacing-sm)",
+        ...coverStyleProps,
       }}
     >
       <div style={{ flex: 1, minHeight: 0 }}>
         <WeekTransitionHost weekId={weekId}>
           <div style={surfaceStyle}>
             <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
+            <DecorationLayer scope="week" />
           </div>
         </WeekTransitionHost>
       </div>
@@ -108,6 +128,7 @@ export const WeekPage = () => {
         flexDirection: "column",
         gap: "var(--mantine-spacing-sm)",
         height: DESKTOP_HEIGHT,
+        ...coverStyleProps,
       }}
     >
       <div
@@ -124,6 +145,7 @@ export const WeekPage = () => {
           <WeekTransitionHost weekId={weekId}>
             <div style={surfaceStyle}>
               <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
+              <DecorationLayer scope="week" />
             </div>
           </WeekTransitionHost>
         </div>
@@ -135,15 +157,19 @@ export const WeekPage = () => {
   );
 
   return (
-    <DndContext
-      sensors={dnd.sensors}
-      collisionDetection={dnd.collisionDetection}
-      onDragStart={dnd.onDragStart}
-      onDragEnd={dnd.onDragEnd}
-      onDragCancel={dnd.onDragCancel}
-    >
-      {content}
-      <TaskDragOverlay task={dnd.activeTask} list={dnd.activeList} />
-    </DndContext>
+    <>
+      <DndContext
+        sensors={dnd.sensors}
+        collisionDetection={dnd.collisionDetection}
+        onDragStart={dnd.onDragStart}
+        onDragEnd={dnd.onDragEnd}
+        onDragCancel={dnd.onDragCancel}
+      >
+        {content}
+        <TaskDragOverlay task={dnd.activeTask} list={dnd.activeList} />
+      </DndContext>
+      <DecorationPalette />
+      <DecorEditBar />
+    </>
   );
 };

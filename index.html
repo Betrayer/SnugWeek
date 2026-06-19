@@ -145,6 +145,14 @@
     <div id="root">
       <div id="sw-boot">SnugWeek</div>
     </div>
+    <script>
+      (function () {
+        try {
+          var name = localStorage.getItem("snugweek-notebook-name");
+          if (name) document.getElementById("sw-boot").textContent = name;
+        } catch (e) {}
+      })();
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

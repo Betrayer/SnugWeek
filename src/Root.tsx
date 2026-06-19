@@ -1,10 +1,11 @@
-import { Center, MantineProvider, Stack, Text } from "@mantine/core";
+import { Box, Center, MantineProvider, Stack, Text } from "@mantine/core";
 import { Notifications, notifications } from "@mantine/notifications";
 import i18next from "i18next";
 import { LazyMotion, domAnimation, m } from "motion/react";
 import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
+import { coverBackground } from "./data/covers.ts";
 import { DEFAULT_THEME_ID, themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
 import { triggerCarryOver } from "./services/carryOver.ts";
@@ -117,10 +118,36 @@ const router = createBrowserRouter([
   },
 ]);
 
+const readBootNotebookName = (): string => {
+  try {
+    return localStorage.getItem("snugweek-notebook-name") ?? "";
+  } catch {
+    return "";
+  }
+};
+
+const readBootCover = (): string | null => {
+  try {
+    return localStorage.getItem("snugweek-cover");
+  } catch {
+    return null;
+  }
+};
+
 const Splash = () => {
   const reduced = useReducedMotionPref();
+  const name = readBootNotebookName();
+  const cover = coverBackground(readBootCover());
+  const label = (
+    <Text ff="var(--sw-font-hand)" fw={600} fz={44} c="var(--sw-ink-2)">
+      {name || "SnugWeek"}
+    </Text>
+  );
   return (
-    <Center mih="100vh" style={{ backgroundColor: "var(--sw-paper)" }}>
+    <Center
+      mih="100vh"
+      style={{ background: cover ?? "var(--sw-paper)" }}
+    >
       <m.div
         initial={reduced ? false : { opacity: 0.72, scale: 0.985 }}
         animate={
@@ -134,9 +161,22 @@ const Splash = () => {
             : { duration: 1.6, ease: "easeInOut", repeat: Infinity }
         }
       >
-        <Text ff="var(--sw-font-hand)" fw={600} fz={44} c="var(--sw-ink-2)">
-          SnugWeek
-        </Text>
+        {cover ? (
+          <Box
+            px={28}
+            py={14}
+            style={{
+              backgroundColor: "var(--sw-card)",
+              border: "1px solid var(--sw-line)",
+              borderRadius: "var(--mantine-radius-lg)",
+              boxShadow: "var(--sw-shadow)",
+            }}
+          >
+            {label}
+          </Box>
+        ) : (
+          label
+        )}
       </m.div>
     </Center>
   );
@@ -207,6 +247,8 @@ export const Root = () => {
   const paperTextureEnabled = useProfileStore(
     (state) => state.paperTextureEnabled,
   );
+  const notebookName = useProfileStore((state) => state.notebookName);
+  const coverStyle = useProfileStore((state) => state.coverStyle);
   const reduceMotion = useSettingsStore((state) => state.reduceMotion);
   const [systemDark, setSystemDark] = useState(
     () =>
@@ -323,6 +365,16 @@ export const Root = () => {
       console.error(error);
     }
   }, [paperTextureEnabled, profileLoaded]);
+
+  useEffect(() => {
+    if (!profileLoaded) return;
+    try {
+      localStorage.setItem("snugweek-notebook-name", notebookName ?? "");
+      localStorage.setItem("snugweek-cover", coverStyle ?? "");
+    } catch (error) {
+      console.error(error);
+    }
+  }, [notebookName, coverStyle, profileLoaded]);
 
   useEffect(() => {
     document.documentElement.dataset.reduceMotion = String(reduceMotion);

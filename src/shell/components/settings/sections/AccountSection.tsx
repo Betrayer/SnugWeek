@@ -15,9 +15,9 @@ export const AccountSection = () => {
         <Text c="var(--sw-ink-2)">{t("settings:accountAnonHint")}</Text>
         <Button
           color="var(--sw-accent)"
-          onClick={() => useAccountStore.getState().openAuthModal("save")}
+          onClick={() => useAccountStore.getState().openAuthModal()}
         >
-          {t("auth:save")}
+          {t("auth:logIn")}
         </Button>
       </Stack>
     );

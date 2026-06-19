@@ -40,7 +40,6 @@ const GoogleMark = () => (
 export const AuthModal = () => {
   const { t } = useTranslation("auth");
   const open = useAccountStore((state) => state.authModalOpen);
-  const mode = useAccountStore((state) => state.authMode);
   const busy = useAccountStore((state) => state.busy);
   const error = useAccountStore((state) => state.error);
   const resetSent = useAccountStore((state) => state.resetSent);
@@ -66,15 +65,11 @@ export const AuthModal = () => {
   const submit = () => {
     setTouched(true);
     if (!emailValid || !passwordValid) return;
-    const store = useAccountStore.getState();
-    if (mode === "save") void store.linkEmail(email.trim(), password);
-    else void store.signInEmail(email.trim(), password);
+    void useAccountStore.getState().linkEmail(email.trim(), password);
   };
 
   const onGoogle = () => {
-    const store = useAccountStore.getState();
-    if (mode === "save") void store.linkGoogle();
-    else void store.signInGoogle();
+    void useAccountStore.getState().linkGoogle();
   };
 
   const forgot = () => {
@@ -83,18 +78,13 @@ export const AuthModal = () => {
     void useAccountStore.getState().sendReset(email.trim());
   };
 
-  const switchMode = () => {
-    setTouched(false);
-    useAccountStore.getState().setAuthMode(mode === "save" ? "signin" : "save");
-  };
-
   return (
     <Modal
       opened={open}
       onClose={close}
       title={
         <Text ff="var(--sw-font-hand)" fz={26} fw={600} c="var(--sw-ink)">
-          {t(mode === "save" ? "title.save" : "title.signin")}
+          {t("title")}
         </Text>
       }
       centered
@@ -105,7 +95,7 @@ export const AuthModal = () => {
     >
       <Stack gap="md">
         <Text fz="sm" c="var(--sw-ink-2)">
-          {t(mode === "save" ? "subtitle.save" : "subtitle.signin")}
+          {t("subtitle")}
         </Text>
 
         <Button
@@ -115,7 +105,7 @@ export const AuthModal = () => {
           loading={busy}
           onClick={onGoogle}
         >
-          {t(mode === "save" ? "google.save" : "google.signin")}
+          {t("google")}
         </Button>
 
         <Divider label={t("or")} labelPosition="center" color="var(--sw-line)" />
@@ -142,30 +132,28 @@ export const AuthModal = () => {
           }}
           error={showPasswordError ? t("validation.password") : null}
           disabled={busy}
-          autoComplete={mode === "save" ? "new-password" : "current-password"}
+          autoComplete="current-password"
           onKeyDown={(event) => {
             if (event.key === "Enter") submit();
           }}
         />
 
-        {mode === "signin" && (
-          <Group justify="space-between">
-            <Anchor
-              component="button"
-              type="button"
-              fz="sm"
-              c="var(--sw-ink-2)"
-              onClick={forgot}
-            >
-              {t("forgotPassword")}
-            </Anchor>
-            {resetSent && (
-              <Text fz="sm" c="var(--sw-accent)">
-                {t("resetSent")}
-              </Text>
-            )}
-          </Group>
-        )}
+        <Group justify="space-between">
+          <Anchor
+            component="button"
+            type="button"
+            fz="sm"
+            c="var(--sw-ink-2)"
+            onClick={forgot}
+          >
+            {t("forgotPassword")}
+          </Anchor>
+          {resetSent && (
+            <Text fz="sm" c="var(--sw-accent)">
+              {t("resetSent")}
+            </Text>
+          )}
+        </Group>
 
         {error && (
           <Text fz="sm" c="var(--sw-danger)">
@@ -173,30 +161,9 @@ export const AuthModal = () => {
           </Text>
         )}
 
-        <Button
-          fullWidth
-          loading={busy}
-          onClick={submit}
-          color="var(--sw-accent)"
-        >
-          {t(mode === "save" ? "submit.save" : "submit.signin")}
+        <Button fullWidth loading={busy} onClick={submit} color="var(--sw-accent)">
+          {t("submit")}
         </Button>
-
-        <Group justify="center" gap={6}>
-          <Text fz="sm" c="var(--sw-ink-3)">
-            {t(mode === "save" ? "switchPrompt.save" : "switchPrompt.signin")}
-          </Text>
-          <Anchor
-            component="button"
-            type="button"
-            fz="sm"
-            fw={600}
-            c="var(--sw-accent)"
-            onClick={switchMode}
-          >
-            {t(mode === "save" ? "switchAction.save" : "switchAction.signin")}
-          </Anchor>
-        </Group>
       </Stack>
     </Modal>
   );

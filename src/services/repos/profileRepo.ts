@@ -50,7 +50,11 @@ export interface ProfileDoc {
   weekend: number[];
   columnMode: "cozy" | "equal";
   statsBackfilledAt: number | null;
+  notebookName: string | null;
+  coverStyle: string | null;
 }
+
+export const NOTEBOOK_NAME_MAX = 40;
 
 export const DEFAULT_MODULE_TOGGLES: ModuleToggles = {
   dayTrackers: true,
@@ -113,6 +117,11 @@ const normalizeProfile = (data: DocumentData): ProfileDoc => ({
   columnMode: data.columnMode === "equal" ? "equal" : "cozy",
   statsBackfilledAt:
     typeof data.statsBackfilledAt === "number" ? data.statsBackfilledAt : null,
+  notebookName:
+    typeof data.notebookName === "string" && data.notebookName.length > 0
+      ? data.notebookName
+      : null,
+  coverStyle: typeof data.coverStyle === "string" ? data.coverStyle : null,
 });
 
 const profileRef = (uid: string) => doc(db, "users", uid);
@@ -247,6 +256,22 @@ export const setColumnMode = (
   notePendingWrite();
   void updateDoc(profileRef(uid), {
     columnMode,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setNotebookName = (uid: string, name: string | null): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    notebookName: name,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setCoverStyle = (uid: string, style: string | null): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    coverStyle: style,
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

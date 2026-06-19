@@ -7,7 +7,9 @@ import {
   ensureProfile,
   setAutoTheme,
   setColumnMode,
+  setCoverStyle,
   setModuleToggle,
+  setNotebookName,
   setPaperTexture,
   setTheme,
   setWeekend,
@@ -25,6 +27,8 @@ interface ProfileState {
   columnMode: "cozy" | "equal";
   moduleToggles: ModuleToggles;
   statsBackfilledAt: number | null;
+  notebookName: string | null;
+  coverStyle: string | null;
   start: (uid: string) => void;
   stop: () => void;
   setThemeId: (themeId: string) => void;
@@ -33,6 +37,8 @@ interface ProfileState {
   setWeekend: (weekend: number[]) => void;
   setColumnMode: (columnMode: "cozy" | "equal") => void;
   setModuleToggle: (key: keyof ModuleToggles, value: boolean) => void;
+  setNotebookName: (name: string | null) => void;
+  setCoverStyle: (style: string | null) => void;
 }
 
 let unsubscribe: (() => void) | null = null;
@@ -49,6 +55,8 @@ export const useProfileStore = create<ProfileState>()(
       columnMode: "cozy",
       moduleToggles: DEFAULT_MODULE_TOGGLES,
       statsBackfilledAt: null,
+      notebookName: null,
+      coverStyle: null,
       start: (uid) => {
         if (activeUid === uid && unsubscribe) return;
         if (unsubscribe) unsubscribe();
@@ -72,6 +80,8 @@ export const useProfileStore = create<ProfileState>()(
             columnMode: profile.columnMode,
             moduleToggles: profile.moduleToggles,
             statsBackfilledAt: profile.statsBackfilledAt,
+            notebookName: profile.notebookName,
+            coverStyle: profile.coverStyle,
           });
         });
       },
@@ -88,6 +98,8 @@ export const useProfileStore = create<ProfileState>()(
           columnMode: "cozy",
           moduleToggles: DEFAULT_MODULE_TOGGLES,
           statsBackfilledAt: null,
+          notebookName: null,
+          coverStyle: null,
         });
       },
       setThemeId: (themeId) => {
@@ -113,6 +125,14 @@ export const useProfileStore = create<ProfileState>()(
       setModuleToggle: (key, value) => {
         if (!activeUid) return;
         setModuleToggle(activeUid, key, value);
+      },
+      setNotebookName: (name) => {
+        if (!activeUid) return;
+        setNotebookName(activeUid, name);
+      },
+      setCoverStyle: (style) => {
+        if (!activeUid) return;
+        setCoverStyle(activeUid, style);
       },
     }),
     { name: "profileStore" },
