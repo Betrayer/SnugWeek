@@ -157,7 +157,7 @@ const main = async (): Promise<void> => {
   const totalKeys = plan.reduce((sum, item) => sum + item.keys.length, 0);
   if (totalKeys === 0) {
     console.log(
-      `Nothing to translate — ${TARGETS.map((t) => t.folder).join(", ")} already match ${SOURCE.folder}.`,
+      `Nothing to translate - ${TARGETS.map((t) => t.folder).join(", ")} already match ${SOURCE.folder}.`,
     );
     return;
   }
@@ -168,7 +168,7 @@ const main = async (): Promise<void> => {
   }
 
   if (dryRun) {
-    console.log(`\nDry run — ${totalKeys} keys would be translated. No API calls, no writes.`);
+    console.log(`\nDry run - ${totalKeys} keys would be translated. No API calls, no writes.`);
     return;
   }
 

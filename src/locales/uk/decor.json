@@ -16,7 +16,7 @@
     "washi": "Стрічки washi",
     "doodle": "Малюнки"
   },
-  "addAsset": "Додати — {{kind}}",
+  "addAsset": "Додати - {{kind}}",
   "itemLabel": "Прикраса: {{kind}}",
   "rotate": "Поворот",
   "scale": "Розмір",

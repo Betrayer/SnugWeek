@@ -16,8 +16,8 @@
   "permBody": "Сповіщення нагадають вчасно, навіть коли вкладку згорнуто.",
   "permAllow": "Дозволити",
   "permNotNow": "Не зараз",
-  "toastDue": "🔔 {{title}} — зараз",
-  "toastSoon": "🔔 {{title}} — за {{min}} хв",
+  "toastDue": "🔔 {{title}} - зараз",
+  "toastSoon": "🔔 {{title}} - за {{min}} хв",
   "dueShort": "зараз",
   "soonShort": "за {{min}} хв",
   "settings": {

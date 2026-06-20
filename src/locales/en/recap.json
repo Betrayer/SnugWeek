@@ -6,8 +6,8 @@
   "streakLabel": "best streak",
   "topHabitLabel": "top habit",
   "close": {
-    "great": "A lovely week — {{done}} done. Take a breath, you earned it.",
-    "steady": "Steady going — {{done}} done. Onward, gently.",
-    "quiet": "A quiet week. Rest counts too — see you next week."
+    "great": "A lovely week - {{done}} done. Take a breath, you earned it.",
+    "steady": "Steady going - {{done}} done. Onward, gently.",
+    "quiet": "A quiet week. Rest counts too - see you next week."
   }
 }

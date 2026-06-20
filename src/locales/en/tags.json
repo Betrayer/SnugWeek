@@ -11,7 +11,7 @@
   "delete": "Delete",
   "reorder": "Reorder tag",
   "menu": "Actions for {{name}}",
-  "empty": "No tags yet — create your first one above.",
+  "empty": "No tags yet - create your first one above.",
   "editTitle": "Edit tag",
   "deleteTitle": "Delete tag?",
   "deleteWarning": "“{{name}}” will be removed from all tasks.",

@@ -1,7 +1,7 @@
 {
   "settingsTab": "Routines",
-  "hint": "Routines pre-fill your day columns. Changes apply to upcoming weeks — tasks already planned stay as they are.",
-  "empty": "No routines yet — create one to plan your weeks ahead.",
+  "hint": "Routines pre-fill your day columns. Changes apply to upcoming weeks - tasks already planned stay as they are.",
+  "empty": "No routines yet - create one to plan your weeks ahead.",
   "create": "New routine",
   "createTitle": "New routine",
   "editTitle": "Edit routine",

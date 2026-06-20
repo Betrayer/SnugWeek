@@ -1,6 +1,6 @@
 # SnugWeek
 
-A cozy weekly planner-journal. A notebook-style week spread with a task column per day, sidebar backlog lists, drag-and-drop planning, day trackers (mood / energy / custom), a habit grid, a week note, page-turn week navigation, a month overview, and monthly / yearly stats — wrapped in several warm color themes. Offline-first with automatic background sync, anonymous-first accounts you can link later. Default UI language is Ukrainian (English included).
+A cozy weekly planner-journal. A notebook-style week spread with a task column per day, sidebar backlog lists, drag-and-drop planning, day trackers (mood / energy / custom), a habit grid, a week note, page-turn week navigation, a month overview, and monthly / yearly stats - wrapped in several warm color themes. Offline-first with automatic background sync, anonymous-first accounts you can link later. Default UI language is Ukrainian (English included).
 
 Installable as a PWA on desktop, Android, and iOS; works fully offline once loaded.
 
@@ -9,7 +9,7 @@ Installable as a PWA on desktop, Android, and iOS; works fully offline once load
 - **Build:** Vite + TypeScript
 - **UI:** React + Mantine (`@mantine/core`, `@mantine/dates`, `@mantine/notifications`, `@mantine/charts`)
 - **State:** Zustand
-- **Backend:** Firebase — Firestore with offline persistence + Auth (anonymous-first)
+- **Backend:** Firebase - Firestore with offline persistence + Auth (anonymous-first)
 - **Drag & drop:** dnd-kit
 - **Animation:** Motion
 - **Routing:** React Router
@@ -28,12 +28,12 @@ Create a Firebase project, enable **Authentication** (Anonymous + the providers 
 
 ## Scripts
 
-- `npm run dev` — start the dev server
-- `npm run build` — type-check and build for production
-- `npm run preview` — preview the production build locally (needed to exercise the service worker)
-- `npm run lint` — run ESLint
-- `npm run format` — format `src` with Prettier
-- `npm run gen:assets` — regenerate app icons, favicon, and the social preview image from the SVG sources in `scripts/assets/`
+- `npm run dev` - start the dev server
+- `npm run build` - type-check and build for production
+- `npm run preview` - preview the production build locally (needed to exercise the service worker)
+- `npm run lint` - run ESLint
+- `npm run format` - format `src` with Prettier
+- `npm run gen:assets` - regenerate app icons, favicon, and the social preview image from the SVG sources in `scripts/assets/`
 
 ## Deployment
 

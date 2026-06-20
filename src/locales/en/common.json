@@ -6,7 +6,7 @@
     "stats": "Stats",
     "settings": "Settings"
   },
-  "offlinePill": "Offline — changes are saved locally",
+  "offlinePill": "Offline - changes are saved locally",
   "sync": {
     "pending": "Unsaved changes",
     "synced": "Synced"
@@ -16,8 +16,8 @@
   "cancel": "Cancel",
   "search": "Search",
   "more": "More",
-  "saveError": "Couldn't save — please try again",
-  "loadError": "Couldn't load your data — try reloading the page",
+  "saveError": "Couldn't save - please try again",
+  "loadError": "Couldn't load your data - try reloading the page",
   "today": "Today",
   "todayWeek": "Go to the current week",
   "carriedToast_one": "Carried over {{count}} unfinished task to this week",
@@ -27,7 +27,7 @@
     "en": "English"
   },
   "update": {
-    "message": "A new version of SnugWeek is ready — update?",
+    "message": "A new version of SnugWeek is ready - update?",
     "action": "Update",
     "dismiss": "Later"
   },
