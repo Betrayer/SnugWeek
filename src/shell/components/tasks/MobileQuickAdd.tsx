@@ -1,6 +1,6 @@
 import { ActionIcon, Button, Group, Stack, TextInput } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { todayIsoDay, weekDays } from "../../../services/time.ts";
@@ -31,8 +31,15 @@ export const MobileQuickAdd = () => {
   const [opened, handlers] = useDisclosure(false);
   const [value, setValue] = useState("");
   const activeMobileDay = useUiStore((state) => state.activeMobileDay);
+  const pendingQuickAdd = useUiStore((state) => state.pendingQuickAdd);
   const weekId = useWeekStore((state) => state.weekId);
   const language = useSettingsStore((state) => state.language);
+
+  useEffect(() => {
+    if (!pendingQuickAdd) return;
+    useUiStore.getState().consumeQuickAdd();
+    handlers.open();
+  }, [pendingQuickAdd, handlers]);
 
   const day = activeMobileDay ?? todayIsoDay();
   const dayLabel = weekId

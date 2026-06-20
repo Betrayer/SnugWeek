@@ -36,6 +36,26 @@ export default defineConfig({
             purpose: "maskable",
           },
         ],
+        shortcuts: [
+          {
+            name: "Додати справу",
+            short_name: "Справа",
+            description: "Швидко додати справу на сьогодні",
+            url: "/?action=add",
+            icons: [
+              { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
+            ],
+          },
+          {
+            name: "Сьогодні",
+            short_name: "Сьогодні",
+            description: "Відкрити поточний тиждень",
+            url: "/?action=today",
+            icons: [
+              { src: "pwa-192x192.png", sizes: "192x192", type: "image/png" },
+            ],
+          },
+        ],
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,svg,ico,webmanifest}"],

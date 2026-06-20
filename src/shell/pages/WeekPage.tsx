@@ -1,6 +1,6 @@
 import { DndContext } from "@dnd-kit/core";
 import { useEffect, useMemo } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import {
   currentWeekId,
   isValidWeekId,
@@ -12,6 +12,7 @@ import { useAuthStore } from "../../state/authStore.ts";
 import { useDecorStore } from "../../state/decorStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useSettingsStore } from "../../state/settingsStore.ts";
+import { useUiStore } from "../../state/uiStore.ts";
 import { useWeekStore } from "../../state/weekStore.ts";
 import { DecorEditBar } from "../components/decor/DecorEditBar.tsx";
 import { DecorationLayer } from "../components/decor/DecorationLayer.tsx";
@@ -47,6 +48,7 @@ export const WeekPage = () => {
     params.weekId && isValidWeekId(params.weekId)
       ? params.weekId
       : currentWeekId();
+  const [searchParams, setSearchParams] = useSearchParams();
   const uid = useAuthStore((state) => state.uid);
   const language = useSettingsStore((state) => state.language);
   const columnMode = useProfileStore((state) => state.columnMode);
@@ -98,6 +100,26 @@ export const WeekPage = () => {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isMobile, weekId]);
+
+  useEffect(() => {
+    const action = searchParams.get("action");
+    if (action !== "add" && action !== "today") return;
+    const next = new URLSearchParams(searchParams);
+    next.delete("action");
+    setSearchParams(next, { replace: true });
+    const today = weekId === currentWeekId() ? todayIsoDay() : 1;
+    useUiStore.getState().setActiveMobileDay(today);
+    if (action !== "add") return;
+    if (isMobile) {
+      useUiStore.getState().requestQuickAdd();
+      return;
+    }
+    window.requestAnimationFrame(() => {
+      const node = document.querySelector(`[data-sw-add-day="${today}"]`);
+      if (node instanceof HTMLButtonElement) node.click();
+      else if (node instanceof HTMLInputElement) node.focus();
+    });
+  }, [searchParams, setSearchParams, isMobile, weekId]);
 
   const days = useMemo(() => weekDays(weekId, language), [weekId, language]);
   const daysOff = week?.daysOff ?? weekend;

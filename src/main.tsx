@@ -6,10 +6,23 @@ import "@mantine/notifications/styles.css";
 import "@mantine/spotlight/styles.css";
 import "./styles/tokens.css";
 import "./styles/global.css";
-import { Root } from "./Root.tsx";
 
-createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <Root />
-  </StrictMode>,
-);
+const root = createRoot(document.getElementById("root")!);
+
+if (window.location.pathname.startsWith("/s/")) {
+  void import("./public/PublicApp.tsx").then(({ PublicApp }) => {
+    root.render(
+      <StrictMode>
+        <PublicApp />
+      </StrictMode>,
+    );
+  });
+} else {
+  void import("./Root.tsx").then(({ Root }) => {
+    root.render(
+      <StrictMode>
+        <Root />
+      </StrictMode>,
+    );
+  });
+}

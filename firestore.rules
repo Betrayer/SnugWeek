@@ -175,6 +175,23 @@ service cloud.firestore {
         && (!('updatedAt' in d) || d.updatedAt is number);
     }
 
+    function validShare(d) {
+      return d.keys().hasOnly([
+          'v', 'ownerUid', 'weekId', 'weekTitle', 'language', 'themeId',
+          'notebookName', 'createdAt', 'include', 'snapshot'
+        ])
+        && d.v is number
+        && d.ownerUid is string
+        && d.weekId is string
+        && d.weekTitle is string
+        && d.language is string
+        && d.themeId is string
+        && (d.notebookName == null || d.notebookName is string)
+        && d.createdAt is number
+        && d.include is map
+        && d.snapshot is map;
+    }
+
     match /users/{uid} {
       allow read, write: if owner(uid);
 
@@ -237,6 +254,15 @@ service cloud.firestore {
       match /migrations/{anonUid} {
         allow read, write: if owner(uid);
       }
+    }
+
+    match /shares/{shareId} {
+      allow get: if true;
+      allow list: if owner(resource.data.ownerUid);
+      allow create: if owner(request.resource.data.ownerUid)
+        && validShare(request.resource.data);
+      allow update: if false;
+      allow delete: if owner(resource.data.ownerUid);
     }
   }
 }
