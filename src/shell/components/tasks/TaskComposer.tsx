@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { TOUR_ANCHORS } from "../../../data/tourSteps.ts";
 import { AddControl } from "../common/AddControl.tsx";
 
 interface TaskComposerProps {
@@ -24,6 +25,7 @@ export const TaskComposer = ({
       maxLength={MAX_TITLE}
       counterFrom={COUNTER_FROM}
       dataDay={dataDay}
+      dataTour={dataDay !== undefined ? TOUR_ANCHORS.addTask : undefined}
       chained
     />
   );

@@ -82,7 +82,7 @@ export const LockSection = () => {
   };
 
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" data-hint="lock">
       <Text fz="sm" c="var(--sw-ink-2)">
         {t("intro")}
       </Text>

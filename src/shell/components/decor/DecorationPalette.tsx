@@ -41,7 +41,7 @@ export const DecorationPalette = () => {
       onClose={() => useDecorStore.getState().closePalette()}
       title={t("paletteTitle")}
     >
-      <Stack gap="md">
+      <Stack gap="md" data-hint="decorations">
         <Select
           label={t("target")}
           data={targetData}

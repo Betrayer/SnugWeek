@@ -6,6 +6,7 @@ import {
   currentWeekId,
   isValidWeekId,
 } from "../../services/time.ts";
+import { TOUR_ANCHORS } from "../../data/tourSteps.ts";
 import { useListsStore } from "../../state/listsStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
 import { useUiStore } from "../../state/uiStore.ts";
@@ -95,14 +96,25 @@ export const HeaderBar = () => {
           <Anchor
             component={Link}
             to={`/month/${currentMonthId()}`}
+            data-tour={TOUR_ANCHORS.navMonth}
             {...navLinkProps}
           >
             {t("common:nav.month")}
           </Anchor>
-          <Anchor component={Link} to="/stats" {...navLinkProps}>
+          <Anchor
+            component={Link}
+            to="/stats"
+            data-tour={TOUR_ANCHORS.navStats}
+            {...navLinkProps}
+          >
             {t("common:nav.stats")}
           </Anchor>
-          <Anchor component={Link} to="/settings" {...navLinkProps}>
+          <Anchor
+            component={Link}
+            to="/settings"
+            data-tour={TOUR_ANCHORS.navSettings}
+            {...navLinkProps}
+          >
             {t("common:nav.settings")}
           </Anchor>
         </Group>
@@ -123,6 +135,7 @@ export const HeaderBar = () => {
             color="var(--sw-ink-2)"
             aria-label={t("tasks:lists.open")}
             onClick={toggleSidebar}
+            data-tour={TOUR_ANCHORS.sidebar}
             style={{ position: "relative" }}
           >
             <ListsIcon />

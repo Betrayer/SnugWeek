@@ -5,6 +5,9 @@ import { FocusTimerHost } from "../components/focus/FocusTimerHost.tsx";
 import { CommandSurface } from "../components/search/CommandSurface.tsx";
 import { MoveTaskMenu } from "../components/tasks/MoveTaskMenu.tsx";
 import { TaskDetail } from "../components/tasks/TaskDetail.tsx";
+import { HintHost } from "../components/tour/HintHost.tsx";
+import { TourHost } from "../components/tour/TourHost.tsx";
+import { TourPrompt } from "../components/tour/TourPrompt.tsx";
 import { useIsMobile } from "../hooks/useIsMobile.ts";
 import { HeaderBar } from "./HeaderBar.tsx";
 import { MobileTabBar } from "./MobileTabBar.tsx";
@@ -45,6 +48,9 @@ export const AppShell = () => {
       <CommandSurface />
       <AccountDialogs />
       <FocusTimerHost />
+      <TourHost />
+      <TourPrompt />
+      <HintHost />
     </MantineAppShell>
   );
 };

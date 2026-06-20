@@ -1,6 +1,7 @@
 import { Box, Text, Textarea, Transition } from "@mantine/core";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { TOUR_ANCHORS } from "../../../data/tourSteps.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 
 interface DayNoteProps {
@@ -28,6 +29,7 @@ export const DayNote = ({ day }: DayNoteProps) => {
 
   return (
     <Box
+      data-tour={TOUR_ANCHORS.weekNote}
       style={{
         position: "relative",
         borderTop: "1px dashed var(--sw-line)",

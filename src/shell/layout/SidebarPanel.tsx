@@ -1,8 +1,10 @@
 import { Box } from "@mantine/core";
+import { TOUR_ANCHORS } from "../../data/tourSteps.ts";
 import { ListsPanel } from "../components/sidebar/ListsPanel.tsx";
 
 export const SidebarPanel = () => (
   <Box
+    data-tour={TOUR_ANCHORS.sidebar}
     style={{
       flex: 1,
       minHeight: 0,

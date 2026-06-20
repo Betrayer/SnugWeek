@@ -8,6 +8,7 @@ import {
   weekDays,
 } from "../../services/time.ts";
 import { coverBackground } from "../../data/covers.ts";
+import { TOUR_ANCHORS } from "../../data/tourSteps.ts";
 import { useAuthStore } from "../../state/authStore.ts";
 import { useDecorStore } from "../../state/decorStore.ts";
 import { useProfileStore } from "../../state/profileStore.ts";
@@ -137,7 +138,7 @@ export const WeekPage = () => {
     >
       <div style={{ flex: 1, minHeight: 0 }}>
         <WeekTransitionHost weekId={weekId}>
-          <div style={surfaceStyle}>
+          <div style={surfaceStyle} data-tour={TOUR_ANCHORS.weekBoard}>
             <MobileDayPager days={days} daysOff={daysOff} weekId={weekId} />
             <DecorationLayer scope="week" />
           </div>
@@ -167,7 +168,7 @@ export const WeekPage = () => {
           style={{ flex: 1, minWidth: 0, minHeight: 0, position: "relative" }}
         >
           <WeekTransitionHost weekId={weekId}>
-            <div style={surfaceStyle}>
+            <div style={surfaceStyle} data-tour={TOUR_ANCHORS.weekBoard}>
               <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
               <DecorationLayer scope="week" />
             </div>

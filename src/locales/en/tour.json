@@ -1,0 +1,72 @@
+{
+  "aria": "Guided tour",
+  "promptTitle": "Show you around?",
+  "promptBody": "It takes about a minute - a gentle walk through your cozy planner.",
+  "promptAccept": "Show me around",
+  "promptDecline": "Maybe later",
+  "back": "Back",
+  "next": "Next",
+  "done": "Done",
+  "skip": "Skip",
+  "steps": {
+    "welcome": {
+      "title": "Welcome to SnugWeek",
+      "body": "Let me show you around in a few small steps. You can skip anytime."
+    },
+    "week": {
+      "title": "Your week",
+      "body": "A column for each day - plan what to do and when, all on one cozy spread."
+    },
+    "add": {
+      "title": "Add a task",
+      "body": "Tap here or just start typing to drop a task into the day."
+    },
+    "card": {
+      "title": "Task details",
+      "body": "Tap a task to open its details: subtasks, tags, time, reminders and attachments."
+    },
+    "lists": {
+      "title": "Lists & backlog",
+      "body": "Your lists and ideas live here. Drag tasks from here into the days of your week."
+    },
+    "trackers": {
+      "title": "Day trackers",
+      "body": "Note your mood and energy each day - a small daily check-in."
+    },
+    "habits": {
+      "title": "Habits",
+      "body": "Tick off your habits in the weekly grid and watch your streaks grow."
+    },
+    "note": {
+      "title": "Notes",
+      "body": "A quiet place to jot a thought for the day or the week."
+    },
+    "month": {
+      "title": "Month overview",
+      "body": "Step back and see the whole month at a glance."
+    },
+    "stats": {
+      "title": "Stats & recap",
+      "body": "Gentle insights and recaps across your months and years."
+    },
+    "settings": {
+      "title": "Themes & settings",
+      "body": "Pick a cozy theme, name your notebook and tune everything to your liking. Have a snug week! 🌿"
+    }
+  },
+  "hints": {
+    "tags": "Add tags to group related tasks together.",
+    "reminders": "Set a time and get a gentle reminder before it.",
+    "attachments": "Attach photos, voice notes, files or links here.",
+    "decorations": "Add stickers, washi tape and doodles to your spread.",
+    "focus": "Start a focus session to work in calm, timed stretches.",
+    "lock": "Lock your journal with a PIN or passkey on this device.",
+    "sharing": "Create a read-only link to share this week with someone."
+  },
+  "hintDismiss": "Got it",
+  "guideTitle": "Guided tour",
+  "guideHint": "Take the tour again, or bring back the one-time feature hints.",
+  "restart": "Replay tour",
+  "restoreHints": "Show hints again",
+  "hintsResetToast": "Feature hints will show again"
+}

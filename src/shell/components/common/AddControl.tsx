@@ -10,6 +10,7 @@ interface AddControlProps {
   chained?: boolean;
   counterFrom?: number;
   dataDay?: number;
+  dataTour?: string;
 }
 
 export const AddControl = ({
@@ -20,6 +21,7 @@ export const AddControl = ({
   chained = false,
   counterFrom,
   dataDay,
+  dataTour,
 }: AddControlProps) => {
   const [active, setActive] = useState(false);
   const [value, setValue] = useState("");
@@ -54,6 +56,7 @@ export const AddControl = ({
         fullWidth
         onClick={() => setActive(true)}
         data-sw-add-day={dataDay}
+        data-tour={dataTour}
         style={{ fontWeight: 600 }}
       >
         + {label}
@@ -71,6 +74,7 @@ export const AddControl = ({
         placeholder={placeholder}
         aria-label={label}
         data-sw-add-day={dataDay}
+        data-tour={dataTour}
         onChange={(event) => setValue(event.currentTarget.value)}
         onKeyDown={handleKey}
         onBlur={() => {

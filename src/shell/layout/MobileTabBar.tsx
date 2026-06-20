@@ -2,6 +2,7 @@ import { UnstyledButton } from "@mantine/core";
 import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation } from "react-router";
+import { TOUR_ANCHORS } from "../../data/tourSteps.ts";
 import { currentMonthId, currentWeekId } from "../../services/time.ts";
 
 const WeekIcon = () => (
@@ -90,24 +91,28 @@ export const MobileTabBar = () => {
       active: pathname.startsWith("/w/"),
       label: t("nav.week"),
       icon: <WeekIcon />,
+      tour: undefined,
     },
     {
       to: `/month/${currentMonthId()}`,
       active: pathname.startsWith("/month/"),
       label: t("nav.month"),
       icon: <MonthIcon />,
+      tour: TOUR_ANCHORS.navMonth,
     },
     {
       to: "/stats",
       active: pathname.startsWith("/stats"),
       label: t("nav.stats"),
       icon: <StatsIcon />,
+      tour: TOUR_ANCHORS.navStats,
     },
     {
       to: "/settings",
       active: pathname.startsWith("/settings"),
       label: t("nav.settings"),
       icon: <SettingsIcon />,
+      tour: TOUR_ANCHORS.navSettings,
     },
   ];
   return (
@@ -117,6 +122,7 @@ export const MobileTabBar = () => {
           key={tab.to}
           component={Link}
           to={tab.to}
+          data-tour={tab.tour}
           style={tabStyle(tab.active)}
         >
           {tab.icon}
