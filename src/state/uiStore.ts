@@ -18,6 +18,7 @@ interface UiState {
   activeMobileDay: number | null;
   openTaskId: string | null;
   pendingOpenTask: PendingOpenTask | null;
+  pendingQuickAdd: boolean;
   tagFilter: string[];
   openSidebar: () => void;
   closeSidebar: () => void;
@@ -30,6 +31,8 @@ interface UiState {
   closeTask: () => void;
   requestOpenTask: (taskId: string, weekId: string) => void;
   clearPendingOpenTask: () => void;
+  requestQuickAdd: () => void;
+  consumeQuickAdd: () => void;
   toggleTagFilter: (tagId: string) => void;
   clearTagFilter: () => void;
   removeFromTagFilter: (tagId: string) => void;
@@ -44,6 +47,7 @@ export const useUiStore = create<UiState>()(
       activeMobileDay: null,
       openTaskId: null,
       pendingOpenTask: null,
+      pendingQuickAdd: false,
       tagFilter: [],
       openSidebar: () => set({ sidebarOpened: true }),
       closeSidebar: () => set({ sidebarOpened: false }),
@@ -62,6 +66,8 @@ export const useUiStore = create<UiState>()(
       requestOpenTask: (taskId, weekId) =>
         set({ pendingOpenTask: { taskId, weekId } }),
       clearPendingOpenTask: () => set({ pendingOpenTask: null }),
+      requestQuickAdd: () => set({ pendingQuickAdd: true }),
+      consumeQuickAdd: () => set({ pendingQuickAdd: false }),
       toggleTagFilter: (tagId) =>
         set((state) => ({
           tagFilter: state.tagFilter.includes(tagId)

@@ -1,0 +1,10 @@
+{
+  "menuAction": "Print week",
+  "title": "Print week",
+  "hint": "Choose what to include. Tasks are always printed.",
+  "includeNotes": "Notes",
+  "includeTrackers": "Trackers",
+  "includeHabits": "Habits",
+  "printAction": "Print",
+  "cancel": "Cancel"
+}

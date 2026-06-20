@@ -78,7 +78,11 @@ const router = createBrowserRouter([
   {
     element: <AppShell />,
     children: [
-      { path: "/", loader: () => redirect(`/w/${currentWeekId()}`) },
+      {
+        path: "/",
+        loader: ({ request }) =>
+          redirect(`/w/${currentWeekId()}${new URL(request.url).search}`),
+      },
       {
         path: "/w/:weekId",
         loader: ({ params }) =>
@@ -115,7 +119,11 @@ const router = createBrowserRouter([
           </Suspense>
         ),
       },
-      { path: "*", loader: () => redirect(`/w/${currentWeekId()}`) },
+      {
+        path: "*",
+        loader: ({ request }) =>
+          redirect(`/w/${currentWeekId()}${new URL(request.url).search}`),
+      },
     ],
   },
 ]);

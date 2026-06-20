@@ -1,0 +1,10 @@
+{
+  "menuAction": "Друк тижня",
+  "title": "Друк тижня",
+  "hint": "Оберіть, що додати. Справи друкуються завжди.",
+  "includeNotes": "Нотатки",
+  "includeTrackers": "Трекери",
+  "includeHabits": "Звички",
+  "printAction": "Друкувати",
+  "cancel": "Скасувати"
+}

@@ -1,0 +1,41 @@
+{
+  "menuLabel": "Share or print this week",
+  "menuAction": "Share week",
+  "title": "Share week",
+  "intro": "Create a read-only link to show this week to a friend. It is a snapshot - later changes won't appear, and you can revoke it anytime.",
+  "tasksAlways": "Tasks are always included.",
+  "includeNotes": "Notes",
+  "includeTrackers": "Trackers",
+  "includeHabits": "Habits",
+  "includeDecorations": "Decorations",
+  "privacyNote": "Attachments are never shared. Notes are included only if you turn them on.",
+  "createAction": "Create link",
+  "linkReady": "Your link is ready",
+  "copy": "Copy",
+  "copied": "Copied",
+  "shareVia": "Share",
+  "shareTitle": "My week in SnugWeek",
+  "activeLinks": "Active links",
+  "createdOn": "Created {{date}}",
+  "manageLink": "Link actions",
+  "revoke": "Revoke",
+  "revokeConfirmTitle": "Revoke this link?",
+  "revokeConfirmBody": "The link will stop working. This can't be undone.",
+  "createdToast": "Link created",
+  "revokedToast": "Link revoked",
+  "copiedToast": "Copied to clipboard",
+  "section": {
+    "habits": "Habits"
+  },
+  "readOnlyBadge": "Read-only",
+  "madeWith": "Made with SnugWeek",
+  "openApp": "Open SnugWeek",
+  "missing": {
+    "title": "This link no longer works",
+    "body": "The owner may have revoked it, or it never existed."
+  },
+  "error": {
+    "title": "Couldn't load this page",
+    "body": "Check your connection and try again."
+  }
+}
