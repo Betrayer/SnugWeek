@@ -20,6 +20,7 @@ interface PersistedSettings {
   lockEnabled: boolean;
   lockMethod: LockMethod | null;
   lockAfterMin: number;
+  tourSeen: boolean;
 }
 
 interface SettingsState extends PersistedSettings {
@@ -33,6 +34,7 @@ interface SettingsState extends PersistedSettings {
   setLockEnabled: (lockEnabled: boolean) => void;
   setLockMethod: (lockMethod: LockMethod | null) => void;
   setLockAfterMin: (lockAfterMin: number) => void;
+  setTourSeen: (tourSeen: boolean) => void;
 }
 
 const defaultSettings: PersistedSettings = {
@@ -46,6 +48,7 @@ const defaultSettings: PersistedSettings = {
   lockEnabled: false,
   lockMethod: null,
   lockAfterMin: 5,
+  tourSeen: false,
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -68,10 +71,11 @@ export const useSettingsStore = create<SettingsState>()(
         setLockEnabled: (lockEnabled) => set({ lockEnabled }),
         setLockMethod: (lockMethod) => set({ lockMethod }),
         setLockAfterMin: (lockAfterMin) => set({ lockAfterMin }),
+        setTourSeen: (tourSeen) => set({ tourSeen }),
       }),
       {
         name: "snugweek-settings",
-        version: 5,
+        version: 6,
         partialize: (state): PersistedSettings => ({
           language: state.language,
           reduceMotion: state.reduceMotion,
@@ -83,8 +87,9 @@ export const useSettingsStore = create<SettingsState>()(
           lockEnabled: state.lockEnabled,
           lockMethod: state.lockMethod,
           lockAfterMin: state.lockAfterMin,
+          tourSeen: state.tourSeen,
         }),
-        migrate: (persisted) => {
+        migrate: (persisted, version) => {
           const stored = persisted as Partial<PersistedSettings> | undefined;
           return {
             ...defaultSettings,
@@ -93,6 +98,7 @@ export const useSettingsStore = create<SettingsState>()(
             language: isSupportedLang(stored?.language)
               ? stored.language
               : DEFAULT_LANGUAGE,
+            tourSeen: version < 6 ? true : (stored?.tourSeen ?? false),
           };
         },
       },

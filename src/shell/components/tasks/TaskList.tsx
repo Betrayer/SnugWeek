@@ -5,6 +5,7 @@ import {
 } from "@dnd-kit/sortable";
 import { AnimatePresence, m } from "motion/react";
 import type { CSSProperties, ReactNode } from "react";
+import { TOUR_ANCHORS } from "../../../data/tourSteps.ts";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 import { useUiStore } from "../../../state/uiStore.ts";
@@ -63,9 +64,10 @@ export const TaskList = ({
     >
       <div ref={setNodeRef} style={zoneStyle(isOver, fill)}>
         <AnimatePresence initial={false}>
-          {display.map((task) => (
+          {display.map((task, taskIndex) => (
             <m.div
               key={task.id}
+              data-tour={taskIndex === 0 ? TOUR_ANCHORS.taskCard : undefined}
               style={{ overflow: "hidden" }}
               initial={reduced ? false : { opacity: 0, height: 0, scale: 0.96 }}
               animate={{ opacity: 1, height: "auto", scale: 1 }}

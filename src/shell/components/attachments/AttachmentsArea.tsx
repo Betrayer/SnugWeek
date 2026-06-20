@@ -130,6 +130,7 @@ const AttachmentsPanel = ({
   return (
     <Stack
       gap="sm"
+      data-hint="attachments"
       onDragOver={(event) => {
         if (!online) return;
         event.preventDefault();

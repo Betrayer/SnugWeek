@@ -101,7 +101,7 @@ export const FocusTimer = () => {
   const isRunning = status === "running" || status === "paused";
 
   return (
-    <Stack gap="lg">
+    <Stack gap="lg" data-hint="focus">
       {taskId !== null ? (
         <Group gap="xs" wrap="nowrap" justify="center">
           <Text fz="sm" c="var(--sw-ink-2)" lineClamp={1}>

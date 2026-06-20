@@ -120,6 +120,7 @@ export const TaskTagPicker = ({ task }: { task: Task }) => {
         <UnstyledButton
           onClick={handlers.open}
           aria-haspopup="dialog"
+          data-hint="tags"
           style={{
             height: 26,
             paddingInline: 10,

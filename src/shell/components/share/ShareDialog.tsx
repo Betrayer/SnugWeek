@@ -104,7 +104,7 @@ export const ShareDialog = ({ opened, onClose }: ShareDialogProps) => {
 
   return (
     <ResponsiveDialog opened={opened} onClose={close} title={t("title")}>
-      <Stack gap="lg">
+      <Stack gap="lg" data-hint="sharing">
         <Stack gap="xs">
           <Text fz="sm" c="var(--sw-ink-2)">
             {t("intro")}

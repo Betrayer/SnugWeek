@@ -78,7 +78,7 @@ export const TaskTimeReminder = ({ task }: { task: Task }) => {
   };
 
   return (
-    <Stack gap="sm">
+    <Stack gap="sm" data-hint="reminders">
       <Group align="flex-end" gap="sm" wrap="nowrap">
         <TimeInput
           label={t("timeLabel")}

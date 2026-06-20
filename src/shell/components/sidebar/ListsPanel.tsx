@@ -1,6 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { Box, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
+import { TOUR_ANCHORS } from "../../../data/tourSteps.ts";
 import { useListsStore } from "../../../state/listsStore.ts";
 import { useProfileStore } from "../../../state/profileStore.ts";
 import { HabitGrid } from "../habits/HabitGrid.tsx";
@@ -83,7 +84,7 @@ export const ListsPanel = () => {
       </div>
 
       {showHabits && (
-        <Stack gap="xs">
+        <Stack gap="xs" data-tour={TOUR_ANCHORS.habits}>
           <SectionTitle>{t("habits:title")}</SectionTitle>
           <HabitGrid />
         </Stack>
