@@ -39,6 +39,7 @@ import { useWeekStore } from "./state/weekStore.ts";
 import { unlockSound } from "./services/sound/soundService.ts";
 import { AuthErrorScreen } from "./shell/components/account/AuthErrorScreen.tsx";
 import { ErrorBoundary } from "./shell/components/common/ErrorBoundary.tsx";
+import { LockGate } from "./shell/components/lock/LockGate.tsx";
 import { SkeletonBlock } from "./shell/components/common/SkeletonBlock.tsx";
 import { useReducedMotionPref } from "./shell/hooks/useReducedMotionPref.ts";
 import { UpdatePrompt } from "./shell/components/pwa/UpdatePrompt.tsx";
@@ -407,7 +408,9 @@ export const Root = () => {
           {authStatus === "error" ? (
             <AuthErrorScreen onRetry={retry} />
           ) : ready ? (
-            <RouterProvider router={router} />
+            <LockGate>
+              <RouterProvider router={router} />
+            </LockGate>
           ) : (
             <Splash />
           )}

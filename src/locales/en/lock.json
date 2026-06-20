@@ -1,0 +1,36 @@
+{
+  "intro": "An optional lock keeps the journal private on this device. It's a gentle deterrent - your data isn't encrypted by the PIN, so anyone who can already reach this device's storage could still read it.",
+  "enable": "Turn on lock",
+  "method": {
+    "pin": "PIN",
+    "passkey": "Passkey / biometrics"
+  },
+  "passkeyFailed": "Couldn't use the passkey. Try again.",
+  "statusEnabled": "Lock is on · {{method}}",
+  "autoLock": {
+    "label": "Lock after inactivity"
+  },
+  "minutesShort": "min",
+  "lockNow": "Lock now",
+  "changePin": "Change PIN",
+  "reRegister": "Re-register passkey",
+  "turnOff": "Turn off lock",
+  "savedToast": "Lock saved",
+  "setup": {
+    "title": "Set a PIN",
+    "create": "Enter a 4-digit PIN",
+    "confirm": "Repeat the PIN",
+    "mismatch": "PINs didn't match - try again"
+  },
+  "pinPrompt": "Enter your PIN",
+  "passkeyPrompt": "Unlock with your device passkey or biometrics.",
+  "unlockPasskey": "Unlock",
+  "forgot": "Forgot PIN?",
+  "cantUnlock": "Can't unlock?",
+  "recovery": {
+    "body": "You can reset the lock without losing anything. This disables the lock; your journal data stays exactly as it is.",
+    "cloudNote": "Signed into an account? Your data is safely in the cloud - you can always sign out and back in.",
+    "reset": "Reset lock",
+    "back": "Back"
+  }
+}

@@ -1,7 +1,7 @@
 {
   "prevMonth": "Previous month",
   "nextMonth": "Next month",
-  "empty": "a calm month — nothing planned yet",
+  "empty": "a calm month - nothing planned yet",
   "weekRow": "Week {{week}}",
   "dayCell": "{{date}}: {{open}} open, {{done}} done"
 }

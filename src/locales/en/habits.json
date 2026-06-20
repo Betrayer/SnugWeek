@@ -10,7 +10,7 @@
   "restore": "Restore",
   "save": "Save",
   "cancel": "Cancel",
-  "empty": "No habits yet — add one to start a streak",
+  "empty": "No habits yet - add one to start a streak",
   "menu": "Options for {{name}}",
   "settings": {
     "title": "Habits",

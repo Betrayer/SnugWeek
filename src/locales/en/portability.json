@@ -1,0 +1,33 @@
+{
+  "exportTitle": "Export",
+  "exportHint": "Download a full JSON copy of your journal - profile, tasks, lists, weeks, trackers, habits, tags, routines and stats. Attachments are included as links and details, not files.",
+  "exportAction": "Export data",
+  "exportDoneToast": "Export ready",
+  "importTitle": "Import",
+  "importHint": "Restore from a previous export. Importing merges by id, so re-importing the same file changes nothing.",
+  "importAction": "Choose a file…",
+  "confirmBody": "This will merge the following into your journal:",
+  "confirmAction": "Import",
+  "cancel": "Cancel",
+  "running": "Importing…",
+  "doneBody": "Import complete.",
+  "importDoneToast": "Import complete",
+  "close": "Close",
+  "entity": {
+    "tasks": "Tasks",
+    "subtasks": "Subtasks",
+    "lists": "Lists",
+    "weeks": "Weeks",
+    "trackers": "Trackers",
+    "habits": "Habits",
+    "tags": "Tags",
+    "routines": "Routines",
+    "stats": "Stats",
+    "attachments": "Attachments"
+  },
+  "error": {
+    "invalidFile": "This file isn't a valid SnugWeek export.",
+    "wrongVersion": "This export was made by a different version and can't be imported.",
+    "writeFailed": "Something went wrong while importing. Re-importing the same file will fix any half-finished writes."
+  }
+}

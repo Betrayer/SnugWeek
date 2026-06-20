@@ -16,8 +16,8 @@
   "permBody": "Notifications will nudge you on time, even when this tab is in the background.",
   "permAllow": "Allow",
   "permNotNow": "Not now",
-  "toastDue": "🔔 {{title}} — now",
-  "toastSoon": "🔔 {{title}} — in {{min}} min",
+  "toastDue": "🔔 {{title}} - now",
+  "toastSoon": "🔔 {{title}} - in {{min}} min",
   "dueShort": "now",
   "soonShort": "in {{min}} min",
   "settings": {

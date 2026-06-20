@@ -22,7 +22,7 @@ export const ErrorFallback = () => {
       <Text fz="sm" c="var(--sw-ink-3)" maw={360}>
         {t("error.message", {
           defaultValue:
-            "Сторінку трохи зім'яло. Перезавантажте — і повертаймося до затишку.",
+            "Сторінку трохи зім'яло. Перезавантажте - і повертаймося до затишку.",
         })}
       </Text>
       <Button

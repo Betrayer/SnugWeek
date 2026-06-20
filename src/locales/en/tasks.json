@@ -15,7 +15,7 @@
   "emptyWeek": "a quiet week ahead",
   "carriedFrom": "from {{week}}",
   "charLimit": "{{n}}/500",
-  "listDeletedToast": "List deleted — its tasks moved to Tasks",
+  "listDeletedToast": "List deleted - its tasks moved to Tasks",
   "count": {
     "open_one": "{{count}} open",
     "open_other": "{{count}} open"
@@ -33,7 +33,7 @@
     "deleteConfirm": "Delete",
     "cancel": "Cancel",
     "open": "Lists",
-    "noLists": "No lists yet — create one",
+    "noLists": "No lists yet - create one",
     "moveToDay": "Move to a day…",
     "moveToDayTitle": "Move “{{name}}” to a day",
     "backToSidebar": "Back to sidebar",

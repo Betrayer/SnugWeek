@@ -7,6 +7,8 @@ import { setTimeLocale } from "../services/time.ts";
 
 type TransitionSetting = "fold" | "none" | "curl";
 
+type LockMethod = "pin" | "passkey";
+
 interface PersistedSettings {
   language: SupportedLang;
   reduceMotion: boolean;
@@ -15,6 +17,9 @@ interface PersistedSettings {
   soundVolume: number;
   remindersEnabled: boolean;
   defaultReminderOffsetMin: number;
+  lockEnabled: boolean;
+  lockMethod: LockMethod | null;
+  lockAfterMin: number;
 }
 
 interface SettingsState extends PersistedSettings {
@@ -25,6 +30,9 @@ interface SettingsState extends PersistedSettings {
   setSoundVolume: (soundVolume: number) => void;
   setRemindersEnabled: (remindersEnabled: boolean) => void;
   setDefaultReminderOffsetMin: (defaultReminderOffsetMin: number) => void;
+  setLockEnabled: (lockEnabled: boolean) => void;
+  setLockMethod: (lockMethod: LockMethod | null) => void;
+  setLockAfterMin: (lockAfterMin: number) => void;
 }
 
 const defaultSettings: PersistedSettings = {
@@ -35,6 +43,9 @@ const defaultSettings: PersistedSettings = {
   soundVolume: 0.6,
   remindersEnabled: true,
   defaultReminderOffsetMin: 10,
+  lockEnabled: false,
+  lockMethod: null,
+  lockAfterMin: 5,
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -54,10 +65,13 @@ export const useSettingsStore = create<SettingsState>()(
         setRemindersEnabled: (remindersEnabled) => set({ remindersEnabled }),
         setDefaultReminderOffsetMin: (defaultReminderOffsetMin) =>
           set({ defaultReminderOffsetMin }),
+        setLockEnabled: (lockEnabled) => set({ lockEnabled }),
+        setLockMethod: (lockMethod) => set({ lockMethod }),
+        setLockAfterMin: (lockAfterMin) => set({ lockAfterMin }),
       }),
       {
         name: "snugweek-settings",
-        version: 4,
+        version: 5,
         partialize: (state): PersistedSettings => ({
           language: state.language,
           reduceMotion: state.reduceMotion,
@@ -66,6 +80,9 @@ export const useSettingsStore = create<SettingsState>()(
           soundVolume: state.soundVolume,
           remindersEnabled: state.remindersEnabled,
           defaultReminderOffsetMin: state.defaultReminderOffsetMin,
+          lockEnabled: state.lockEnabled,
+          lockMethod: state.lockMethod,
+          lockAfterMin: state.lockAfterMin,
         }),
         migrate: (persisted) => {
           const stored = persisted as Partial<PersistedSettings> | undefined;

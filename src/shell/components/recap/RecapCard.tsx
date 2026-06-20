@@ -140,7 +140,7 @@ export const RecapCard = ({ recap, onDismiss, elevated }: RecapCardProps) => {
                     <Text ta="center" fw={700} fz="lg" c="var(--sw-ink)">
                       {recap.total > 0
                         ? `${Math.round(recap.completionPct * 100)}%`
-                        : "—"}
+                        : "-"}
                     </Text>
                     <Text ta="center" fz="xs" c="var(--sw-ink-3)">
                       {recap.completed}/{recap.total}

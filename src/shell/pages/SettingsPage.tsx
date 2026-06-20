@@ -5,6 +5,8 @@ import type { SettingsSection } from "../components/settings/SettingsLayout.tsx"
 import { AboutSection } from "../components/settings/sections/AboutSection.tsx";
 import { AccountSection } from "../components/settings/sections/AccountSection.tsx";
 import { AppearanceSection } from "../components/settings/sections/AppearanceSection.tsx";
+import { DataSection } from "../components/settings/sections/DataSection.tsx";
+import { LockSection } from "../components/settings/sections/LockSection.tsx";
 import { ModulesSection } from "../components/settings/sections/ModulesSection.tsx";
 import { RemindersSection } from "../components/settings/sections/RemindersSection.tsx";
 import { RoutinesSection } from "../components/settings/sections/RoutinesSection.tsx";
@@ -35,6 +37,8 @@ export const SettingsPage = () => {
       label: t("remindersTitle"),
       content: <RemindersSection />,
     },
+    { value: "lock", label: t("lock"), content: <LockSection /> },
+    { value: "data", label: t("data"), content: <DataSection /> },
     { value: "account", label: t("account"), content: <AccountSection /> },
     { value: "about", label: t("about"), content: <AboutSection /> },
   ];

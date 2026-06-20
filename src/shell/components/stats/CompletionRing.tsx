@@ -18,7 +18,7 @@ export const CompletionRing = ({ completed, created }: CompletionRingProps) => {
         sections={[{ value: ratio * 100, color: "var(--sw-done)" }]}
         label={
           <Text ta="center" fw={700} fz="xl" c="var(--sw-ink)">
-            {created > 0 ? `${Math.round(ratio * 100)}%` : "—"}
+            {created > 0 ? `${Math.round(ratio * 100)}%` : "-"}
           </Text>
         }
       />
