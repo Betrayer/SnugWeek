@@ -14,6 +14,11 @@ import {
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
 import {
+  cheerDayClear,
+  cheerHabit,
+  cheerTask,
+} from "../services/cheer/cheerService.ts";
+import {
   playCheck,
   playPop,
   playSwoosh,
@@ -38,6 +43,7 @@ import type {
 import { DEFAULT_DECORATION_ANIMATION } from "../data/decorations.tsx";
 import type { DecorationKind } from "../data/decorations.tsx";
 import { useDecorStore } from "./decorStore.ts";
+import { useHabitsStore } from "./habitsStore.ts";
 import { useProfileStore } from "./profileStore.ts";
 import { useUiStore } from "./uiStore.ts";
 
@@ -222,6 +228,15 @@ export const useWeekStore = create<WeekState>()(
         setStatus(activeUid, task.id, "done", now);
         bumpCompletion(activeUid, isoDateKeyOf(now), 1);
         playCheck();
+        const dayTasks =
+          task.day === null ? [] : (get().tasksByDay[task.day] ?? []);
+        const cleared =
+          dayTasks.length >= 2 &&
+          dayTasks.every(
+            (entry) => entry.id === task.id || entry.status === "done",
+          );
+        if (cleared) cheerDayClear();
+        else cheerTask();
       },
       renameTask: (taskId, title) => {
         const trimmed = title.trim();
@@ -263,6 +278,10 @@ export const useWeekStore = create<WeekState>()(
         const current =
           get().week?.habitChecks[habitId]?.[String(day)] === true;
         setHabitCheck(activeUid, activeWeekId, habitId, day, !current);
+        if (!current) {
+          cheerHabit();
+          useHabitsStore.getState().cheerHabitStreak(habitId);
+        }
       },
       toggleDayOff: (day) => {
         if (!activeUid || !activeWeekId) return;

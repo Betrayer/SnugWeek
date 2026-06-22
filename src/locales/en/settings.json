@@ -63,6 +63,13 @@
   "transitionCurl": "Page curl",
   "transitionNone": "No animation",
   "reduceMotion": "Reduce motion",
+  "cheers": "Cheers",
+  "cheersHint": "Gentle well-done moments when you check off habits and tasks.",
+  "cheerLevels": {
+    "off": "Off",
+    "subtle": "Subtle",
+    "full": "Full"
+  },
   "sound": "Sound",
   "soundEnable": "Sound effects",
   "soundVolume": "Volume",

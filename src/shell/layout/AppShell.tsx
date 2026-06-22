@@ -1,6 +1,7 @@
 import { AppShell as MantineAppShell } from "@mantine/core";
 import { Outlet } from "react-router";
 import { AccountDialogs } from "../components/account/AccountDialogs.tsx";
+import { CheerOverlay } from "../components/cheer/CheerOverlay.tsx";
 import { FocusTimerHost } from "../components/focus/FocusTimerHost.tsx";
 import { CommandSurface } from "../components/search/CommandSurface.tsx";
 import { MoveTaskMenu } from "../components/tasks/MoveTaskMenu.tsx";
@@ -51,6 +52,7 @@ export const AppShell = () => {
       <TourHost />
       <TourPrompt />
       <HintHost />
+      <CheerOverlay />
     </MantineAppShell>
   );
 };

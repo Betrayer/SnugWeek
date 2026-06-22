@@ -19,6 +19,7 @@ const NOTE_SEPARATOR = "\n···\n";
 const BATCH_LIMIT = 450;
 const BUILTIN_LISTS = ["tasks", "ideas"];
 const DEFAULT_TRACKERS = ["mood", "energy"];
+const DEFAULT_HABIT_DAYS = [1, 2, 3, 4, 5, 6, 7];
 
 const isBuiltinList = (id: string): boolean => BUILTIN_LISTS.includes(id);
 const isDefaultTracker = (id: string): boolean => DEFAULT_TRACKERS.includes(id);
@@ -134,6 +135,7 @@ interface HabitData {
   order: number;
   archived: boolean;
   createdAt: number;
+  days: number[];
 }
 
 interface DecorationData {
@@ -256,6 +258,7 @@ const toHabitData = (data: DocumentData): HabitData => ({
   order: asNumber(data.order, 0),
   archived: asBool(data.archived, false),
   createdAt: asNumber(data.createdAt, 0),
+  days: asNumberArrayOrNull(data.days) ?? DEFAULT_HABIT_DAYS,
 });
 
 const toTrackerValues = (
@@ -614,6 +617,7 @@ export const runMerge = async (
         order: data.order,
         archived: data.archived,
         createdAt: data.createdAt,
+        days: data.days,
       }),
     );
   }

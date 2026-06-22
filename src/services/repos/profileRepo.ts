@@ -20,7 +20,7 @@ import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
 import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
-import { createHabit } from "./habitsRepo.ts";
+import { ALL_WEEK_DAYS, createHabit } from "./habitsRepo.ts";
 import { createTask } from "./tasksRepo.ts";
 import { MOOD_TRACKER_ID, seedDefaultTrackers } from "./trackersRepo.ts";
 import { setTrackerValue } from "./weeksRepo.ts";
@@ -189,7 +189,9 @@ const seedFirstRun = async (
       tagIds: [],
     });
   });
-  createHabit(uid, content.habit, content.habitIcon, ORDER_SPACING);
+  createHabit(uid, content.habit, content.habitIcon, ORDER_SPACING, [
+    ...ALL_WEEK_DAYS,
+  ]);
   setTrackerValue(
     uid,
     currentWeekId(),

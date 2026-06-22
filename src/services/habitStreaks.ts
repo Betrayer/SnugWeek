@@ -3,11 +3,16 @@ import { addWeeks, currentWeekId, todayIsoDay } from "./time.ts";
 
 const LOOKBACK_WEEKS = 8;
 
+export interface HabitSchedule {
+  id: string;
+  days: number[];
+}
+
 export const computeHabitStreaks = async (
   uid: string,
-  habitIds: string[],
+  habits: HabitSchedule[],
 ): Promise<Record<string, number>> => {
-  if (habitIds.length === 0) return {};
+  if (habits.length === 0) return {};
   const weeks: string[] = [];
   let cursor = currentWeekId();
   for (let index = 0; index < LOOKBACK_WEEKS; index += 1) {
@@ -18,21 +23,25 @@ export const computeHabitStreaks = async (
   const known = new Set(weeks);
 
   const result: Record<string, number> = {};
-  for (const habitId of habitIds) {
+  for (const habit of habits) {
+    const scheduled = new Set(habit.days);
     let streak = 0;
     let weekId = currentWeekId();
     let day = todayIsoDay();
     while (known.has(weekId)) {
-      const checked = docs[weekId]?.habitChecks[habitId]?.[String(day)] === true;
-      if (!checked) break;
-      streak += 1;
+      if (scheduled.has(day)) {
+        const checked =
+          docs[weekId]?.habitChecks[habit.id]?.[String(day)] === true;
+        if (!checked) break;
+        streak += 1;
+      }
       day -= 1;
       if (day < 1) {
         day = 7;
         weekId = addWeeks(weekId, -1);
       }
     }
-    result[habitId] = streak;
+    result[habit.id] = streak;
   }
   return result;
 };

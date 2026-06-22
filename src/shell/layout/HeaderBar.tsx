@@ -66,6 +66,7 @@ export const HeaderBar = () => {
             style={{
               minWidth: 0,
               maxWidth: 220,
+              paddingInlineEnd: 6,
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",

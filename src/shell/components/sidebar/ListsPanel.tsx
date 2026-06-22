@@ -1,10 +1,7 @@
 import { useDroppable } from "@dnd-kit/core";
 import { Box, Stack, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
-import { TOUR_ANCHORS } from "../../../data/tourSteps.ts";
 import { useListsStore } from "../../../state/listsStore.ts";
-import { useProfileStore } from "../../../state/profileStore.ts";
-import { HabitGrid } from "../habits/HabitGrid.tsx";
 import { LIST_SIDEBAR_DROP_ID } from "../tasks/dndIds.ts";
 import { AddListControl } from "./AddListControl.tsx";
 import { ListSection } from "./ListSection.tsx";
@@ -38,9 +35,8 @@ const SectionTitle = ({ children }: { children: string }) => (
 );
 
 export const ListsPanel = () => {
-  const { t } = useTranslation(["tasks", "habits"]);
+  const { t } = useTranslation("tasks");
   const lists = useListsStore((state) => state.lists);
-  const showHabits = useProfileStore((state) => state.moduleToggles.habits);
   const { setNodeRef, isOver } = useDroppable({ id: LIST_SIDEBAR_DROP_ID });
   const tasksList = lists.find((list) => list.id === TASKS_LIST_ID);
   const ideasList = lists.find((list) => list.id === IDEAS_LIST_ID);
@@ -82,13 +78,6 @@ export const ListsPanel = () => {
           <AddListControl />
         </Stack>
       </div>
-
-      {showHabits && (
-        <Stack gap="xs" data-tour={TOUR_ANCHORS.habits}>
-          <SectionTitle>{t("habits:title")}</SectionTitle>
-          <HabitGrid />
-        </Stack>
-      )}
     </Stack>
   );
 };

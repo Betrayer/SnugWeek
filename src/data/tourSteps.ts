@@ -26,7 +26,7 @@ export const TOUR_STEPS: TourStep[] = [
   { id: "card", anchor: TOUR_ANCHORS.taskCard, placement: "right" },
   { id: "lists", anchor: TOUR_ANCHORS.sidebar, placement: "left" },
   { id: "trackers", anchor: TOUR_ANCHORS.trackers, placement: "bottom" },
-  { id: "habits", anchor: TOUR_ANCHORS.habits, placement: "left" },
+  { id: "habits", anchor: TOUR_ANCHORS.habits, placement: "bottom" },
   { id: "note", anchor: TOUR_ANCHORS.weekNote, placement: "top" },
   { id: "month", anchor: TOUR_ANCHORS.navMonth, placement: "bottom" },
   { id: "stats", anchor: TOUR_ANCHORS.navStats, placement: "bottom" },

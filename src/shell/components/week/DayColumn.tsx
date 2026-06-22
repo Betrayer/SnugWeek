@@ -11,6 +11,7 @@ import { AttachmentsArea } from "../attachments/AttachmentsArea.tsx";
 import { MemoriesStrip } from "../attachments/MemoriesStrip.tsx";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { DecorationLayer } from "../decor/DecorationLayer.tsx";
+import { DayHabitRow } from "../habits/DayHabitRow.tsx";
 import { DayNote } from "../note/DayNote.tsx";
 import { ListSection } from "../sidebar/ListSection.tsx";
 import { dayColumnId, dayContainerId } from "../tasks/dndIds.ts";
@@ -34,6 +35,7 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
   const showTrackers = useProfileStore(
     (state) => state.moduleToggles.dayTrackers,
   );
+  const showHabits = useProfileStore((state) => state.moduleToggles.habits);
   const showNote = useProfileStore((state) => state.moduleToggles.weekNote);
   const [memoriesOpen, setMemoriesOpen] = useState(false);
   const [composerActive, setComposerActive] = useState(false);
@@ -72,6 +74,7 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
         onAddMemory={weekId ? () => setMemoriesOpen(true) : undefined}
       />
       {showTrackers && <DayTrackerRow day={day.iso} />}
+      {showHabits && <DayHabitRow day={day.iso} dayLabel={day.label} />}
       {weekId && (
         <MemoriesStrip
           weekId={weekId}

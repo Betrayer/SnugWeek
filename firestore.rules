@@ -160,12 +160,13 @@ service cloud.firestore {
     }
 
     function validHabit(d) {
-      return d.keys().hasOnly(['name', 'icon', 'order', 'archived', 'createdAt'])
+      return d.keys().hasOnly(['name', 'icon', 'order', 'archived', 'createdAt', 'days'])
         && d.name is string
         && (d.icon == null || d.icon is string)
         && d.order is number
         && d.archived is bool
-        && d.createdAt is number;
+        && d.createdAt is number
+        && (!('days' in d) || d.days is list);
     }
 
     function validStats(d) {

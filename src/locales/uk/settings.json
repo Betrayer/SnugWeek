@@ -63,6 +63,13 @@
   "transitionCurl": "Загинання",
   "transitionNone": "Без анімації",
   "reduceMotion": "Зменшити анімацію",
+  "cheers": "Похвала",
+  "cheersHint": "Делікатні моменти похвали, коли ви виконуєте звички та справи.",
+  "cheerLevels": {
+    "off": "Вимк.",
+    "subtle": "Делікатно",
+    "full": "Повна"
+  },
   "sound": "Звук",
   "soundEnable": "Звукові ефекти",
   "soundVolume": "Гучність",

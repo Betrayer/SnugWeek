@@ -53,7 +53,7 @@ export const YearStatsView = () => {
     return longestStreaks(
       heatmap,
       byId,
-      activeHabits.map((habit) => habit.id),
+      activeHabits.map((habit) => ({ id: habit.id, days: habit.days })),
     );
   }, [yearValue, yearWeeks, activeHabits, language]);
 

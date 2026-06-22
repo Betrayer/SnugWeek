@@ -28,6 +28,8 @@ export const AppearanceSection = () => {
   const setTransition = useSettingsStore((state) => state.setTransition);
   const reduceMotion = useSettingsStore((state) => state.reduceMotion);
   const setReduceMotion = useSettingsStore((state) => state.setReduceMotion);
+  const cheerLevel = useSettingsStore((state) => state.cheerLevel);
+  const setCheerLevel = useSettingsStore((state) => state.setCheerLevel);
   const themeId = useProfileStore((state) => state.themeId);
   const autoTheme = useProfileStore((state) => state.autoTheme);
   const setAutoTheme = useProfileStore((state) => state.setAutoTheme);
@@ -156,6 +158,24 @@ export const AppearanceSection = () => {
           onChange={(event) => setReduceMotion(event.currentTarget.checked)}
           label={t("settings:reduceMotion")}
         />
+      </Stack>
+      <Stack gap="xs">
+        <Text fw={600}>{t("settings:cheers")}</Text>
+        <SegmentedControl
+          value={cheerLevel}
+          onChange={(value) => {
+            if (value === "off" || value === "subtle" || value === "full")
+              setCheerLevel(value);
+          }}
+          data={[
+            { value: "off", label: t("settings:cheerLevels.off") },
+            { value: "subtle", label: t("settings:cheerLevels.subtle") },
+            { value: "full", label: t("settings:cheerLevels.full") },
+          ]}
+        />
+        <Text fz="sm" c="var(--sw-ink-3)">
+          {t("settings:cheersHint")}
+        </Text>
       </Stack>
       <Stack gap="xs">
         <Text fw={600}>{t("settings:paperTexture")}</Text>
