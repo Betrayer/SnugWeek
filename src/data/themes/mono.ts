@@ -6,6 +6,7 @@ export const mono: ThemeSpec = {
   vars: {
     "--sw-paper": "#f6f6f5",
     "--sw-paper-2": "#ececeb",
+    "--sw-off-day": "#e4e3e0",
     "--sw-card": "#ffffff",
     "--sw-ink": "#2b2b2b",
     "--sw-ink-2": "#5c5c5c",

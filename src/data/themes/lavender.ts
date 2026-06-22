@@ -6,6 +6,7 @@ export const lavender: ThemeSpec = {
   vars: {
     "--sw-paper": "#f6f4fb",
     "--sw-paper-2": "#ece7f5",
+    "--sw-off-day": "#e6ddf3",
     "--sw-card": "#fefcff",
     "--sw-ink": "#423a52",
     "--sw-ink-2": "#6f6582",

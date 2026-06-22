@@ -1,17 +1,19 @@
-import { Box, Group, Text } from "@mantine/core";
+import { ActionIcon, Box, Group, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { WeekDay } from "../../../services/time.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { ActionMenu } from "../common/ActionMenu.tsx";
+import { PlusGlyph } from "../icons/glyphs.tsx";
 
 interface DayHeaderProps {
   day: WeekDay;
   isOff: boolean;
+  onAdd: () => void;
   onAddMemory?: () => void;
 }
 
-export const DayHeader = ({ day, isOff, onAddMemory }: DayHeaderProps) => {
-  const { t } = useTranslation(["week", "attachments"]);
+export const DayHeader = ({ day, isOff, onAdd, onAddMemory }: DayHeaderProps) => {
+  const { t } = useTranslation(["week", "tasks", "attachments"]);
   const color = isOff
     ? "var(--sw-ink-3)"
     : day.isToday
@@ -49,7 +51,16 @@ export const DayHeader = ({ day, isOff, onAddMemory }: DayHeaderProps) => {
           {day.label}
         </Text>
       </Box>
-      <Group gap={4} wrap="nowrap">
+      <Group gap={2} wrap="nowrap">
+        <ActionIcon
+          variant="subtle"
+          color="var(--sw-ink-3)"
+          size="sm"
+          aria-label={t("tasks:quickAdd.title", { day: day.label })}
+          onClick={onAdd}
+        >
+          <PlusGlyph size={16} />
+        </ActionIcon>
         <ActionMenu
           label={t("dayOptions", { day: day.label })}
           iconSize={16}

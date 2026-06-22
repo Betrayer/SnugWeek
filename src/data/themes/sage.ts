@@ -6,6 +6,7 @@ export const sage: ThemeSpec = {
   vars: {
     "--sw-paper": "#f3f6f1",
     "--sw-paper-2": "#e6ede1",
+    "--sw-off-day": "#dde9d4",
     "--sw-card": "#fcfdfb",
     "--sw-ink": "#3b443a",
     "--sw-ink-2": "#667064",

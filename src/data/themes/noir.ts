@@ -20,6 +20,7 @@ export const noir: ThemeSpec = {
   vars: {
     "--sw-paper": "#161616",
     "--sw-paper-2": "#1e1e1e",
+    "--sw-off-day": "#2e2c2a",
     "--sw-card": "#242424",
     "--sw-ink": "#ededed",
     "--sw-ink-2": "#b0b0b0",

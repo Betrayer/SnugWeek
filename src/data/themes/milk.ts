@@ -6,6 +6,7 @@ export const milk: ThemeSpec = {
   vars: {
     "--sw-paper": "#faf6ef",
     "--sw-paper-2": "#f3ecdf",
+    "--sw-off-day": "#f3e6cb",
     "--sw-card": "#fffdf8",
     "--sw-ink": "#4a3f35",
     "--sw-ink-2": "#7d6e5f",

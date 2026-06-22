@@ -11,7 +11,10 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { THEME_ORDER, themeById } from "../../../../data/themes/registry.ts";
 import { SUPPORTED_LANGS, isSupportedLang } from "../../../../i18n/languages.ts";
-import { NOTEBOOK_NAME_MAX } from "../../../../services/repos/profileRepo.ts";
+import {
+  NOTEBOOK_NAME_MAX,
+  TASK_DONE_STYLES,
+} from "../../../../services/repos/profileRepo.ts";
 import { useProfileStore } from "../../../../state/profileStore.ts";
 import { useSettingsStore } from "../../../../state/settingsStore.ts";
 import { CoverPicker } from "../CoverPicker.tsx";
@@ -34,6 +37,8 @@ export const AppearanceSection = () => {
   const setPaperTextureEnabled = useProfileStore(
     (state) => state.setPaperTextureEnabled,
   );
+  const taskDoneStyle = useProfileStore((state) => state.taskDoneStyle);
+  const setTaskDoneStyle = useProfileStore((state) => state.setTaskDoneStyle);
   const notebookName = useProfileStore((state) => state.notebookName);
   const [nameDraft, setNameDraft] = useState(notebookName ?? "");
   const [seenName, setSeenName] = useState(notebookName);
@@ -160,6 +165,22 @@ export const AppearanceSection = () => {
             setPaperTextureEnabled(event.currentTarget.checked)
           }
           label={t("settings:paperTextureHint")}
+        />
+      </Stack>
+      <Stack gap="xs">
+        <Text fw={600}>{t("settings:taskDoneStyle")}</Text>
+        <Select
+          data={TASK_DONE_STYLES.map((style) => ({
+            value: style,
+            label: t(`settings:taskDoneStyles.${style}`),
+          }))}
+          value={taskDoneStyle}
+          onChange={(value) => {
+            const next = TASK_DONE_STYLES.find((style) => style === value);
+            if (next) setTaskDoneStyle(next);
+          }}
+          allowDeselect={false}
+          comboboxProps={{ withinPortal: true }}
         />
       </Stack>
     </Stack>

@@ -20,6 +20,7 @@ export const midnight: ThemeSpec = {
   vars: {
     "--sw-paper": "#1c1f27",
     "--sw-paper-2": "#242833",
+    "--sw-off-day": "#343029",
     "--sw-card": "#2a2f3b",
     "--sw-ink": "#e8e2d6",
     "--sw-ink-2": "#b3ab9c",

@@ -327,6 +327,7 @@ html {
     display: block !important;
     --sw-paper: #ffffff;
     --sw-paper-2: #f2f2f0;
+    --sw-off-day: #ececea;
     --sw-card: #ffffff;
     --sw-ink: #1a1a1a;
     --sw-ink-2: #333333;

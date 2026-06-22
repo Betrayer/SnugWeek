@@ -6,6 +6,7 @@ export const cocoa: ThemeSpec = {
   vars: {
     "--sw-paper": "#f6efe6",
     "--sw-paper-2": "#ebdfcf",
+    "--sw-off-day": "#e7d4b8",
     "--sw-card": "#fdf8f1",
     "--sw-ink": "#3f3329",
     "--sw-ink-2": "#6f5d4c",

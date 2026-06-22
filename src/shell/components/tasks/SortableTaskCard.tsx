@@ -8,12 +8,16 @@ interface SortableTaskCardProps {
   task: Task;
   onToggle: () => void;
   onOpen: () => void;
+  onRename?: (title: string) => void;
+  onDelete?: () => void;
 }
 
 export const SortableTaskCard = ({
   task,
   onToggle,
   onOpen,
+  onRename,
+  onDelete,
 }: SortableTaskCardProps) => {
   const {
     attributes,
@@ -47,7 +51,13 @@ export const SortableTaskCard = ({
           }}
         />
       )}
-      <TaskCard task={task} onToggle={onToggle} onOpen={onOpen} />
+      <TaskCard
+        task={task}
+        onToggle={onToggle}
+        onOpen={onOpen}
+        onRename={onRename}
+        onDelete={onDelete}
+      />
     </div>
   );
 };

@@ -3,6 +3,7 @@ import { devtools } from "zustand/middleware";
 import { DEFAULT_THEME_ID } from "../data/themes/registry.ts";
 import {
   DEFAULT_MODULE_TOGGLES,
+  DEFAULT_TASK_DONE_STYLE,
   DEFAULT_WEEKEND,
   ensureProfile,
   setAutoTheme,
@@ -11,11 +12,16 @@ import {
   setModuleToggle,
   setNotebookName,
   setPaperTexture,
+  setTaskDoneStyle,
   setTheme,
   setWeekend,
   subscribeProfile,
 } from "../services/repos/profileRepo.ts";
-import type { AutoTheme, ModuleToggles } from "../services/repos/profileRepo.ts";
+import type {
+  AutoTheme,
+  ModuleToggles,
+  TaskDoneStyle,
+} from "../services/repos/profileRepo.ts";
 import { useSettingsStore } from "./settingsStore.ts";
 
 interface ProfileState {
@@ -25,6 +31,7 @@ interface ProfileState {
   paperTextureEnabled: boolean;
   weekend: number[];
   columnMode: "cozy" | "equal";
+  taskDoneStyle: TaskDoneStyle;
   moduleToggles: ModuleToggles;
   statsBackfilledAt: number | null;
   notebookName: string | null;
@@ -36,6 +43,7 @@ interface ProfileState {
   setPaperTextureEnabled: (enabled: boolean) => void;
   setWeekend: (weekend: number[]) => void;
   setColumnMode: (columnMode: "cozy" | "equal") => void;
+  setTaskDoneStyle: (taskDoneStyle: TaskDoneStyle) => void;
   setModuleToggle: (key: keyof ModuleToggles, value: boolean) => void;
   setNotebookName: (name: string | null) => void;
   setCoverStyle: (style: string | null) => void;
@@ -53,6 +61,7 @@ export const useProfileStore = create<ProfileState>()(
       paperTextureEnabled: false,
       weekend: DEFAULT_WEEKEND,
       columnMode: "cozy",
+      taskDoneStyle: DEFAULT_TASK_DONE_STYLE,
       moduleToggles: DEFAULT_MODULE_TOGGLES,
       statsBackfilledAt: null,
       notebookName: null,
@@ -78,6 +87,7 @@ export const useProfileStore = create<ProfileState>()(
             paperTextureEnabled: profile.paperTextureEnabled,
             weekend: profile.weekend,
             columnMode: profile.columnMode,
+            taskDoneStyle: profile.taskDoneStyle,
             moduleToggles: profile.moduleToggles,
             statsBackfilledAt: profile.statsBackfilledAt,
             notebookName: profile.notebookName,
@@ -96,6 +106,7 @@ export const useProfileStore = create<ProfileState>()(
           paperTextureEnabled: false,
           weekend: DEFAULT_WEEKEND,
           columnMode: "cozy",
+          taskDoneStyle: DEFAULT_TASK_DONE_STYLE,
           moduleToggles: DEFAULT_MODULE_TOGGLES,
           statsBackfilledAt: null,
           notebookName: null,
@@ -121,6 +132,10 @@ export const useProfileStore = create<ProfileState>()(
       setColumnMode: (columnMode) => {
         if (!activeUid) return;
         setColumnMode(activeUid, columnMode);
+      },
+      setTaskDoneStyle: (taskDoneStyle) => {
+        if (!activeUid) return;
+        setTaskDoneStyle(activeUid, taskDoneStyle);
       },
       setModuleToggle: (key, value) => {
         if (!activeUid) return;

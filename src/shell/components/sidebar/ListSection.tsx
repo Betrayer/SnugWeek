@@ -225,6 +225,12 @@ export const ListSection = ({
                   emptyLabel={emptyLabel}
                   emptyIcon={<LeafDoodle />}
                   onToggle={(task) => useListsStore.getState().toggleDone(task)}
+                  onRename={(task, title) =>
+                    useListsStore.getState().renameTask(task.id, title)
+                  }
+                  onDelete={(task) =>
+                    useListsStore.getState().removeTask(task.id)
+                  }
                 />
                 <TaskComposer
                   onAdd={(title) =>
@@ -249,6 +255,10 @@ export const ListSection = ({
             emptyLabel={emptyLabel}
             emptyIcon={<LeafDoodle />}
             onToggle={(task) => useListsStore.getState().toggleDone(task)}
+            onRename={(task, title) =>
+              useListsStore.getState().renameTask(task.id, title)
+            }
+            onDelete={(task) => useListsStore.getState().removeTask(task.id)}
           />
           <TaskComposer
             onAdd={(title) => useListsStore.getState().addTask(list.id, title)}

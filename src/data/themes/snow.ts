@@ -6,6 +6,7 @@ export const snow: ThemeSpec = {
   vars: {
     "--sw-paper": "#fcfcfb",
     "--sw-paper-2": "#f3f3f0",
+    "--sw-off-day": "#efe6e2",
     "--sw-card": "#ffffff",
     "--sw-ink": "#33312e",
     "--sw-ink-2": "#6b6862",

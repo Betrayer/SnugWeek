@@ -91,6 +91,22 @@ export const PlusGlyph = ({ size = 16, strokeWidth }: GlyphProps) => (
   </svg>
 );
 
+export const PencilGlyph = ({ size = 16, strokeWidth }: GlyphProps) => (
+  <svg {...stroke(size, strokeWidth)}>
+    <path d="M14 5.5 18.5 10 8 20.5l-4.5.5.5-4.5z" />
+    <path d="m13 6.5 4.5 4.5" />
+  </svg>
+);
+
+export const ExpandGlyph = ({ size = 16, strokeWidth }: GlyphProps) => (
+  <svg {...stroke(size, strokeWidth)}>
+    <path d="M9 4H5a1 1 0 0 0-1 1v4" />
+    <path d="M15 4h4a1 1 0 0 1 1 1v4" />
+    <path d="M20 15v4a1 1 0 0 1-1 1h-4" />
+    <path d="M4 15v4a1 1 0 0 0 1 1h4" />
+  </svg>
+);
+
 export const DownloadGlyph = ({ size = 16, strokeWidth }: GlyphProps) => (
   <svg {...stroke(size, strokeWidth)}>
     <path d="M12 4v11m0 0 4-4m-4 4-4-4" />

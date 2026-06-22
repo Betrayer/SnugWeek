@@ -1,49 +1,37 @@
-import { Box, Text, UnstyledButton } from "@mantine/core";
+import { ActionIcon, Box, Button, Group, Text, TextInput, UnstyledButton } from "@mantine/core";
 import { useHover } from "@mantine/hooks";
-import { m, useAnimationControls } from "motion/react";
-import { useEffect, useRef } from "react";
+import { useState } from "react";
 import type { CSSProperties, KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { tagSwatchValue } from "../../../data/tagColors.ts";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
+import type { TaskDoneStyle } from "../../../services/repos/profileRepo.ts";
 import { formatTime } from "../../../services/time.ts";
+import { useProfileStore } from "../../../state/profileStore.ts";
 import { useTagsStore } from "../../../state/tagsStore.ts";
-import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
-import { PaperclipGlyph } from "../icons/glyphs.tsx";
+import { useIsMobile } from "../../hooks/useIsMobile.ts";
+import { inputFieldStyles } from "../../styles/fieldStyles.ts";
+import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
+import {
+  ExpandGlyph,
+  PaperclipGlyph,
+  PencilGlyph,
+  TrashGlyph,
+} from "../icons/glyphs.tsx";
 import { Pill } from "../common/Pill.tsx";
 import { CardSubtasks } from "./CardSubtasks.tsx";
 
 const MAX_CARD_TAGS = 4;
+const MAX_TITLE = 500;
 
 interface TaskCardProps {
   task: Task;
   onToggle: () => void;
   onOpen?: () => void;
+  onRename?: (title: string) => void;
+  onDelete?: () => void;
   isOverlay?: boolean;
 }
-
-const CheckMark = ({ done }: { done: boolean }) => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-accent-ink)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path
-      d="M5 12l4.5 4.5L19 7"
-      pathLength={1}
-      style={{
-        strokeDasharray: 1,
-        strokeDashoffset: done ? 0 : 1,
-        transition: "stroke-dashoffset 220ms ease",
-      }}
-    />
-  </svg>
-);
 
 const cardStyle = (
   done: boolean,
@@ -66,6 +54,23 @@ const cardStyle = (
   transform: hovered && !isOverlay ? "translateY(-1px)" : "none",
   transition: "background-color 120ms ease, transform 120ms ease",
 });
+
+const doneTextStyle = (style: TaskDoneStyle, done: boolean): CSSProperties => {
+  if (!done) {
+    return {
+      color: "var(--sw-ink)",
+      textDecorationLine: "none",
+      textDecorationColor: "transparent",
+    };
+  }
+  const strike = style === "strike" || style === "dimStrike";
+  const dim = style === "dim" || style === "dimStrike";
+  return {
+    color: dim ? "var(--sw-ink-3)" : "var(--sw-ink)",
+    textDecorationLine: strike ? "line-through" : "none",
+    textDecorationColor: strike ? "var(--sw-ink-3)" : "transparent",
+  };
+};
 
 const RepeatGlyph = () => (
   <svg
@@ -175,115 +180,265 @@ const CardTags = ({ task }: { task: Task }) => {
   );
 };
 
+const TaskBody = ({ task, style }: { task: Task; style: CSSProperties }) => {
+  const { t } = useTranslation(["tasks", "routines"]);
+  const done = task.status === "done";
+  return (
+    <>
+      {task.time !== null && (
+        <Pill tone={done ? "muted" : "accent-2"}>
+          {formatTime(task.time)}
+          {task.remindOffsetMin !== null && <BellGlyph />}
+        </Pill>
+      )}
+      <Text
+        component="span"
+        style={{
+          width: "100%",
+          lineHeight: 1.4,
+          wordBreak: "break-word",
+          transition:
+            "color 150ms ease, text-decoration-color 250ms ease",
+          ...style,
+        }}
+      >
+        {task.title}
+      </Text>
+      <CardTags task={task} />
+      {task.carriedFrom && (
+        <Pill tone="accent-2">
+          {t("tasks:carriedFrom", { week: task.carriedFrom.slice(5) })}
+        </Pill>
+      )}
+      {task.routineId !== null && (
+        <Pill tone="muted" icon={<RepeatGlyph />}>
+          {t("routines:repeats")}
+        </Pill>
+      )}
+      {task.attachmentCount > 0 && (
+        <Pill tone="muted" icon={<PaperclipGlyph size={9} />}>
+          {task.attachmentCount}
+        </Pill>
+      )}
+    </>
+  );
+};
+
 export const TaskCard = ({
   task,
   onToggle,
   onOpen,
+  onRename,
+  onDelete,
   isOverlay = false,
 }: TaskCardProps) => {
-  const { t } = useTranslation(["tasks", "routines"]);
+  const { t } = useTranslation(["tasks", "common"]);
   const { hovered, ref } = useHover();
-  const reduced = useReducedMotionPref();
-  const checkControls = useAnimationControls();
-  const wasDone = useRef(task.status === "done");
+  const isMobile = useIsMobile();
+  const taskDoneStyle = useProfileStore((state) => state.taskDoneStyle);
+  const [editing, setEditing] = useState(false);
+  const [editValue, setEditValue] = useState(task.title);
+  const [confirming, setConfirming] = useState(false);
+  const [focused, setFocused] = useState(false);
   const done = task.status === "done";
 
-  useEffect(() => {
-    if (done && !wasDone.current && !reduced) {
-      void checkControls.start({
-        scale: [1, 1.28, 1],
-        transition: { duration: 0.3, ease: "easeOut" },
-      });
-    }
-    wasDone.current = done;
-  }, [done, reduced, checkControls]);
+  const titleStyle = doneTextStyle(taskDoneStyle, done);
+  const contentOpacity = done && taskDoneStyle === "fade" ? 0.5 : 1;
 
-  return (
-    <Box ref={isOverlay ? undefined : ref} style={cardStyle(done, hovered, isOverlay)}>
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
-        <m.div
-          animate={checkControls}
-          style={{ marginTop: 2, flex: "0 0 auto", display: "inline-flex" }}
-        >
-          <UnstyledButton
-            onClick={onToggle}
-            onPointerDown={(event) => event.stopPropagation()}
-            onKeyDown={(event) => event.stopPropagation()}
-            aria-label={done ? t("reopen") : t("done")}
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: "50%",
-              border: `2px solid ${done ? "var(--sw-done)" : "var(--sw-line)"}`,
-              backgroundColor: done ? "var(--sw-done)" : "transparent",
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              transition: "background-color 150ms ease, border-color 150ms ease",
-            }}
-          >
-            <CheckMark done={done} />
-          </UnstyledButton>
-        </m.div>
-        <UnstyledButton
-          onClick={isOverlay ? undefined : onOpen}
-          onKeyDown={(event: KeyboardEvent<HTMLElement>) =>
-            event.stopPropagation()
-          }
-          component={isOverlay ? "div" : "button"}
-          aria-label={isOverlay ? undefined : t("openDetail", { title: task.title })}
+  if (isOverlay) {
+    return (
+      <Box style={cardStyle(done, false, true)}>
+        <div
           style={{
-            flex: 1,
-            minWidth: 0,
             display: "flex",
             flexDirection: "column",
             alignItems: "flex-start",
             gap: 3,
-            cursor: isOverlay ? "default" : "pointer",
-            textAlign: "start",
+            opacity: contentOpacity,
           }}
         >
-          {task.time !== null && (
-            <Pill tone={done ? "muted" : "accent-2"}>
-              {formatTime(task.time)}
-              {task.remindOffsetMin !== null && <BellGlyph />}
-            </Pill>
+          <TaskBody task={task} style={titleStyle} />
+        </div>
+      </Box>
+    );
+  }
+
+  const startEdit = () => {
+    setEditValue(task.title);
+    setEditing(true);
+  };
+
+  const commitEdit = () => {
+    const trimmed = editValue.trim();
+    if (trimmed.length > 0 && trimmed !== task.title) onRename?.(trimmed);
+    setEditing(false);
+  };
+
+  const cancelEdit = () => {
+    setEditValue(task.title);
+    setEditing(false);
+  };
+
+  const editKey = (event: KeyboardEvent<HTMLInputElement>) => {
+    event.stopPropagation();
+    if (event.nativeEvent.isComposing) return;
+    if (event.key === "Enter") {
+      event.preventDefault();
+      commitEdit();
+    } else if (event.key === "Escape") {
+      event.preventDefault();
+      cancelEdit();
+    }
+  };
+
+  const stopForControl = {
+    onPointerDown: (event: { stopPropagation: () => void }) =>
+      event.stopPropagation(),
+  };
+
+  const showActions = !editing && (isMobile || hovered || focused);
+
+  const actions = (
+    <Group
+      gap={2}
+      wrap="nowrap"
+      style={
+        isMobile
+          ? { flex: "0 0 auto", marginTop: 1 }
+          : {
+              position: "absolute",
+              top: 4,
+              insetInlineEnd: 4,
+              backgroundColor: "var(--sw-card)",
+              borderRadius: "var(--mantine-radius-sm)",
+              boxShadow: "var(--sw-shadow)",
+              opacity: showActions ? 1 : 0,
+              pointerEvents: showActions ? "auto" : "none",
+              transition: "opacity 120ms ease",
+            }
+      }
+    >
+      {onRename && (
+        <ActionIcon
+          variant="subtle"
+          color="var(--sw-ink-3)"
+          size={isMobile ? 24 : 26}
+          aria-label={t("tasks:edit")}
+          onClick={startEdit}
+          {...stopForControl}
+        >
+          <PencilGlyph size={14} />
+        </ActionIcon>
+      )}
+      {onOpen && (
+        <ActionIcon
+          variant="subtle"
+          color="var(--sw-ink-3)"
+          size={isMobile ? 24 : 26}
+          aria-label={t("tasks:openDetail", { title: task.title })}
+          onClick={onOpen}
+          {...stopForControl}
+        >
+          <ExpandGlyph size={14} />
+        </ActionIcon>
+      )}
+      {onDelete && (
+        <ActionIcon
+          variant="subtle"
+          color="var(--sw-danger)"
+          size={isMobile ? 24 : 26}
+          aria-label={t("tasks:delete")}
+          onClick={() => setConfirming(true)}
+          {...stopForControl}
+        >
+          <TrashGlyph size={14} />
+        </ActionIcon>
+      )}
+    </Group>
+  );
+
+  return (
+    <Box
+      ref={ref}
+      onFocus={() => setFocused(true)}
+      onBlur={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+          setFocused(false);
+      }}
+      style={{ ...cardStyle(done, hovered, false), position: "relative" }}
+    >
+      <div style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {editing ? (
+            <TextInput
+              autoFocus
+              size="xs"
+              value={editValue}
+              maxLength={MAX_TITLE}
+              aria-label={t("tasks:edit")}
+              onChange={(event) => setEditValue(event.currentTarget.value)}
+              onKeyDown={editKey}
+              onBlur={commitEdit}
+              styles={inputFieldStyles}
+              {...stopForControl}
+            />
+          ) : (
+            <UnstyledButton
+              onClick={onToggle}
+              onKeyDown={(event: KeyboardEvent<HTMLElement>) =>
+                event.stopPropagation()
+              }
+              aria-pressed={done}
+              aria-label={task.title}
+              style={{
+                width: "100%",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "flex-start",
+                gap: 3,
+                cursor: "pointer",
+                textAlign: "start",
+                opacity: contentOpacity,
+                transition: "opacity 200ms ease",
+              }}
+            >
+              <TaskBody task={task} style={titleStyle} />
+            </UnstyledButton>
           )}
-          <Text
-            component="span"
-            style={{
-              width: "100%",
-              color: done ? "var(--sw-ink-3)" : "var(--sw-ink)",
-              textDecorationLine: "line-through",
-              textDecorationColor: done ? "var(--sw-ink-3)" : "transparent",
-              lineHeight: 1.4,
-              wordBreak: "break-word",
-              transition: "color 150ms ease, text-decoration-color 250ms ease",
-            }}
-          >
-            {task.title}
-          </Text>
-          <CardTags task={task} />
-          {task.carriedFrom && (
-            <Pill tone="accent-2">
-              {t("tasks:carriedFrom", { week: task.carriedFrom.slice(5) })}
-            </Pill>
-          )}
-          {task.routineId !== null && (
-            <Pill tone="muted" icon={<RepeatGlyph />}>
-              {t("routines:repeats")}
-            </Pill>
-          )}
-          {task.attachmentCount > 0 && (
-            <Pill tone="muted" icon={<PaperclipGlyph size={9} />}>
-              {task.attachmentCount}
-            </Pill>
-          )}
-        </UnstyledButton>
+        </div>
+        {isMobile && showActions && actions}
       </div>
-      {!isOverlay && task.subtaskCount > 0 && (
+      {!isMobile && actions}
+      {task.subtaskCount > 0 && (
         <CardSubtasks taskId={task.id} onOpen={onOpen} />
       )}
+      <ResponsiveDialog
+        opened={confirming}
+        onClose={() => setConfirming(false)}
+        title={t("tasks:detail.deleteTitle")}
+      >
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <Text c="var(--sw-ink-2)">{t("tasks:detail.deleteWarning")}</Text>
+          <Group justify="flex-end">
+            <Button
+              variant="subtle"
+              c="var(--sw-ink-2)"
+              onClick={() => setConfirming(false)}
+            >
+              {t("common:cancel")}
+            </Button>
+            <Button
+              color="var(--sw-danger)"
+              onClick={() => {
+                setConfirming(false);
+                onDelete?.();
+              }}
+            >
+              {t("tasks:delete")}
+            </Button>
+          </Group>
+        </div>
+      </ResponsiveDialog>
     </Box>
   );
 };

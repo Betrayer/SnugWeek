@@ -6,6 +6,7 @@ export const peach: ThemeSpec = {
   vars: {
     "--sw-paper": "#fdf3ee",
     "--sw-paper-2": "#f9e6db",
+    "--sw-off-day": "#f8ddc9",
     "--sw-card": "#fffcf9",
     "--sw-ink": "#4e3d34",
     "--sw-ink-2": "#79604f",

@@ -1,6 +1,7 @@
 :root {
   --sw-paper: #faf6ef;
   --sw-paper-2: #f3ecdf;
+  --sw-off-day: #f3e6cb;
   --sw-card: #fffdf8;
   --sw-ink: #4a3f35;
   --sw-ink-2: #7d6e5f;
@@ -23,6 +24,7 @@
 [data-snug-theme="milk"] {
   --sw-paper: #faf6ef;
   --sw-paper-2: #f3ecdf;
+  --sw-off-day: #f3e6cb;
   --sw-card: #fffdf8;
   --sw-ink: #4a3f35;
   --sw-ink-2: #7d6e5f;
@@ -44,6 +46,7 @@
 [data-snug-theme="lavender"] {
   --sw-paper: #f6f4fb;
   --sw-paper-2: #ece7f5;
+  --sw-off-day: #e6ddf3;
   --sw-card: #fefcff;
   --sw-ink: #423a52;
   --sw-ink-2: #6f6582;
@@ -65,6 +68,7 @@
 [data-snug-theme="sage"] {
   --sw-paper: #f3f6f1;
   --sw-paper-2: #e6ede1;
+  --sw-off-day: #dde9d4;
   --sw-card: #fcfdfb;
   --sw-ink: #3b443a;
   --sw-ink-2: #667064;
@@ -86,6 +90,7 @@
 [data-snug-theme="peach"] {
   --sw-paper: #fdf3ee;
   --sw-paper-2: #f9e6db;
+  --sw-off-day: #f8ddc9;
   --sw-card: #fffcf9;
   --sw-ink: #4e3d34;
   --sw-ink-2: #79604f;
@@ -107,6 +112,7 @@
 [data-snug-theme="midnight"] {
   --sw-paper: #1c1f27;
   --sw-paper-2: #242833;
+  --sw-off-day: #343029;
   --sw-card: #2a2f3b;
   --sw-ink: #e8e2d6;
   --sw-ink-2: #b3ab9c;
@@ -128,6 +134,7 @@
 [data-snug-theme="snow"] {
   --sw-paper: #fcfcfb;
   --sw-paper-2: #f3f3f0;
+  --sw-off-day: #efe6e2;
   --sw-card: #ffffff;
   --sw-ink: #33312e;
   --sw-ink-2: #6b6862;
@@ -149,6 +156,7 @@
 [data-snug-theme="mono"] {
   --sw-paper: #f6f6f5;
   --sw-paper-2: #ececeb;
+  --sw-off-day: #e4e3e0;
   --sw-card: #ffffff;
   --sw-ink: #2b2b2b;
   --sw-ink-2: #5c5c5c;
@@ -170,6 +178,7 @@
 [data-snug-theme="noir"] {
   --sw-paper: #161616;
   --sw-paper-2: #1e1e1e;
+  --sw-off-day: #2e2c2a;
   --sw-card: #242424;
   --sw-ink: #ededed;
   --sw-ink-2: #b0b0b0;
@@ -191,6 +200,7 @@
 [data-snug-theme="sky"] {
   --sw-paper: #f2f6fb;
   --sw-paper-2: #e2ecf5;
+  --sw-off-day: #d3e4f2;
   --sw-card: #fbfdff;
   --sw-ink: #37414c;
   --sw-ink-2: #5d6975;
@@ -212,6 +222,7 @@
 [data-snug-theme="cocoa"] {
   --sw-paper: #f6efe6;
   --sw-paper-2: #ebdfcf;
+  --sw-off-day: #e7d4b8;
   --sw-card: #fdf8f1;
   --sw-ink: #3f3329;
   --sw-ink-2: #6f5d4c;

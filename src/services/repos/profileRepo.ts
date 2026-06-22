@@ -39,6 +39,17 @@ export interface AutoTheme {
   dark: string;
 }
 
+export type TaskDoneStyle = "strike" | "dim" | "dimStrike" | "fade";
+
+export const TASK_DONE_STYLES: TaskDoneStyle[] = [
+  "strike",
+  "dim",
+  "dimStrike",
+  "fade",
+];
+
+export const DEFAULT_TASK_DONE_STYLE: TaskDoneStyle = "dimStrike";
+
 export interface ProfileDoc {
   schemaVersion: number;
   createdAt: number;
@@ -49,6 +60,7 @@ export interface ProfileDoc {
   moduleToggles: ModuleToggles;
   weekend: number[];
   columnMode: "cozy" | "equal";
+  taskDoneStyle: TaskDoneStyle;
   statsBackfilledAt: number | null;
   notebookName: string | null;
   coverStyle: string | null;
@@ -92,6 +104,11 @@ const coerceThemeId = (
   return spec.id === id && spec.kind === kind ? id : fallback;
 };
 
+const normalizeTaskDoneStyle = (value: unknown): TaskDoneStyle =>
+  TASK_DONE_STYLES.includes(value as TaskDoneStyle)
+    ? (value as TaskDoneStyle)
+    : DEFAULT_TASK_DONE_STYLE;
+
 const normalizeAutoTheme = (value: unknown): AutoTheme | null => {
   if (typeof value !== "object" || value === null) return null;
   const source = value as Record<string, unknown>;
@@ -115,6 +132,7 @@ const normalizeProfile = (data: DocumentData): ProfileDoc => ({
   moduleToggles: normalizeToggles(data.moduleToggles),
   weekend: isNumberArray(data.weekend) ? data.weekend : DEFAULT_WEEKEND,
   columnMode: data.columnMode === "equal" ? "equal" : "cozy",
+  taskDoneStyle: normalizeTaskDoneStyle(data.taskDoneStyle),
   statsBackfilledAt:
     typeof data.statsBackfilledAt === "number" ? data.statsBackfilledAt : null,
   notebookName:
@@ -256,6 +274,17 @@ export const setColumnMode = (
   notePendingWrite();
   void updateDoc(profileRef(uid), {
     columnMode,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setTaskDoneStyle = (
+  uid: string,
+  taskDoneStyle: TaskDoneStyle,
+): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    taskDoneStyle,
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

@@ -109,6 +109,14 @@ export const useTaskDnd = () => {
       return;
     }
 
+    const isTouch =
+      typeof TouchEvent !== "undefined" &&
+      event.activatorEvent instanceof TouchEvent;
+    if (isTouch && Math.abs(event.delta.x) < 6 && Math.abs(event.delta.y) < 6) {
+      useUiStore.getState().openTask(activeId);
+      return;
+    }
+
     const result = resolveMove({
       activeId,
       overId,

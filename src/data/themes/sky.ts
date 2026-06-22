@@ -6,6 +6,7 @@ export const sky: ThemeSpec = {
   vars: {
     "--sw-paper": "#f2f6fb",
     "--sw-paper-2": "#e2ecf5",
+    "--sw-off-day": "#d3e4f2",
     "--sw-card": "#fbfdff",
     "--sw-ink": "#37414c",
     "--sw-ink-2": "#5d6975",

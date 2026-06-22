@@ -27,6 +27,13 @@
   },
   "paperTexture": "Paper texture",
   "paperTextureHint": "A subtle grain on the paper (off by default).",
+  "taskDoneStyle": "Completed tasks look",
+  "taskDoneStyles": {
+    "strike": "Crossed out",
+    "dim": "Dimmed",
+    "dimStrike": "Dimmed and crossed out",
+    "fade": "Faded"
+  },
   "theme": "Theme",
   "autoTheme": "Auto - follow system",
   "autoThemeHint": "Switch between a light and dark theme when your device does.",

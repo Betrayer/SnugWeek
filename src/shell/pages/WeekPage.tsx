@@ -61,13 +61,15 @@ export const WeekPage = () => {
   const dnd = useTaskDnd();
 
   const cover = coverBackground(coverStyle);
-  const coverStyleProps = cover
-    ? {
-      background: cover,
-      borderRadius: "var(--mantine-radius-lg)",
-      padding: 6,
-    }
-    : null;
+  const pageBackground = cover
+    ? `var(--sw-paper-texture), ${cover}`
+    : "var(--sw-paper-texture), var(--sw-paper)";
+  const pageStyleProps = {
+    background: pageBackground,
+    ...(cover
+      ? { borderRadius: "var(--mantine-radius-lg)", padding: 6 }
+      : null),
+  };
 
   useEffect(() => {
     if (uid) useWeekStore.getState().open(uid, weekId);
@@ -134,11 +136,11 @@ export const WeekPage = () => {
         display: "flex",
         flexDirection: "column",
         gap: "var(--mantine-spacing-sm)",
-        ...coverStyleProps,
+        ...pageStyleProps,
       }}
     >
       <div style={{ flex: 1, minHeight: 0 }}>
-        <WeekTransitionHost weekId={weekId}>
+        <WeekTransitionHost weekId={weekId} pageBackground={pageBackground}>
           <div style={surfaceStyle} data-tour={TOUR_ANCHORS.weekBoard}>
             <MobileDayPager
               days={days}
@@ -159,7 +161,7 @@ export const WeekPage = () => {
         flexDirection: "column",
         gap: "var(--mantine-spacing-sm)",
         height: DESKTOP_HEIGHT,
-        ...coverStyleProps,
+        ...pageStyleProps,
       }}
     >
       <div
@@ -173,7 +175,7 @@ export const WeekPage = () => {
         <div
           style={{ flex: 1, minWidth: 0, minHeight: 0, position: "relative" }}
         >
-          <WeekTransitionHost weekId={weekId}>
+          <WeekTransitionHost weekId={weekId} pageBackground={pageBackground}>
             <div style={surfaceStyle} data-tour={TOUR_ANCHORS.weekBoard}>
               <WeekBoard days={days} daysOff={daysOff} columnMode={columnMode} />
               <DecorationLayer scope="week" />
