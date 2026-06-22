@@ -6,36 +6,7 @@ import { todayIsoDay } from "../../services/time.ts";
 import { useUiStore } from "../../state/uiStore.ts";
 import { WeekJumpPopover } from "../components/calendar/WeekJumpPopover.tsx";
 import { useWeekParam } from "../hooks/useWeekParam.ts";
-
-const ChevronLeftIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M15 5l-7 7 7 7" />
-  </svg>
-);
-
-const ChevronRightIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M9 5l7 7-7 7" />
-  </svg>
-);
+import { ChevronLeftGlyph, ChevronRightGlyph } from "../components/icons/glyphs.tsx";
 
 export const WeekNav = () => {
   const { t } = useTranslation(["week", "common"]);
@@ -82,7 +53,7 @@ export const WeekNav = () => {
         aria-label={t("week:prevWeek")}
         onClick={goPrev}
       >
-        <ChevronLeftIcon />
+        <ChevronLeftGlyph size={18} strokeWidth={2} />
       </ActionIcon>
       <WeekJumpPopover weekId={weekId} onPick={goTo} />
       <ActionIcon
@@ -91,7 +62,7 @@ export const WeekNav = () => {
         aria-label={t("week:nextWeek")}
         onClick={goNext}
       >
-        <ChevronRightIcon />
+        <ChevronRightGlyph size={18} strokeWidth={2} />
       </ActionIcon>
       {!isCurrent && (
         <Button

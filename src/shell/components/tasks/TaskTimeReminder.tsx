@@ -15,17 +15,9 @@ import { REMINDER_OFFSETS, offsetKey } from "../../../services/reminders/offsets
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
+import { fieldStyles } from "../../styles/fieldStyles.ts";
 
 const NONE = "none";
-
-const fieldStyles = {
-  label: { color: "var(--sw-ink-2)", fontWeight: 600 },
-  input: {
-    backgroundColor: "var(--sw-card)",
-    borderColor: "var(--sw-line)",
-    color: "var(--sw-ink)",
-  },
-};
 
 export const TaskTimeReminder = ({ task }: { task: Task }) => {
   const { t } = useTranslation("reminders");

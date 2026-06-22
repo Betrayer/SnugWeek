@@ -8,23 +8,10 @@ import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useUiStore } from "../../../state/uiStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { BottomSheet } from "../common/BottomSheet.tsx";
+import { inputFieldStyles } from "../../styles/fieldStyles.ts";
+import { PlusGlyph } from "../icons/glyphs.tsx";
 
 const MAX_TITLE = 500;
-
-const PlusIcon = () => (
-  <svg
-    width="26"
-    height="26"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2.4"
-    strokeLinecap="round"
-    aria-hidden
-  >
-    <path d="M12 5v14M5 12h14" />
-  </svg>
-);
 
 export const MobileQuickAdd = () => {
   const { t } = useTranslation("tasks");
@@ -86,7 +73,7 @@ export const MobileQuickAdd = () => {
           boxShadow: "var(--sw-shadow)",
         }}
       >
-        <PlusIcon />
+        <PlusGlyph size={26} strokeWidth={2.4} />
       </ActionIcon>
 
       <BottomSheet
@@ -103,14 +90,7 @@ export const MobileQuickAdd = () => {
             placeholder={t("composerPlaceholder")}
             onChange={(event) => setValue(event.currentTarget.value)}
             onKeyDown={handleKey}
-            styles={{
-              input: {
-                backgroundColor: "var(--sw-card)",
-                borderColor: "var(--sw-line)",
-                color: "var(--sw-ink)",
-                "--input-placeholder-color": "var(--sw-ink-3)",
-              },
-            }}
+            styles={inputFieldStyles}
           />
           <Group justify="flex-end">
             <Button variant="subtle" c="var(--sw-ink-2)" onClick={close}>

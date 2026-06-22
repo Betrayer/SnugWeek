@@ -17,36 +17,7 @@ import { useStatsStore } from "../../state/statsStore.ts";
 import { StatsRecapPanel } from "../components/recap/StatsRecapPanel.tsx";
 import { MonthStatsView } from "../components/stats/MonthStatsView.tsx";
 import { YearStatsView } from "../components/stats/YearStatsView.tsx";
-
-const ChevronLeftIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M15 5l-7 7 7 7" />
-  </svg>
-);
-
-const ChevronRightIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M9 5l7 7-7 7" />
-  </svg>
-);
+import { ChevronLeftGlyph, ChevronRightGlyph } from "../components/icons/glyphs.tsx";
 
 export const StatsPage = () => {
   const { t } = useTranslation(["stats", "common"]);
@@ -99,7 +70,7 @@ export const StatsPage = () => {
             aria-label={t("stats:prevPeriod")}
             onClick={() => step(-1)}
           >
-            <ChevronLeftIcon />
+            <ChevronLeftGlyph size={18} strokeWidth={2} />
           </ActionIcon>
           <Text fw={700} fz="lg" c="var(--sw-ink)" style={{ minWidth: 0 }}>
             {title}
@@ -110,7 +81,7 @@ export const StatsPage = () => {
             aria-label={t("stats:nextPeriod")}
             onClick={() => step(1)}
           >
-            <ChevronRightIcon />
+            <ChevronRightGlyph size={18} strokeWidth={2} />
           </ActionIcon>
           {!isCurrent && (
             <Button

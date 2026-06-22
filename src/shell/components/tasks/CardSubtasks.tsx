@@ -3,35 +3,12 @@ import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { useAuthStore } from "../../../state/authStore.ts";
 import { useSubtasksStore } from "../../../state/subtasksStore.ts";
+import { DrawnCheckGlyph } from "../icons/glyphs.tsx";
 
 interface CardSubtasksProps {
   taskId: string;
   onOpen?: () => void;
 }
-
-const MiniCheck = ({ done }: { done: boolean }) => (
-  <svg
-    width="9"
-    height="9"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-accent-ink)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path
-      d="M5 12l4.5 4.5L19 7"
-      pathLength={1}
-      style={{
-        strokeDasharray: 1,
-        strokeDashoffset: done ? 0 : 1,
-        transition: "stroke-dashoffset 200ms ease",
-      }}
-    />
-  </svg>
-);
 
 export const CardSubtasks = ({ taskId, onOpen }: CardSubtasksProps) => {
   const { t } = useTranslation("tasks");
@@ -88,7 +65,7 @@ export const CardSubtasks = ({ taskId, onOpen }: CardSubtasksProps) => {
               transition: "background-color 150ms ease, border-color 150ms ease",
             }}
           >
-            <MiniCheck done={item.done} />
+            <DrawnCheckGlyph size={9} done={item.done} />
           </UnstyledButton>
           <UnstyledButton
             onClick={onOpen}

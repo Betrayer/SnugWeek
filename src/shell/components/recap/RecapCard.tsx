@@ -11,28 +11,13 @@ import { useTranslation } from "react-i18next";
 import type { WeekRecap } from "../../../services/recap/weeklyRecap.ts";
 import { MOOD_EMOJIS } from "../../../services/stats/moodScale.ts";
 import { MugDoodle, SparkleDoodle } from "../common/doodles.tsx";
+import { CloseGlyph } from "../icons/glyphs.tsx";
 
 interface RecapCardProps {
   recap: WeekRecap;
   onDismiss?: () => void;
   elevated?: boolean;
 }
-
-const CloseIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path d="M6 6l12 12M18 6 6 18" />
-  </svg>
-);
 
 interface RecapFactProps {
   value: string;
@@ -117,7 +102,7 @@ export const RecapCard = ({ recap, onDismiss, elevated }: RecapCardProps) => {
               aria-label={t("dismiss")}
               onClick={onDismiss}
             >
-              <CloseIcon />
+              <CloseGlyph size={18} strokeWidth={1.8} />
             </ActionIcon>
           )}
         </Group>

@@ -19,25 +19,10 @@ import { ActionMenu } from "../common/ActionMenu.tsx";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { TrackerIcon } from "../trackers/TrackerIcon.tsx";
 import { HabitComposer } from "./HabitComposer.tsx";
+import { CheckGlyph } from "../icons/glyphs.tsx";
 
 const MAX_NAME = 60;
 const EMPTY_CHECKS: Record<string, Record<string, true>> = {};
-
-const CheckGlyph = () => (
-  <svg
-    width="13"
-    height="13"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-accent-ink)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path d="M5 12l4.5 4.5L19 7" />
-  </svg>
-);
 
 const daysGridStyle: CSSProperties = {
   display: "grid",
@@ -196,7 +181,7 @@ export const HabitGrid = () => {
                           aria-pressed={checked}
                           style={checkStyle(checked)}
                         >
-                          {checked && <CheckGlyph />}
+                          {checked && <CheckGlyph size={13} />}
                         </UnstyledButton>
                       </div>
                     );

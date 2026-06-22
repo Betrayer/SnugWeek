@@ -5,6 +5,7 @@ import type { WeekViewModel } from "../../../services/share/shareTypes.ts";
 import { StaticDayCard } from "./StaticDayCard.tsx";
 import { StaticDecorations } from "./StaticDecorations.tsx";
 import { StaticHabitGrid } from "./StaticHabitGrid.tsx";
+import { cardSurface } from "../../styles/surfaces.ts";
 
 interface WeekViewProps {
   model: WeekViewModel;
@@ -88,12 +89,7 @@ export const WeekView = ({ model, variant }: WeekViewProps) => {
       {hasHabits && (
         <Box
           className="sw-break-avoid"
-          style={{
-            backgroundColor: "var(--sw-card)",
-            border: "1px solid var(--sw-line)",
-            borderRadius: "var(--mantine-radius-lg)",
-            padding: "var(--mantine-spacing-md)",
-          }}
+          style={{ ...cardSurface("lg"), padding: "var(--mantine-spacing-md)" }}
         >
           <Text fz="sm" fw={700} c="var(--sw-ink-2)" mb="sm">
             {t("section.habits")}

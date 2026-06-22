@@ -28,6 +28,8 @@ import { ComingSoon } from "../common/ComingSoon.tsx";
 import { SubtaskList } from "./SubtaskList.tsx";
 import { TaskTagPicker } from "./TaskTagPicker.tsx";
 import { TaskTimeReminder } from "./TaskTimeReminder.tsx";
+import { fieldStyles } from "../../styles/fieldStyles.ts";
+import { CheckGlyph } from "../icons/glyphs.tsx";
 
 const MAX_TITLE = 500;
 
@@ -67,21 +69,7 @@ const DoneToggle = ({ task }: { task: Task }) => {
           justifyContent: "center",
         }}
       >
-        {done && (
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--sw-accent-ink)"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <path d="M5 12l4.5 4.5L19 7" />
-          </svg>
-        )}
+        {done && <CheckGlyph size={13} />}
       </span>
       {done ? t("completed") : t("done")}
     </UnstyledButton>
@@ -174,14 +162,7 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
         onChange={(event) => setDraft(event.currentTarget.value)}
         onKeyDown={handleKey}
         onBlur={commit}
-        styles={{
-          label: { color: "var(--sw-ink-2)", fontWeight: 600 },
-          input: {
-            backgroundColor: "var(--sw-card)",
-            borderColor: "var(--sw-line)",
-            color: "var(--sw-ink)",
-          },
-        }}
+        styles={fieldStyles}
       />
 
       <Box>

@@ -2,7 +2,15 @@ import { Box, Center, MantineProvider, Stack, Text } from "@mantine/core";
 import { Notifications, notifications } from "@mantine/notifications";
 import i18next from "i18next";
 import { LazyMotion, domAnimation, m } from "motion/react";
-import { Suspense, lazy, useEffect, useMemo, useRef, useState } from "react";
+import {
+  Suspense,
+  lazy,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { coverBackground } from "./data/covers.ts";
@@ -144,26 +152,50 @@ const readBootCover = (): string | null => {
   }
 };
 
-const Splash = () => {
-  const reduced = useReducedMotionPref();
+const splashBackground = (): string =>
+  coverBackground(readBootCover()) ?? "var(--sw-paper)";
+
+const SplashFace = () => {
   const name = readBootNotebookName();
-  const cover = coverBackground(readBootCover());
+  const hasCover = coverBackground(readBootCover()) !== undefined;
   const label = (
-    <Text ff="var(--sw-font-hand)" fw={600} fz={44} c="var(--sw-ink-2)">
+    <Text
+      ff="var(--sw-font-hand)"
+      fw={600}
+      fz={44}
+      c="var(--sw-ink-2)"
+      style={{ letterSpacing: "0.5px" }}
+    >
       {name || "SnugWeek"}
     </Text>
   );
+  if (!hasCover) return label;
   return (
-    <Center
-      mih="100vh"
-      style={{ background: cover ?? "var(--sw-paper)" }}
+    <Box
+      px={28}
+      py={14}
+      style={{
+        backgroundColor: "var(--sw-card)",
+        border: "1px solid var(--sw-line)",
+        borderRadius: "var(--mantine-radius-lg)",
+        boxShadow: "var(--sw-shadow)",
+      }}
     >
+      {label}
+    </Box>
+  );
+};
+
+const Splash = () => {
+  const reduced = useReducedMotionPref();
+  return (
+    <Center mih="100vh" style={{ background: splashBackground() }}>
       <m.div
-        initial={reduced ? false : { opacity: 0.72, scale: 0.985 }}
+        initial={reduced ? false : { opacity: 1, scale: 1 }}
         animate={
           reduced
             ? { opacity: 1, scale: 1 }
-            : { opacity: [0.72, 1, 0.72], scale: [0.985, 1, 0.985] }
+            : { opacity: [1, 0.72, 1], scale: [1, 0.985, 1] }
         }
         transition={
           reduced
@@ -171,24 +203,37 @@ const Splash = () => {
             : { duration: 1.6, ease: "easeInOut", repeat: Infinity }
         }
       >
-        {cover ? (
-          <Box
-            px={28}
-            py={14}
-            style={{
-              backgroundColor: "var(--sw-card)",
-              border: "1px solid var(--sw-line)",
-              borderRadius: "var(--mantine-radius-lg)",
-              boxShadow: "var(--sw-shadow)",
-            }}
-          >
-            {label}
-          </Box>
-        ) : (
-          label
-        )}
+        <SplashFace />
       </m.div>
     </Center>
+  );
+};
+
+const CoverReveal = ({ onDone }: { onDone: () => void }) => {
+  const reduced = useReducedMotionPref();
+  useEffect(() => {
+    if (reduced) onDone();
+  }, [reduced, onDone]);
+  if (reduced) return null;
+  return (
+    <m.div
+      initial={{ opacity: 1 }}
+      animate={{ opacity: 0 }}
+      transition={{ duration: 0.5, ease: "easeInOut" }}
+      onAnimationComplete={onDone}
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 1000,
+        pointerEvents: "none",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: splashBackground(),
+      }}
+    >
+      <SplashFace />
+    </m.div>
   );
 };
 
@@ -251,6 +296,8 @@ export const Root = () => {
   const bootstrap = useAuthStore((state) => state.bootstrap);
   const retry = useAuthStore((state) => state.retry);
   const checkedMigrationUid = useRef<string | null>(null);
+  const revealShownRef = useRef(false);
+  const [showReveal, setShowReveal] = useState(false);
   const profileLoaded = useProfileStore((state) => state.loaded);
   const themeId = useProfileStore((state) => state.themeId);
   const autoTheme = useProfileStore((state) => state.autoTheme);
@@ -407,6 +454,15 @@ export const Root = () => {
 
   const ready = i18nReady && authStatus === "ready";
 
+  useEffect(() => {
+    if (ready && !revealShownRef.current) {
+      revealShownRef.current = true;
+      setShowReveal(true);
+    }
+  }, [ready]);
+
+  const finishReveal = useCallback(() => setShowReveal(false), []);
+
   return (
     <MantineProvider theme={mantineTheme} forceColorScheme={theme.kind}>
       <Notifications />
@@ -416,9 +472,12 @@ export const Root = () => {
           {authStatus === "error" ? (
             <AuthErrorScreen onRetry={retry} />
           ) : ready ? (
-            <LockGate>
-              <RouterProvider router={router} />
-            </LockGate>
+            <>
+              <LockGate>
+                <RouterProvider router={router} />
+              </LockGate>
+              {showReveal && <CoverReveal onDone={finishReveal} />}
+            </>
           ) : (
             <Splash />
           )}

@@ -6,7 +6,7 @@ import {
   ChevronLeftGlyph,
   ChevronRightGlyph,
   CloseGlyph,
-} from "./icons.tsx";
+} from "../icons/glyphs.tsx";
 
 interface LightboxProps {
   images: Attachment[];

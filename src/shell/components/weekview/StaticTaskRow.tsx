@@ -1,26 +1,12 @@
 import { Box, Text } from "@mantine/core";
 import { formatTime } from "../../../services/time.ts";
 import type { WeekViewTask } from "../../../services/share/shareTypes.ts";
+import { Pill } from "../common/Pill.tsx";
+import { CheckGlyph } from "../icons/glyphs.tsx";
 
 interface StaticTaskRowProps {
   task: WeekViewTask;
 }
-
-const CheckMark = () => (
-  <svg
-    width="11"
-    height="11"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-accent-ink)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path d="M5 12l4.5 4.5L19 7" />
-  </svg>
-);
 
 export const StaticTaskRow = ({ task }: StaticTaskRowProps) => (
   <Box style={{ display: "flex", alignItems: "flex-start", gap: 8, padding: "3px 0" }}>
@@ -39,27 +25,13 @@ export const StaticTaskRow = ({ task }: StaticTaskRowProps) => (
         justifyContent: "center",
       }}
     >
-      {task.done && <CheckMark />}
+      {task.done && <CheckGlyph size={11} />}
     </span>
     <span style={{ flex: 1, minWidth: 0, display: "flex", flexDirection: "column", gap: 2 }}>
       {task.time !== null && (
-        <span
-          style={{
-            alignSelf: "flex-start",
-            fontSize: 10,
-            fontWeight: 700,
-            lineHeight: 1.5,
-            color: task.done ? "var(--sw-ink-3)" : "var(--sw-accent-2)",
-            backgroundColor: task.done
-              ? "color-mix(in srgb, var(--sw-ink-3) 10%, transparent)"
-              : "color-mix(in srgb, var(--sw-accent-2) 14%, transparent)",
-            padding: "0 6px",
-            borderRadius: 999,
-            whiteSpace: "nowrap",
-          }}
-        >
+        <Pill tone={task.done ? "muted" : "accent-2"}>
           {formatTime(task.time)}
-        </span>
+        </Pill>
       )}
       <Text
         component="span"

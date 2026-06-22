@@ -2,21 +2,7 @@ import { Button, Group, Paper } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useDecorStore } from "../../../state/decorStore.ts";
 import { useIsMobile } from "../../hooks/useIsMobile.ts";
-
-const PlusIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    aria-hidden
-  >
-    <path d="M12 5v14M5 12h14" />
-  </svg>
-);
+import { PlusGlyph } from "../icons/glyphs.tsx";
 
 export const DecorEditBar = () => {
   const { t } = useTranslation("decor");
@@ -49,7 +35,7 @@ export const DecorEditBar = () => {
         <Button
           size="compact-sm"
           radius="xl"
-          leftSection={<PlusIcon />}
+          leftSection={<PlusGlyph size={16} strokeWidth={2} />}
           color="var(--sw-accent)"
           onClick={() => useDecorStore.getState().openPalette()}
         >

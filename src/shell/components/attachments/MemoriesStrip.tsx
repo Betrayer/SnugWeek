@@ -8,7 +8,7 @@ import {
   type RetainTarget,
 } from "../../../state/attachmentsStore.ts";
 import { useAuthStore } from "../../../state/authStore.ts";
-import { FileGlyph, LinkGlyph, MicGlyph, PlayGlyph, VideoGlyph } from "./icons.tsx";
+import { FileGlyph, LinkGlyph, MicGlyph, PlayGlyph, VideoGlyph } from "../icons/glyphs.tsx";
 
 interface MemoriesStripProps {
   weekId: string;

@@ -1,6 +1,6 @@
 import { UnstyledButton } from "@mantine/core";
 import type { MouseEvent } from "react";
-import { TrashGlyph } from "./icons.tsx";
+import { TrashGlyph } from "../icons/glyphs.tsx";
 
 interface RemoveButtonProps {
   onRemove: () => void;

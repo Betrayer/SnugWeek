@@ -27,6 +27,8 @@ import { useRoutinesStore } from "../../../../state/routinesStore.ts";
 import { useSettingsStore } from "../../../../state/settingsStore.ts";
 import { ActionMenu } from "../../common/ActionMenu.tsx";
 import { ResponsiveDialog } from "../../common/ResponsiveDialog.tsx";
+import { fieldStyles } from "../../../styles/fieldStyles.ts";
+import { cardSurface } from "../../../styles/surfaces.ts";
 
 const MAX_NAME = 200;
 const NONE = "none";
@@ -66,15 +68,6 @@ const toFields = (draft: Draft): RoutineFields => ({
   remindOffsetMin: draft.time === "" ? null : draft.remindOffsetMin,
   active: draft.active,
 });
-
-const fieldStyles = {
-  label: { color: "var(--sw-ink-2)", fontWeight: 600 },
-  input: {
-    backgroundColor: "var(--sw-card)",
-    borderColor: "var(--sw-line)",
-    color: "var(--sw-ink)",
-  },
-};
 
 interface RoutineEditorProps {
   opened: boolean;
@@ -296,12 +289,7 @@ export const RoutinesSection = () => {
               justify="space-between"
               wrap="nowrap"
               gap="sm"
-              style={{
-                padding: "8px 12px",
-                borderRadius: "var(--mantine-radius-md)",
-                backgroundColor: "var(--sw-card)",
-                border: "1px solid var(--sw-line)",
-              }}
+              style={{ padding: "8px 12px", ...cardSurface("md") }}
             >
               <Stack gap={2} style={{ minWidth: 0 }}>
                 <Text

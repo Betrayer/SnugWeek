@@ -9,7 +9,8 @@ import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { formatTime } from "../../../services/time.ts";
 import { useTagsStore } from "../../../state/tagsStore.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
-import { PaperclipGlyph } from "../attachments/icons.tsx";
+import { PaperclipGlyph } from "../icons/glyphs.tsx";
+import { Pill } from "../common/Pill.tsx";
 import { CardSubtasks } from "./CardSubtasks.tsx";
 
 const MAX_CARD_TAGS = 4;
@@ -85,50 +86,6 @@ const RepeatGlyph = () => (
   </svg>
 );
 
-const RepeatChip = ({ label }: { label: string }) => (
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 3,
-      alignSelf: "flex-start",
-      fontSize: 10,
-      fontWeight: 700,
-      lineHeight: 1.5,
-      color: "var(--sw-ink-3)",
-      backgroundColor: "color-mix(in srgb, var(--sw-ink-3) 10%, transparent)",
-      padding: "0 6px",
-      borderRadius: 999,
-      whiteSpace: "nowrap",
-    }}
-  >
-    <RepeatGlyph />
-    {label}
-  </span>
-);
-
-const AttachmentChip = ({ count }: { count: number }) => (
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 3,
-      alignSelf: "flex-start",
-      fontSize: 10,
-      fontWeight: 700,
-      lineHeight: 1.5,
-      color: "var(--sw-ink-3)",
-      backgroundColor: "color-mix(in srgb, var(--sw-ink-3) 10%, transparent)",
-      padding: "0 6px",
-      borderRadius: 999,
-      whiteSpace: "nowrap",
-    }}
-  >
-    <PaperclipGlyph size={9} />
-    {count}
-  </span>
-);
-
 const BellGlyph = () => (
   <svg
     width="9"
@@ -144,38 +101,6 @@ const BellGlyph = () => (
     <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
     <path d="M13.7 21a2 2 0 0 1-3.4 0" />
   </svg>
-);
-
-const TimeChip = ({
-  time,
-  hasReminder,
-  done,
-}: {
-  time: string;
-  hasReminder: boolean;
-  done: boolean;
-}) => (
-  <span
-    style={{
-      display: "inline-flex",
-      alignItems: "center",
-      gap: 3,
-      alignSelf: "flex-start",
-      fontSize: 10,
-      fontWeight: 700,
-      lineHeight: 1.6,
-      color: done ? "var(--sw-ink-3)" : "var(--sw-accent-2)",
-      backgroundColor: done
-        ? "color-mix(in srgb, var(--sw-ink-3) 10%, transparent)"
-        : "color-mix(in srgb, var(--sw-accent-2) 14%, transparent)",
-      padding: "0 6px",
-      borderRadius: 999,
-      whiteSpace: "nowrap",
-    }}
-  >
-    {formatTime(time)}
-    {hasReminder && <BellGlyph />}
-  </span>
 );
 
 const CardTags = ({ task }: { task: Task }) => {
@@ -319,11 +244,10 @@ export const TaskCard = ({
           }}
         >
           {task.time !== null && (
-            <TimeChip
-              time={task.time}
-              hasReminder={task.remindOffsetMin !== null}
-              done={done}
-            />
+            <Pill tone={done ? "muted" : "accent-2"}>
+              {formatTime(task.time)}
+              {task.remindOffsetMin !== null && <BellGlyph />}
+            </Pill>
           )}
           <Text
             component="span"
@@ -341,27 +265,19 @@ export const TaskCard = ({
           </Text>
           <CardTags task={task} />
           {task.carriedFrom && (
-            <span
-              style={{
-                fontSize: 10,
-                fontWeight: 700,
-                lineHeight: 1.5,
-                color: "var(--sw-accent-2)",
-                backgroundColor:
-                  "color-mix(in srgb, var(--sw-accent-2) 12%, transparent)",
-                padding: "0 6px",
-                borderRadius: 999,
-                whiteSpace: "nowrap",
-              }}
-            >
+            <Pill tone="accent-2">
               {t("tasks:carriedFrom", { week: task.carriedFrom.slice(5) })}
-            </span>
+            </Pill>
           )}
           {task.routineId !== null && (
-            <RepeatChip label={t("routines:repeats")} />
+            <Pill tone="muted" icon={<RepeatGlyph />}>
+              {t("routines:repeats")}
+            </Pill>
           )}
           {task.attachmentCount > 0 && (
-            <AttachmentChip count={task.attachmentCount} />
+            <Pill tone="muted" icon={<PaperclipGlyph size={9} />}>
+              {task.attachmentCount}
+            </Pill>
           )}
         </UnstyledButton>
       </div>

@@ -2,6 +2,7 @@ import { UnstyledButton } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { DayCounts } from "../../../state/monthStore.ts";
 import type { MonthDayCellData } from "../../../services/time.ts";
+import { CheckGlyph } from "../icons/glyphs.tsx";
 
 interface MonthDayCellProps {
   day: MonthDayCellData;
@@ -10,22 +11,6 @@ interface MonthDayCellProps {
   mood?: string;
   onOpen: (weekId: string, iso: number) => void;
 }
-
-const CheckMark = () => (
-  <svg
-    width="11"
-    height="11"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-done)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path d="M5 12l4.5 4.5L19 7" />
-  </svg>
-);
 
 export const MonthDayCell = ({
   day,
@@ -120,7 +105,7 @@ export const MonthDayCell = ({
               color: "var(--sw-done)",
             }}
           >
-            <CheckMark />
+            <CheckGlyph size={11} color="var(--sw-done)" />
             {done}
           </span>
         )}
