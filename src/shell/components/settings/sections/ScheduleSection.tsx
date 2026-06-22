@@ -4,9 +4,11 @@ import { useTranslation } from "react-i18next";
 import { weekdayInitials } from "../../../../services/time.ts";
 import { useProfileStore } from "../../../../state/profileStore.ts";
 import { useSettingsStore } from "../../../../state/settingsStore.ts";
+import { useIsMobile } from "../../../hooks/useIsMobile.ts";
 
 export const ScheduleSection = () => {
   const { t } = useTranslation("settings");
+  const isMobile = useIsMobile();
   const language = useSettingsStore((state) => state.language);
   const weekend = useProfileStore((state) => state.weekend);
   const columnMode = useProfileStore((state) => state.columnMode);
@@ -25,7 +27,7 @@ export const ScheduleSection = () => {
               .setWeekend(value.map(Number).sort((a, b) => a - b))
           }
         >
-          <Group gap={6} wrap="nowrap">
+          <Group gap={6} wrap="wrap">
             {initials.map((initial, index) => (
               <Chip key={index} value={String(index + 1)} size="sm">
                 {initial}
@@ -37,6 +39,8 @@ export const ScheduleSection = () => {
       <Stack gap="xs">
         <Text fw={600}>{t("columnMode")}</Text>
         <SegmentedControl
+          fullWidth={isMobile}
+          orientation={isMobile ? "vertical" : "horizontal"}
           value={columnMode}
           onChange={(value) => {
             if (value === "cozy" || value === "equal")

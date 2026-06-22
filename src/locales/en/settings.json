@@ -1,5 +1,9 @@
 {
   "title": "Settings",
+  "tabs": {
+    "settings": "Settings",
+    "notebook": "Notebook"
+  },
   "appearance": "Appearance",
   "account": "Account",
   "about": "About",

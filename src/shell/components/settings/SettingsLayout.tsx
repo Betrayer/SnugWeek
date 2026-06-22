@@ -1,4 +1,4 @@
-import { Accordion, Tabs } from "@mantine/core";
+import { Accordion, Box, Tabs } from "@mantine/core";
 import type { ReactNode } from "react";
 import { useIsMobile } from "../../hooks/useIsMobile.ts";
 
@@ -48,9 +48,10 @@ export const SettingsLayout = ({ sections }: SettingsLayoutProps) => {
       defaultValue={first}
       color="var(--sw-accent)"
       styles={{
+        root: { width: "100%" },
         list: {
           borderInlineEnd: "1px solid var(--sw-line)",
-          minWidth: 160,
+          minWidth: 180,
         },
         tab: { fontWeight: 600, color: "var(--sw-ink-2)" },
         panel: { paddingInlineStart: "var(--mantine-spacing-xl)" },
@@ -65,7 +66,9 @@ export const SettingsLayout = ({ sections }: SettingsLayoutProps) => {
       </Tabs.List>
       {sections.map((section) => (
         <Tabs.Panel key={section.value} value={section.value}>
-          {section.content}
+          <Box maw={720} style={{ marginInline: "auto", width: "100%" }}>
+            {section.content}
+          </Box>
         </Tabs.Panel>
       ))}
     </Tabs>

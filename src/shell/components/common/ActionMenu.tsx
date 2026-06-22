@@ -7,7 +7,7 @@ import {
   Text,
   UnstyledButton,
 } from "@mantine/core";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import type { CSSProperties, ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { useIsMobile } from "../../hooks/useIsMobile.ts";
@@ -28,6 +28,7 @@ export interface ActionItem {
   disabled?: boolean;
   rightSection?: ReactNode;
   confirm?: ConfirmConfig;
+  divider?: boolean;
 }
 
 interface ActionMenuProps {
@@ -146,27 +147,37 @@ export const ActionMenu = ({
         >
           <Stack gap={2} pt={4}>
             {actions.map((action) => (
-              <UnstyledButton
-                key={action.key}
-                disabled={action.disabled}
-                onClick={() => run(action)}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  gap: 12,
-                  minHeight: 48,
-                  padding: "0 12px",
-                  borderRadius: "var(--mantine-radius-md)",
-                  color: action.danger ? "var(--sw-danger)" : "var(--sw-ink)",
-                  opacity: action.disabled ? 0.4 : 1,
-                  fontWeight: 600,
-                  cursor: action.disabled ? "not-allowed" : "pointer",
-                }}
-              >
-                <span>{action.label}</span>
-                {action.rightSection}
-              </UnstyledButton>
+              <Fragment key={action.key}>
+                {action.divider && (
+                  <div
+                    style={{
+                      height: 1,
+                      backgroundColor: "var(--sw-line)",
+                      margin: "6px 12px",
+                    }}
+                  />
+                )}
+                <UnstyledButton
+                  disabled={action.disabled}
+                  onClick={() => run(action)}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 12,
+                    minHeight: 48,
+                    padding: "0 12px",
+                    borderRadius: "var(--mantine-radius-md)",
+                    color: action.danger ? "var(--sw-danger)" : "var(--sw-ink)",
+                    opacity: action.disabled ? 0.4 : 1,
+                    fontWeight: 600,
+                    cursor: action.disabled ? "not-allowed" : "pointer",
+                  }}
+                >
+                  <span>{action.label}</span>
+                  {action.rightSection}
+                </UnstyledButton>
+              </Fragment>
             ))}
           </Stack>
         </BottomSheet>
@@ -181,15 +192,17 @@ export const ActionMenu = ({
         <Menu.Target>{trigger}</Menu.Target>
         <Menu.Dropdown>
           {actions.map((action) => (
-            <Menu.Item
-              key={action.key}
-              disabled={action.disabled}
-              rightSection={action.rightSection}
-              style={action.danger ? { color: "var(--sw-danger)" } : undefined}
-              onClick={() => run(action)}
-            >
-              {action.label}
-            </Menu.Item>
+            <Fragment key={action.key}>
+              {action.divider && <Menu.Divider />}
+              <Menu.Item
+                disabled={action.disabled}
+                rightSection={action.rightSection}
+                style={action.danger ? { color: "var(--sw-danger)" } : undefined}
+                onClick={() => run(action)}
+              >
+                {action.label}
+              </Menu.Item>
+            </Fragment>
           ))}
         </Menu.Dropdown>
       </Menu>
