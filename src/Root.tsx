@@ -14,6 +14,7 @@ import {
 import { createBrowserRouter, redirect } from "react-router";
 import { RouterProvider } from "react-router/dom";
 import { coverBackground } from "./data/covers.ts";
+import { resolveFontVars } from "./data/fonts/registry.ts";
 import { DEFAULT_THEME_ID, themeById } from "./data/themes/registry.ts";
 import { initI18n } from "./i18n/index.ts";
 import { triggerCarryOver } from "./services/carryOver.ts";
@@ -306,6 +307,9 @@ export const Root = () => {
   );
   const notebookName = useProfileStore((state) => state.notebookName);
   const coverStyle = useProfileStore((state) => state.coverStyle);
+  const fontBodyId = useProfileStore((state) => state.fontBodyId);
+  const fontHandId = useProfileStore((state) => state.fontHandId);
+  const fontScope = useProfileStore((state) => state.fontScope);
   const reduceMotion = useSettingsStore((state) => state.reduceMotion);
   const [systemDark, setSystemDark] = useState(
     () =>
@@ -433,6 +437,28 @@ export const Root = () => {
       console.error(error);
     }
   }, [notebookName, coverStyle, profileLoaded]);
+
+  useEffect(() => {
+    if (!profileLoaded) return;
+    const root = document.documentElement;
+    const fonts = resolveFontVars(fontBodyId, fontHandId, fontScope);
+    root.style.setProperty("--sw-font-body", fonts.body);
+    root.style.setProperty("--sw-font-hand", fonts.hand);
+    root.style.setProperty("--sw-font-tasks", fonts.tasks);
+    try {
+      localStorage.setItem(
+        "snugweek-fonts",
+        JSON.stringify({
+          body: fonts.body,
+          hand: fonts.hand,
+          tasks: fonts.tasks,
+          preload: fonts.preload,
+        }),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  }, [fontBodyId, fontHandId, fontScope, profileLoaded]);
 
   useEffect(() => {
     document.documentElement.dataset.reduceMotion = String(reduceMotion);

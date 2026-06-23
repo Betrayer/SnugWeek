@@ -55,21 +55,10 @@ const cardStyle = (
   transition: "background-color 120ms ease, transform 120ms ease",
 });
 
-const doneTextStyle = (style: TaskDoneStyle, done: boolean): CSSProperties => {
-  if (!done) {
-    return {
-      color: "var(--sw-ink)",
-      textDecorationLine: "none",
-      textDecorationColor: "transparent",
-    };
-  }
-  const strike = style === "strike" || style === "dimStrike";
+const doneTextColor = (style: TaskDoneStyle, done: boolean): string => {
+  if (!done) return "var(--sw-ink)";
   const dim = style === "dim" || style === "dimStrike";
-  return {
-    color: dim ? "var(--sw-ink-3)" : "var(--sw-ink)",
-    textDecorationLine: strike ? "line-through" : "none",
-    textDecorationColor: strike ? "var(--sw-ink-3)" : "transparent",
-  };
+  return dim ? "var(--sw-ink-3)" : "var(--sw-ink)";
 };
 
 const RepeatGlyph = () => (
@@ -180,7 +169,15 @@ const CardTags = ({ task }: { task: Task }) => {
   );
 };
 
-const TaskBody = ({ task, style }: { task: Task; style: CSSProperties }) => {
+const TaskBody = ({
+  task,
+  style,
+  titleClassName,
+}: {
+  task: Task;
+  style: CSSProperties;
+  titleClassName?: string;
+}) => {
   const { t } = useTranslation(["tasks", "routines"]);
   const done = task.status === "done";
   return (
@@ -197,12 +194,19 @@ const TaskBody = ({ task, style }: { task: Task; style: CSSProperties }) => {
           width: "100%",
           lineHeight: 1.4,
           wordBreak: "break-word",
-          transition:
-            "color 150ms ease, text-decoration-color 250ms ease",
+          fontFamily: "var(--sw-font-tasks)",
+          transition: "color 150ms ease",
           ...style,
         }}
       >
-        {task.title}
+        {task.emoji && (
+          <span style={{ marginInlineEnd: 4 }}>{task.emoji}</span>
+        )}
+        {titleClassName ? (
+          <span className={titleClassName}>{task.title}</span>
+        ) : (
+          task.title
+        )}
       </Text>
       <CardTags task={task} />
       {task.carriedFrom && (
@@ -236,13 +240,19 @@ export const TaskCard = ({
   const { hovered, ref } = useHover();
   const isMobile = useIsMobile();
   const taskDoneStyle = useProfileStore((state) => state.taskDoneStyle);
+  const taskStrikeStyle = useProfileStore((state) => state.taskStrikeStyle);
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(task.title);
   const [confirming, setConfirming] = useState(false);
   const [focused, setFocused] = useState(false);
   const done = task.status === "done";
 
-  const titleStyle = doneTextStyle(taskDoneStyle, done);
+  const titleStyle: CSSProperties = { color: doneTextColor(taskDoneStyle, done) };
+  const struck =
+    done && (taskDoneStyle === "strike" || taskDoneStyle === "dimStrike");
+  const titleClassName = struck
+    ? `sw-strike sw-strike-${taskStrikeStyle}`
+    : undefined;
   const contentOpacity = done && taskDoneStyle === "fade" ? 0.5 : 1;
 
   if (isOverlay) {
@@ -257,7 +267,7 @@ export const TaskCard = ({
             opacity: contentOpacity,
           }}
         >
-          <TaskBody task={task} style={titleStyle} />
+          <TaskBody task={task} style={titleStyle} titleClassName={titleClassName} />
         </div>
       </Box>
     );
@@ -379,7 +389,12 @@ export const TaskCard = ({
               onChange={(event) => setEditValue(event.currentTarget.value)}
               onKeyDown={editKey}
               onBlur={commitEdit}
-              styles={inputFieldStyles}
+              styles={{
+                input: {
+                  ...inputFieldStyles.input,
+                  fontFamily: "var(--sw-font-tasks)",
+                },
+              }}
               {...stopForControl}
             />
           ) : (
@@ -402,7 +417,11 @@ export const TaskCard = ({
                 transition: "opacity 200ms ease",
               }}
             >
-              <TaskBody task={task} style={titleStyle} />
+              <TaskBody
+                task={task}
+                style={titleStyle}
+                titleClassName={titleClassName}
+              />
             </UnstyledButton>
           )}
         </div>

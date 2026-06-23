@@ -19,6 +19,7 @@
   --sw-scrim: rgba(28, 22, 16, 0.55);
   --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
   --sw-font-hand: "Caveat", cursive;
+  --sw-font-tasks: "Nunito", "Segoe UI", system-ui, sans-serif;
 }
 
 [data-snug-theme="milk"] {
@@ -39,8 +40,6 @@
   --sw-shadow: 0 2px 10px rgba(86, 70, 56, 0.08);
   --sw-fold-shade: rgba(58, 44, 30, 0.3);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="lavender"] {
@@ -61,8 +60,6 @@
   --sw-shadow: 0 2px 10px rgba(70, 58, 92, 0.1);
   --sw-fold-shade: rgba(45, 33, 64, 0.3);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="sage"] {
@@ -83,8 +80,6 @@
   --sw-shadow: 0 2px 10px rgba(56, 70, 52, 0.09);
   --sw-fold-shade: rgba(38, 50, 34, 0.3);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="peach"] {
@@ -105,8 +100,6 @@
   --sw-shadow: 0 2px 10px rgba(110, 70, 50, 0.1);
   --sw-fold-shade: rgba(70, 40, 24, 0.3);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="midnight"] {
@@ -127,8 +120,6 @@
   --sw-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
   --sw-fold-shade: rgba(0, 0, 0, 0.55);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="snow"] {
@@ -149,8 +140,6 @@
   --sw-shadow: 0 2px 10px rgba(60, 55, 50, 0.06);
   --sw-fold-shade: rgba(45, 42, 38, 0.25);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="mono"] {
@@ -171,8 +160,6 @@
   --sw-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
   --sw-fold-shade: rgba(0, 0, 0, 0.25);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="noir"] {
@@ -193,8 +180,6 @@
   --sw-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
   --sw-fold-shade: rgba(0, 0, 0, 0.65);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="sky"] {
@@ -215,8 +200,6 @@
   --sw-shadow: 0 2px 10px rgba(40, 60, 90, 0.1);
   --sw-fold-shade: rgba(28, 44, 66, 0.3);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-snug-theme="cocoa"] {
@@ -237,8 +220,6 @@
   --sw-shadow: 0 2px 10px rgba(90, 66, 40, 0.1);
   --sw-fold-shade: rgba(66, 46, 26, 0.3);
   --sw-paper-texture: none;
-  --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
-  --sw-font-hand: "Caveat", cursive;
 }
 
 [data-paper-texture="on"][data-snug-theme="milk"] {

@@ -7,6 +7,7 @@ import {
   createTask,
   deleteTask,
   setStatus,
+  setTaskEmoji as setTaskEmojiDoc,
   setTaskReminder,
   setTaskTime,
   subscribeWeekTasks,
@@ -61,6 +62,7 @@ interface WeekState {
   addTask: (day: number, title: string) => void;
   toggleDone: (task: Task) => void;
   renameTask: (taskId: string, title: string) => void;
+  setTaskEmoji: (taskId: string, emoji: string | null) => void;
   removeTask: (taskId: string) => void;
   setTime: (taskId: string, time: string | null) => void;
   setReminder: (taskId: string, offsetMin: number | null) => void;
@@ -242,6 +244,10 @@ export const useWeekStore = create<WeekState>()(
         const trimmed = title.trim();
         if (!activeUid || trimmed.length === 0) return;
         updateTitle(activeUid, taskId, trimmed);
+      },
+      setTaskEmoji: (taskId, emoji) => {
+        if (!activeUid) return;
+        setTaskEmojiDoc(activeUid, taskId, emoji);
       },
       removeTask: (taskId) => {
         if (!activeUid) return;

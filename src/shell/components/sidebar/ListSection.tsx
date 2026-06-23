@@ -17,6 +17,7 @@ import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 import { ListReferences } from "../attachments/ListReferences.tsx";
 import { ActionMenu } from "../common/ActionMenu.tsx";
 import type { ActionItem } from "../common/ActionMenu.tsx";
+import { EmojiPicker } from "../common/EmojiPicker.tsx";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { LeafDoodle } from "../common/doodles.tsx";
 import { isBuiltinList } from "../../../services/repos/listsRepo.ts";
@@ -81,6 +82,7 @@ export const ListSection = ({
   const language = useSettingsStore((state) => state.language);
   const [renameOpened, renameHandlers] = useDisclosure(false);
   const [moveOpened, moveHandlers] = useDisclosure(false);
+  const [emojiOpened, emojiHandlers] = useDisclosure(false);
   const [collapsed, setCollapsed] = useState(collapsible);
   const [nameDraft, setNameDraft] = useState("");
 
@@ -121,6 +123,17 @@ export const ListSection = ({
   };
   const menuActions: ActionItem[] = [
     { key: "rename", label: t("lists.rename"), onClick: openRename },
+    { key: "setEmoji", label: t("lists.setEmoji"), onClick: emojiHandlers.open },
+    ...(list.emoji
+      ? [
+          {
+            key: "clearEmoji",
+            label: t("lists.clearEmoji"),
+            onClick: () =>
+              useListsStore.getState().setListEmoji(list.id, null),
+          },
+        ]
+      : []),
     {
       key: "moveToDay",
       label: t("lists.moveToDay"),
@@ -181,6 +194,16 @@ export const ListSection = ({
               >
                 <ChevronIcon open={!collapsed} />
               </ActionIcon>
+            )}
+            {list.emoji && (
+              <Text
+                component="span"
+                fz={18}
+                lh={1}
+                style={{ flex: "0 0 auto" }}
+              >
+                {list.emoji}
+              </Text>
             )}
             <Text
               ff="var(--sw-font-hand)"
@@ -290,6 +313,20 @@ export const ListSection = ({
             <Button onClick={submitRename}>{t("lists.rename")}</Button>
           </Group>
         </Stack>
+      </ResponsiveDialog>
+
+      <ResponsiveDialog
+        opened={emojiOpened}
+        onClose={emojiHandlers.close}
+        title={t("lists.setEmoji")}
+      >
+        <EmojiPicker
+          value={list.emoji}
+          onChange={(emoji) =>
+            useListsStore.getState().setListEmoji(list.id, emoji)
+          }
+          onClose={emojiHandlers.close}
+        />
       </ResponsiveDialog>
 
       <ResponsiveDialog

@@ -2,17 +2,28 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { DEFAULT_THEME_ID } from "../data/themes/registry.ts";
 import {
+  DEFAULT_BODY_FONT_ID,
+  DEFAULT_FONT_SCOPE,
+  DEFAULT_HAND_FONT_ID,
+} from "../data/fonts/registry.ts";
+import type { FontScope } from "../data/fonts/registry.ts";
+import {
   DEFAULT_MODULE_TOGGLES,
   DEFAULT_TASK_DONE_STYLE,
+  DEFAULT_TASK_STRIKE_STYLE,
   DEFAULT_WEEKEND,
   ensureProfile,
   setAutoTheme,
   setColumnMode,
   setCoverStyle,
+  setFontBody,
+  setFontHand,
+  setFontScope,
   setModuleToggle,
   setNotebookName,
   setPaperTexture,
   setTaskDoneStyle,
+  setTaskStrikeStyle,
   setTheme,
   setWeekend,
   subscribeProfile,
@@ -21,6 +32,7 @@ import type {
   AutoTheme,
   ModuleToggles,
   TaskDoneStyle,
+  TaskStrikeStyle,
 } from "../services/repos/profileRepo.ts";
 import { useSettingsStore } from "./settingsStore.ts";
 
@@ -32,6 +44,10 @@ interface ProfileState {
   weekend: number[];
   columnMode: "cozy" | "equal";
   taskDoneStyle: TaskDoneStyle;
+  taskStrikeStyle: TaskStrikeStyle;
+  fontBodyId: string;
+  fontHandId: string;
+  fontScope: FontScope;
   moduleToggles: ModuleToggles;
   statsBackfilledAt: number | null;
   notebookName: string | null;
@@ -44,6 +60,10 @@ interface ProfileState {
   setWeekend: (weekend: number[]) => void;
   setColumnMode: (columnMode: "cozy" | "equal") => void;
   setTaskDoneStyle: (taskDoneStyle: TaskDoneStyle) => void;
+  setTaskStrikeStyle: (taskStrikeStyle: TaskStrikeStyle) => void;
+  setFontBodyId: (fontBodyId: string) => void;
+  setFontHandId: (fontHandId: string) => void;
+  setFontScope: (fontScope: FontScope) => void;
   setModuleToggle: (key: keyof ModuleToggles, value: boolean) => void;
   setNotebookName: (name: string | null) => void;
   setCoverStyle: (style: string | null) => void;
@@ -62,6 +82,10 @@ export const useProfileStore = create<ProfileState>()(
       weekend: DEFAULT_WEEKEND,
       columnMode: "cozy",
       taskDoneStyle: DEFAULT_TASK_DONE_STYLE,
+      taskStrikeStyle: DEFAULT_TASK_STRIKE_STYLE,
+      fontBodyId: DEFAULT_BODY_FONT_ID,
+      fontHandId: DEFAULT_HAND_FONT_ID,
+      fontScope: DEFAULT_FONT_SCOPE,
       moduleToggles: DEFAULT_MODULE_TOGGLES,
       statsBackfilledAt: null,
       notebookName: null,
@@ -88,6 +112,10 @@ export const useProfileStore = create<ProfileState>()(
             weekend: profile.weekend,
             columnMode: profile.columnMode,
             taskDoneStyle: profile.taskDoneStyle,
+            taskStrikeStyle: profile.taskStrikeStyle,
+            fontBodyId: profile.fontBodyId,
+            fontHandId: profile.fontHandId,
+            fontScope: profile.fontScope,
             moduleToggles: profile.moduleToggles,
             statsBackfilledAt: profile.statsBackfilledAt,
             notebookName: profile.notebookName,
@@ -107,6 +135,10 @@ export const useProfileStore = create<ProfileState>()(
           weekend: DEFAULT_WEEKEND,
           columnMode: "cozy",
           taskDoneStyle: DEFAULT_TASK_DONE_STYLE,
+          taskStrikeStyle: DEFAULT_TASK_STRIKE_STYLE,
+          fontBodyId: DEFAULT_BODY_FONT_ID,
+          fontHandId: DEFAULT_HAND_FONT_ID,
+          fontScope: DEFAULT_FONT_SCOPE,
           moduleToggles: DEFAULT_MODULE_TOGGLES,
           statsBackfilledAt: null,
           notebookName: null,
@@ -136,6 +168,22 @@ export const useProfileStore = create<ProfileState>()(
       setTaskDoneStyle: (taskDoneStyle) => {
         if (!activeUid) return;
         setTaskDoneStyle(activeUid, taskDoneStyle);
+      },
+      setTaskStrikeStyle: (taskStrikeStyle) => {
+        if (!activeUid) return;
+        setTaskStrikeStyle(activeUid, taskStrikeStyle);
+      },
+      setFontBodyId: (fontBodyId) => {
+        if (!activeUid) return;
+        setFontBody(activeUid, fontBodyId);
+      },
+      setFontHandId: (fontHandId) => {
+        if (!activeUid) return;
+        setFontHand(activeUid, fontHandId);
+      },
+      setFontScope: (fontScope) => {
+        if (!activeUid) return;
+        setFontScope(activeUid, fontScope);
       },
       setModuleToggle: (key, value) => {
         if (!activeUid) return;

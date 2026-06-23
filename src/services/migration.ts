@@ -81,6 +81,7 @@ type TrackerValue = number | string | boolean;
 
 interface TaskData {
   title: string;
+  emoji: string | null;
   status: TaskStatus;
   bucket: TaskBucket;
   weekId: string | null;
@@ -115,6 +116,7 @@ interface TagData {
 interface ListData {
   kind: "tasks" | "ideas" | "custom";
   name: string | null;
+  emoji: string | null;
   order: number;
   createdAt: number;
   day: number | null;
@@ -196,6 +198,7 @@ export interface ExportCounts {
 
 const toTaskData = (data: DocumentData): TaskData => ({
   title: asString(data.title, ""),
+  emoji: asStringOrNull(data.emoji),
   status: data.status === "done" ? "done" : "open",
   bucket: data.bucket === "list" ? "list" : "day",
   weekId: asStringOrNull(data.weekId),
@@ -230,6 +233,7 @@ const toTagData = (data: DocumentData): TagData => ({
 const toListData = (data: DocumentData): ListData => ({
   kind: data.kind === "tasks" || data.kind === "ideas" ? data.kind : "custom",
   name: asStringOrNull(data.name),
+  emoji: asStringOrNull(data.emoji),
   order: asNumber(data.order, 0),
   createdAt: asNumber(data.createdAt, 0),
   day: asNumberOrNull(data.day),
@@ -573,6 +577,7 @@ export const runMerge = async (
       batch.set(ref, {
         kind: data.kind,
         name: data.name,
+        emoji: data.emoji,
         order: data.order,
         createdAt: data.createdAt,
         day: data.day,
@@ -660,6 +665,7 @@ export const runMerge = async (
     ops.push((batch) =>
       batch.set(ref, {
         title: data.title,
+        emoji: data.emoji,
         status: data.status,
         bucket: data.bucket,
         weekId: data.weekId,

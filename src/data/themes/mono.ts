@@ -21,8 +21,6 @@ export const mono: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(0, 0, 0, 0.06)",
     "--sw-fold-shade": "rgba(0, 0, 0, 0.25)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#f6f6f5", accent: "#3a3a3a", ink: "#2b2b2b" },

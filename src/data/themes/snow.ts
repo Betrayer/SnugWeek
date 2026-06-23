@@ -21,8 +21,6 @@ export const snow: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(60, 55, 50, 0.06)",
     "--sw-fold-shade": "rgba(45, 42, 38, 0.25)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#fcfcfb", accent: "#a87f87", ink: "#33312e" },

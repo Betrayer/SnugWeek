@@ -1,4 +1,5 @@
 import {
+  Box,
   Group,
   SegmentedControl,
   Select,
@@ -10,15 +11,25 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { THEME_ORDER, themeById } from "../../../../data/themes/registry.ts";
+import {
+  BODY_FONTS,
+  FONT_SCOPES,
+  HAND_FONTS,
+} from "../../../../data/fonts/registry.ts";
 import { SUPPORTED_LANGS, isSupportedLang } from "../../../../i18n/languages.ts";
 import {
   NOTEBOOK_NAME_MAX,
   TASK_DONE_STYLES,
+  TASK_STRIKE_STYLES,
 } from "../../../../services/repos/profileRepo.ts";
 import { useProfileStore } from "../../../../state/profileStore.ts";
 import { useSettingsStore } from "../../../../state/settingsStore.ts";
 import { CoverPicker } from "../CoverPicker.tsx";
 import { ThemePicker } from "../ThemePicker.tsx";
+
+const fontStackById = (id: string): string =>
+  [...BODY_FONTS, ...HAND_FONTS].find((font) => font.id === id)?.stack ??
+  "inherit";
 
 export const AppearanceSection = () => {
   const { t } = useTranslation(["settings", "common"]);
@@ -41,6 +52,16 @@ export const AppearanceSection = () => {
   );
   const taskDoneStyle = useProfileStore((state) => state.taskDoneStyle);
   const setTaskDoneStyle = useProfileStore((state) => state.setTaskDoneStyle);
+  const taskStrikeStyle = useProfileStore((state) => state.taskStrikeStyle);
+  const setTaskStrikeStyle = useProfileStore(
+    (state) => state.setTaskStrikeStyle,
+  );
+  const fontBodyId = useProfileStore((state) => state.fontBodyId);
+  const setFontBodyId = useProfileStore((state) => state.setFontBodyId);
+  const fontHandId = useProfileStore((state) => state.fontHandId);
+  const setFontHandId = useProfileStore((state) => state.setFontHandId);
+  const fontScope = useProfileStore((state) => state.fontScope);
+  const setFontScope = useProfileStore((state) => state.setFontScope);
   const notebookName = useProfileStore((state) => state.notebookName);
   const [nameDraft, setNameDraft] = useState(notebookName ?? "");
   const [seenName, setSeenName] = useState(notebookName);
@@ -127,6 +148,79 @@ export const AppearanceSection = () => {
         )}
       </Stack>
       <Stack gap="xs">
+        <Text fw={600}>{t("settings:fonts")}</Text>
+        <Group gap="md" grow align="flex-start">
+          <Select
+            label={t("settings:fontBody")}
+            data={BODY_FONTS.map((font) => ({
+              value: font.id,
+              label: font.name,
+            }))}
+            value={fontBodyId}
+            onChange={(value) => value && setFontBodyId(value)}
+            allowDeselect={false}
+            comboboxProps={{ withinPortal: true }}
+            renderOption={({ option }) => (
+              <span style={{ fontFamily: fontStackById(option.value) }}>
+                {option.label}
+              </span>
+            )}
+          />
+          <Select
+            label={t("settings:fontHand")}
+            data={HAND_FONTS.map((font) => ({
+              value: font.id,
+              label: font.name,
+            }))}
+            value={fontHandId}
+            onChange={(value) => value && setFontHandId(value)}
+            allowDeselect={false}
+            comboboxProps={{ withinPortal: true }}
+            renderOption={({ option }) => (
+              <span style={{ fontFamily: fontStackById(option.value) }}>
+                {option.label}
+              </span>
+            )}
+          />
+        </Group>
+        <Text fz="sm" fw={600} c="var(--sw-ink-2)">
+          {t("settings:fontScope")}
+        </Text>
+        <SegmentedControl
+          value={fontScope}
+          onChange={(value) => {
+            if (
+              value === "all" ||
+              value === "exceptTasks" ||
+              value === "onlyTasks"
+            )
+              setFontScope(value);
+          }}
+          data={FONT_SCOPES.map((scope) => ({
+            value: scope,
+            label: t(`settings:fontScopes.${scope}`),
+          }))}
+        />
+        <Box
+          p="sm"
+          style={{
+            border: "1px solid var(--sw-line)",
+            borderRadius: "var(--mantine-radius-md)",
+            backgroundColor: "var(--sw-card)",
+          }}
+        >
+          <Text ff="var(--sw-font-hand)" fz={24} c="var(--sw-ink-2)" lh={1.1}>
+            {notebookName ?? "SnugWeek"}
+          </Text>
+          <Text ff="var(--sw-font-body)" c="var(--sw-ink)" mt={6}>
+            {t("settings:fontPreviewBody")}
+          </Text>
+          <Text ff="var(--sw-font-tasks)" c="var(--sw-ink-2)" fz="sm" mt={2}>
+            {t("settings:fontPreviewTask")}
+          </Text>
+        </Box>
+      </Stack>
+      <Stack gap="xs">
         <Text fw={600}>{t("settings:language")}</Text>
         <SegmentedControl
           value={language}
@@ -202,6 +296,28 @@ export const AppearanceSection = () => {
           allowDeselect={false}
           comboboxProps={{ withinPortal: true }}
         />
+        {(taskDoneStyle === "strike" || taskDoneStyle === "dimStrike") && (
+          <>
+            <Text fz="sm" fw={600} c="var(--sw-ink-2)">
+              {t("settings:taskStrikeStyle")}
+            </Text>
+            <SegmentedControl
+              value={taskStrikeStyle}
+              onChange={(value) => {
+                if (
+                  value === "single" ||
+                  value === "scribble" ||
+                  value === "double"
+                )
+                  setTaskStrikeStyle(value);
+              }}
+              data={TASK_STRIKE_STYLES.map((style) => ({
+                value: style,
+                label: t(`settings:taskStrikeStyles.${style}`),
+              }))}
+            />
+          </>
+        )}
       </Stack>
     </Stack>
   );

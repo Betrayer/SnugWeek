@@ -21,8 +21,6 @@ export const cocoa: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(90, 66, 40, 0.1)",
     "--sw-fold-shade": "rgba(66, 46, 26, 0.3)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#f6efe6", accent: "#b07636", ink: "#3f3329" },

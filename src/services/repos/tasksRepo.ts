@@ -14,6 +14,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
+import { EMOJI_MAX } from "../../data/emoji.ts";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
 import { reportReadError } from "./readError.ts";
@@ -32,6 +33,7 @@ export interface TaskLocation {
 export interface Task extends TaskLocation {
   id: string;
   title: string;
+  emoji: string | null;
   status: TaskStatus;
   order: number;
   createdAt: number;
@@ -80,6 +82,7 @@ const asOffsetOrNull = (value: unknown): number | null =>
 const normalizeTask = (id: string, data: DocumentData): Task => ({
   id,
   title: typeof data.title === "string" ? data.title : "",
+  emoji: asStringOrNull(data.emoji),
   status: data.status === "done" ? "done" : "open",
   bucket: data.bucket === "list" ? "list" : "day",
   weekId: asStringOrNull(data.weekId),
@@ -181,6 +184,7 @@ export const createTask = (uid: string, fields: NewTaskFields): void => {
   const now = Date.now();
   void addDoc(tasksCol(uid), {
     title: fields.title,
+    emoji: null,
     status: "open",
     bucket: fields.bucket,
     weekId: fields.weekId,
@@ -234,6 +238,18 @@ export const updateTitle = (
   notePendingWrite();
   void updateDoc(taskRef(uid, taskId), {
     title,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setTaskEmoji = (
+  uid: string,
+  taskId: string,
+  emoji: string | null,
+): void => {
+  notePendingWrite();
+  void updateDoc(taskRef(uid, taskId), {
+    emoji: emoji === null ? null : emoji.slice(0, EMOJI_MAX),
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

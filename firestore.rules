@@ -8,12 +8,14 @@ service cloud.firestore {
 
     function validTask(d) {
       return d.keys().hasOnly([
-          'title', 'status', 'bucket', 'weekId', 'day', 'listId',
+          'title', 'emoji', 'status', 'bucket', 'weekId', 'day', 'listId',
           'order', 'createdAt', 'updatedAt', 'completedAt', 'carriedFrom',
           'tagIds', 'subtaskCount', 'subtaskDone', 'time', 'remindOffsetMin',
           'routineId', 'attachmentCount'
         ])
         && d.title is string && d.title.size() >= 1 && d.title.size() <= 500
+        && (!('emoji' in d) || d.emoji == null
+          || (d.emoji is string && d.emoji.size() <= 24))
         && (d.status == 'open' || d.status == 'done')
         && d.order is number
         && d.createdAt is number
@@ -87,10 +89,12 @@ service cloud.firestore {
 
     function validList(d) {
       return d.keys().hasOnly([
-          'kind', 'name', 'order', 'createdAt', 'day', 'attachmentCount'
+          'kind', 'name', 'emoji', 'order', 'createdAt', 'day', 'attachmentCount'
         ])
         && (d.kind == 'tasks' || d.kind == 'ideas' || d.kind == 'custom')
         && (d.name == null || d.name is string)
+        && (!('emoji' in d) || d.emoji == null
+          || (d.emoji is string && d.emoji.size() <= 24))
         && d.order is number
         && d.createdAt is number
         && (!('day' in d) || d.day == null || d.day is number)

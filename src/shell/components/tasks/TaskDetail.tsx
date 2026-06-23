@@ -25,6 +25,7 @@ import { AttachmentsArea } from "../attachments/AttachmentsArea.tsx";
 import { ActionMenu } from "../common/ActionMenu.tsx";
 import { BottomSheet } from "../common/BottomSheet.tsx";
 import { ComingSoon } from "../common/ComingSoon.tsx";
+import { EmojiPickerButton } from "../common/EmojiPickerButton.tsx";
 import { SubtaskList } from "./SubtaskList.tsx";
 import { TaskTagPicker } from "./TaskTagPicker.tsx";
 import { TaskTimeReminder } from "./TaskTimeReminder.tsx";
@@ -155,15 +156,28 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
         <ActionMenu label={t("tasks:detail.actions")} actions={menuActions} />
       </Group>
 
-      <TextInput
-        label={t("tasks:detail.titleLabel")}
-        value={draft}
-        maxLength={MAX_TITLE}
-        onChange={(event) => setDraft(event.currentTarget.value)}
-        onKeyDown={handleKey}
-        onBlur={commit}
-        styles={fieldStyles}
-      />
+      <Group align="flex-end" gap="xs" wrap="nowrap">
+        <EmojiPickerButton
+          value={task.emoji}
+          onChange={(emoji) => ownerOf(task).setTaskEmoji(task.id, emoji)}
+        />
+        <TextInput
+          style={{ flex: 1 }}
+          label={t("tasks:detail.titleLabel")}
+          value={draft}
+          maxLength={MAX_TITLE}
+          onChange={(event) => setDraft(event.currentTarget.value)}
+          onKeyDown={handleKey}
+          onBlur={commit}
+          styles={{
+            label: fieldStyles.label,
+            input: {
+              ...fieldStyles.input,
+              fontFamily: "var(--sw-font-tasks)",
+            },
+          }}
+        />
+      </Group>
 
       <Box>
         <SectionLabel>{t("tasks:detail.locationLabel")}</SectionLabel>

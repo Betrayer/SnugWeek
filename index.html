@@ -69,6 +69,33 @@
             root.dataset.snugCover = coverId;
             root.style.setProperty("--boot-cover", covers[coverId]);
           }
+          var fonts = null;
+          try {
+            fonts = JSON.parse(localStorage.getItem("snugweek-fonts"));
+          } catch (e2) {}
+          if (fonts) {
+            if (fonts.body)
+              root.style.setProperty("--sw-font-body", fonts.body);
+            if (fonts.hand)
+              root.style.setProperty("--sw-font-hand", fonts.hand);
+            if (fonts.tasks)
+              root.style.setProperty("--sw-font-tasks", fonts.tasks);
+          }
+          var preload = (fonts && fonts.preload) || [
+            "/fonts/nunito-latin-400.woff2",
+            "/fonts/nunito-cyrillic-400.woff2",
+            "/fonts/caveat-latin-600.woff2",
+            "/fonts/caveat-cyrillic-600.woff2",
+          ];
+          for (var i = 0; i < preload.length; i++) {
+            var fl = document.createElement("link");
+            fl.rel = "preload";
+            fl.as = "font";
+            fl.type = "font/woff2";
+            fl.crossOrigin = "anonymous";
+            fl.href = preload[i];
+            document.head.appendChild(fl);
+          }
         } catch (e) {}
       })();
     </script>
@@ -86,7 +113,7 @@
       }
       #sw-boot-name {
         color: var(--boot-ink, #7d6e5f);
-        font-family: "Caveat", cursive;
+        font-family: var(--sw-font-hand, "Caveat", cursive);
         font-weight: 600;
         font-size: 44px;
         letter-spacing: 0.5px;
@@ -110,35 +137,6 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
-
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/caveat-latin-600.woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/caveat-cyrillic-600.woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/nunito-latin-400.woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/nunito-cyrillic-400.woff2"
-      crossorigin
-    />
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />

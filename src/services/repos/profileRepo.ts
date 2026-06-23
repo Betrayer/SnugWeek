@@ -13,6 +13,15 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import { seedContentFor } from "../../data/defaults.ts";
 import { DEFAULT_THEME_ID, themeById } from "../../data/themes/registry.ts";
+import {
+  DEFAULT_BODY_FONT_ID,
+  DEFAULT_FONT_SCOPE,
+  DEFAULT_HAND_FONT_ID,
+  FONT_SCOPES,
+  bodyFontById,
+  handFontById,
+} from "../../data/fonts/registry.ts";
+import type { FontScope } from "../../data/fonts/registry.ts";
 import type { SupportedLang } from "../../i18n/languages.ts";
 import { ORDER_SPACING } from "../ordering.ts";
 import { currentWeekId, todayIsoDay } from "../time.ts";
@@ -50,6 +59,16 @@ export const TASK_DONE_STYLES: TaskDoneStyle[] = [
 
 export const DEFAULT_TASK_DONE_STYLE: TaskDoneStyle = "dimStrike";
 
+export type TaskStrikeStyle = "single" | "scribble" | "double";
+
+export const TASK_STRIKE_STYLES: TaskStrikeStyle[] = [
+  "single",
+  "scribble",
+  "double",
+];
+
+export const DEFAULT_TASK_STRIKE_STYLE: TaskStrikeStyle = "single";
+
 export interface ProfileDoc {
   schemaVersion: number;
   createdAt: number;
@@ -61,6 +80,10 @@ export interface ProfileDoc {
   weekend: number[];
   columnMode: "cozy" | "equal";
   taskDoneStyle: TaskDoneStyle;
+  taskStrikeStyle: TaskStrikeStyle;
+  fontBodyId: string;
+  fontHandId: string;
+  fontScope: FontScope;
   statsBackfilledAt: number | null;
   notebookName: string | null;
   coverStyle: string | null;
@@ -109,6 +132,26 @@ const normalizeTaskDoneStyle = (value: unknown): TaskDoneStyle =>
     ? (value as TaskDoneStyle)
     : DEFAULT_TASK_DONE_STYLE;
 
+const normalizeTaskStrikeStyle = (value: unknown): TaskStrikeStyle =>
+  TASK_STRIKE_STYLES.includes(value as TaskStrikeStyle)
+    ? (value as TaskStrikeStyle)
+    : DEFAULT_TASK_STRIKE_STYLE;
+
+const normalizeBodyFont = (value: unknown): string =>
+  typeof value === "string" && bodyFontById(value).id === value
+    ? value
+    : DEFAULT_BODY_FONT_ID;
+
+const normalizeHandFont = (value: unknown): string =>
+  typeof value === "string" && handFontById(value).id === value
+    ? value
+    : DEFAULT_HAND_FONT_ID;
+
+const normalizeFontScope = (value: unknown): FontScope =>
+  FONT_SCOPES.includes(value as FontScope)
+    ? (value as FontScope)
+    : DEFAULT_FONT_SCOPE;
+
 const normalizeAutoTheme = (value: unknown): AutoTheme | null => {
   if (typeof value !== "object" || value === null) return null;
   const source = value as Record<string, unknown>;
@@ -133,6 +176,10 @@ const normalizeProfile = (data: DocumentData): ProfileDoc => ({
   weekend: isNumberArray(data.weekend) ? data.weekend : DEFAULT_WEEKEND,
   columnMode: data.columnMode === "equal" ? "equal" : "cozy",
   taskDoneStyle: normalizeTaskDoneStyle(data.taskDoneStyle),
+  taskStrikeStyle: normalizeTaskStrikeStyle(data.taskStrikeStyle),
+  fontBodyId: normalizeBodyFont(data.fontBodyId),
+  fontHandId: normalizeHandFont(data.fontHandId),
+  fontScope: normalizeFontScope(data.fontScope),
   statsBackfilledAt:
     typeof data.statsBackfilledAt === "number" ? data.statsBackfilledAt : null,
   notebookName:
@@ -287,6 +334,41 @@ export const setTaskDoneStyle = (
   notePendingWrite();
   void updateDoc(profileRef(uid), {
     taskDoneStyle,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setTaskStrikeStyle = (
+  uid: string,
+  taskStrikeStyle: TaskStrikeStyle,
+): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    taskStrikeStyle,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setFontBody = (uid: string, fontBodyId: string): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    fontBodyId,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setFontHand = (uid: string, fontHandId: string): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    fontHandId,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setFontScope = (uid: string, fontScope: FontScope): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    fontScope,
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

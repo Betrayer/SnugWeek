@@ -21,8 +21,6 @@ export const sage: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(56, 70, 52, 0.09)",
     "--sw-fold-shade": "rgba(38, 50, 34, 0.3)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#f3f6f1", accent: "#5f9488", ink: "#3b443a" },
