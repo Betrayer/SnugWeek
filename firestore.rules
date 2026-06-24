@@ -154,10 +154,12 @@ service cloud.firestore {
     }
 
     function validTracker(d) {
-      return d.keys().hasOnly(['name', 'type', 'icon', 'order', 'enabled', 'createdAt'])
+      return d.keys().hasOnly(['name', 'type', 'icon', 'color', 'order', 'enabled', 'createdAt'])
         && d.name is string
         && (d.type == 'scale5' || d.type == 'emoji' || d.type == 'number' || d.type == 'checkbox')
         && d.icon is string
+        && (!('color' in d) || d.color in ['rose', 'amber', 'teal', 'violet',
+          'fern', 'sky', 'coral', 'plum'])
         && d.order is number
         && d.enabled is bool
         && d.createdAt is number;
