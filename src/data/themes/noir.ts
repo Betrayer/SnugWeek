@@ -20,6 +20,7 @@ export const noir: ThemeSpec = {
   vars: {
     "--sw-paper": "#161616",
     "--sw-paper-2": "#1e1e1e",
+    "--sw-off-day": "#2e2c2a",
     "--sw-card": "#242424",
     "--sw-ink": "#ededed",
     "--sw-ink-2": "#b0b0b0",
@@ -34,8 +35,6 @@ export const noir: ThemeSpec = {
     "--sw-shadow": "0 4px 16px rgba(0, 0, 0, 0.5)",
     "--sw-fold-shade": "rgba(0, 0, 0, 0.65)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: { colors: { dark } },
   preview: { paper: "#161616", accent: "#e8e8e8", ink: "#ededed" },

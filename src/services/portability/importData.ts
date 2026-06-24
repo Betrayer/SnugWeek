@@ -16,6 +16,7 @@ const MAX_DECORATIONS = 120;
 
 const TASK_KEYS = [
   "title",
+  "emoji",
   "status",
   "bucket",
   "weekId",
@@ -38,6 +39,7 @@ const SUBTASK_KEYS = ["title", "done", "order", "createdAt"] as const;
 const LIST_KEYS = [
   "kind",
   "name",
+  "emoji",
   "order",
   "createdAt",
   "day",
@@ -51,7 +53,14 @@ const TRACKER_KEYS = [
   "enabled",
   "createdAt",
 ] as const;
-const HABIT_KEYS = ["name", "icon", "order", "archived", "createdAt"] as const;
+const HABIT_KEYS = [
+  "name",
+  "icon",
+  "order",
+  "archived",
+  "createdAt",
+  "days",
+] as const;
 const TAG_KEYS = ["name", "color", "order", "createdAt"] as const;
 const ROUTINE_KEYS = [
   "title",
@@ -93,6 +102,11 @@ const PROFILE_KEYS = [
   "moduleToggles",
   "weekend",
   "columnMode",
+  "taskDoneStyle",
+  "taskStrikeStyle",
+  "fontBodyId",
+  "fontHandId",
+  "fontScope",
   "notebookName",
   "coverStyle",
 ] as const;

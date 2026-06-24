@@ -14,7 +14,6 @@
   "dailyHint": "A task will be added for every day of the week.",
   "everyDay": "Every day",
   "timeLabel": "Time",
-  "clearTime": "Clear time",
   "reminderLabel": "Reminder",
   "active": "Active",
   "activeHint": "Pause to stop adding it to future weeks.",

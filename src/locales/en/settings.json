@@ -1,5 +1,9 @@
 {
   "title": "Settings",
+  "tabs": {
+    "settings": "Settings",
+    "notebook": "Notebook"
+  },
   "appearance": "Appearance",
   "account": "Account",
   "about": "About",
@@ -23,6 +27,30 @@
   },
   "paperTexture": "Paper texture",
   "paperTextureHint": "A subtle grain on the paper (off by default).",
+  "taskDoneStyle": "Completed tasks look",
+  "taskDoneStyles": {
+    "strike": "Crossed out",
+    "dim": "Dimmed",
+    "dimStrike": "Dimmed and crossed out",
+    "fade": "Faded"
+  },
+  "taskStrikeStyle": "Strikethrough",
+  "taskStrikeStyles": {
+    "single": "Single",
+    "scribble": "Scribble",
+    "double": "Double"
+  },
+  "fonts": "Fonts",
+  "fontBody": "Text font",
+  "fontHand": "Accent font",
+  "fontScope": "Apply to",
+  "fontScopes": {
+    "all": "Everything",
+    "exceptTasks": "Except tasks",
+    "onlyTasks": "Only tasks"
+  },
+  "fontPreviewBody": "A cozy week of small plans.",
+  "fontPreviewTask": "Water the plants",
   "theme": "Theme",
   "autoTheme": "Auto - follow system",
   "autoThemeHint": "Switch between a light and dark theme when your device does.",
@@ -52,6 +80,13 @@
   "transitionCurl": "Page curl",
   "transitionNone": "No animation",
   "reduceMotion": "Reduce motion",
+  "cheers": "Cheers",
+  "cheersHint": "Gentle well-done moments when you check off habits and tasks.",
+  "cheerLevels": {
+    "off": "Off",
+    "subtle": "Subtle",
+    "full": "Full"
+  },
   "sound": "Sound",
   "soundEnable": "Sound effects",
   "soundVolume": "Volume",

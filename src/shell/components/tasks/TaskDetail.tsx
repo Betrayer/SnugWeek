@@ -25,9 +25,12 @@ import { AttachmentsArea } from "../attachments/AttachmentsArea.tsx";
 import { ActionMenu } from "../common/ActionMenu.tsx";
 import { BottomSheet } from "../common/BottomSheet.tsx";
 import { ComingSoon } from "../common/ComingSoon.tsx";
+import { EmojiPickerButton } from "../common/EmojiPickerButton.tsx";
 import { SubtaskList } from "./SubtaskList.tsx";
 import { TaskTagPicker } from "./TaskTagPicker.tsx";
 import { TaskTimeReminder } from "./TaskTimeReminder.tsx";
+import { fieldStyles } from "../../styles/fieldStyles.ts";
+import { CheckGlyph } from "../icons/glyphs.tsx";
 
 const MAX_TITLE = 500;
 
@@ -67,21 +70,7 @@ const DoneToggle = ({ task }: { task: Task }) => {
           justifyContent: "center",
         }}
       >
-        {done && (
-          <svg
-            width="13"
-            height="13"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="var(--sw-accent-ink)"
-            strokeWidth="3.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            aria-hidden
-          >
-            <path d="M5 12l4.5 4.5L19 7" />
-          </svg>
-        )}
+        {done && <CheckGlyph size={13} />}
       </span>
       {done ? t("completed") : t("done")}
     </UnstyledButton>
@@ -167,22 +156,28 @@ const TaskDetailContent = ({ task }: { task: Task }) => {
         <ActionMenu label={t("tasks:detail.actions")} actions={menuActions} />
       </Group>
 
-      <TextInput
-        label={t("tasks:detail.titleLabel")}
-        value={draft}
-        maxLength={MAX_TITLE}
-        onChange={(event) => setDraft(event.currentTarget.value)}
-        onKeyDown={handleKey}
-        onBlur={commit}
-        styles={{
-          label: { color: "var(--sw-ink-2)", fontWeight: 600 },
-          input: {
-            backgroundColor: "var(--sw-card)",
-            borderColor: "var(--sw-line)",
-            color: "var(--sw-ink)",
-          },
-        }}
-      />
+      <Group align="flex-end" gap="xs" wrap="nowrap">
+        <EmojiPickerButton
+          value={task.emoji}
+          onChange={(emoji) => ownerOf(task).setTaskEmoji(task.id, emoji)}
+        />
+        <TextInput
+          style={{ flex: 1 }}
+          label={t("tasks:detail.titleLabel")}
+          value={draft}
+          maxLength={MAX_TITLE}
+          onChange={(event) => setDraft(event.currentTarget.value)}
+          onKeyDown={handleKey}
+          onBlur={commit}
+          styles={{
+            label: fieldStyles.label,
+            input: {
+              ...fieldStyles.input,
+              fontFamily: "var(--sw-font-tasks)",
+            },
+          }}
+        />
+      </Group>
 
       <Box>
         <SectionLabel>{t("tasks:detail.locationLabel")}</SectionLabel>

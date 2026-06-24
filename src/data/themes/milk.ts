@@ -6,6 +6,7 @@ export const milk: ThemeSpec = {
   vars: {
     "--sw-paper": "#faf6ef",
     "--sw-paper-2": "#f3ecdf",
+    "--sw-off-day": "#f3e6cb",
     "--sw-card": "#fffdf8",
     "--sw-ink": "#4a3f35",
     "--sw-ink-2": "#7d6e5f",
@@ -20,8 +21,6 @@ export const milk: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(86, 70, 56, 0.08)",
     "--sw-fold-shade": "rgba(58, 44, 30, 0.3)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#faf6ef", accent: "#c47e8a", ink: "#4a3f35" },

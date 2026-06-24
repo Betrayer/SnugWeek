@@ -9,9 +9,7 @@ import {
   Text,
   TextInput,
 } from "@mantine/core";
-import { TimeInput } from "@mantine/dates";
 import { useMemo, useState } from "react";
-import type { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import {
   REMINDER_OFFSETS,
@@ -27,6 +25,9 @@ import { useRoutinesStore } from "../../../../state/routinesStore.ts";
 import { useSettingsStore } from "../../../../state/settingsStore.ts";
 import { ActionMenu } from "../../common/ActionMenu.tsx";
 import { ResponsiveDialog } from "../../common/ResponsiveDialog.tsx";
+import { TimeField } from "../../common/TimeField.tsx";
+import { fieldStyles } from "../../../styles/fieldStyles.ts";
+import { cardSurface } from "../../../styles/surfaces.ts";
 
 const MAX_NAME = 200;
 const NONE = "none";
@@ -67,15 +68,6 @@ const toFields = (draft: Draft): RoutineFields => ({
   active: draft.active,
 });
 
-const fieldStyles = {
-  label: { color: "var(--sw-ink-2)", fontWeight: 600 },
-  input: {
-    backgroundColor: "var(--sw-card)",
-    borderColor: "var(--sw-line)",
-    color: "var(--sw-ink)",
-  },
-};
-
 interface RoutineEditorProps {
   opened: boolean;
   title: string;
@@ -109,9 +101,6 @@ const RoutineEditor = ({
       label: t(`reminders:offsets.${offsetKey(minutes)}`),
     })),
   ];
-
-  const onTimeChange = (event: ChangeEvent<HTMLInputElement>) =>
-    onChange({ ...draft, time: event.currentTarget.value });
 
   return (
     <ResponsiveDialog opened={opened} onClose={onClose} title={title}>
@@ -176,23 +165,11 @@ const RoutineEditor = ({
           )}
         </Stack>
 
-        <Group align="flex-end" gap="sm" wrap="nowrap">
-          <TimeInput
-            label={t("timeLabel")}
-            value={draft.time}
-            onChange={onTimeChange}
-            styles={fieldStyles}
-            style={{ flex: 1 }}
-          />
-          <Button
-            variant="subtle"
-            color="var(--sw-ink-2)"
-            onClick={() => onChange({ ...draft, time: "" })}
-            disabled={!hasTime}
-          >
-            {t("clearTime")}
-          </Button>
-        </Group>
+        <TimeField
+          label={t("timeLabel")}
+          value={draft.time === "" ? null : draft.time}
+          onChange={(value) => onChange({ ...draft, time: value ?? "" })}
+        />
 
         <Select
           label={t("reminderLabel")}
@@ -296,12 +273,7 @@ export const RoutinesSection = () => {
               justify="space-between"
               wrap="nowrap"
               gap="sm"
-              style={{
-                padding: "8px 12px",
-                borderRadius: "var(--mantine-radius-md)",
-                backgroundColor: "var(--sw-card)",
-                border: "1px solid var(--sw-line)",
-              }}
+              style={{ padding: "8px 12px", ...cardSurface("md") }}
             >
               <Stack gap={2} style={{ minWidth: 0 }}>
                 <Text

@@ -6,6 +6,7 @@ import type {
   WeekViewHabit,
 } from "../../../services/share/shareTypes.ts";
 import { TrackerIcon } from "../trackers/TrackerIcon.tsx";
+import { CheckGlyph } from "../icons/glyphs.tsx";
 
 interface StaticHabitGridProps {
   habits: WeekViewHabit[];
@@ -19,22 +20,6 @@ const gridStyle: CSSProperties = {
   gap: 5,
   alignItems: "center",
 };
-
-const CheckGlyph = () => (
-  <svg
-    width="13"
-    height="13"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-accent-ink)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path d="M5 12l4.5 4.5L19 7" />
-  </svg>
-);
 
 const cell = (checked: boolean): CSSProperties => ({
   width: 24,
@@ -80,7 +65,9 @@ export const StaticHabitGrid = ({ habits, checks, days }: StaticHabitGridProps) 
           <div style={gridStyle}>
             {days.map((day) => (
               <span key={day.iso} style={cell(checks[habit.id]?.[String(day.iso)] === true)}>
-                {checks[habit.id]?.[String(day.iso)] === true && <CheckGlyph />}
+                {checks[habit.id]?.[String(day.iso)] === true && (
+                  <CheckGlyph size={13} />
+                )}
               </span>
             ))}
           </div>

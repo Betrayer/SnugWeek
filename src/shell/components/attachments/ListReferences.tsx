@@ -2,7 +2,7 @@ import { Stack, UnstyledButton } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useTranslation } from "react-i18next";
 import { AttachmentsArea } from "./AttachmentsArea.tsx";
-import { ChevronRightGlyph, PaperclipGlyph } from "./icons.tsx";
+import { ChevronRightGlyph, PaperclipGlyph } from "../icons/glyphs.tsx";
 
 interface ListReferencesProps {
   listId: string;

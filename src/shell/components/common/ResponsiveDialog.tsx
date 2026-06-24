@@ -36,6 +36,7 @@ export const ResponsiveDialog = ({
       onClose={onClose}
       title={title}
       centered
+      zIndex={300}
       closeOnClickOutside={closeOnClickOutside}
       closeOnEscape={closeOnEscape}
       styles={{

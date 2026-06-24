@@ -20,14 +20,21 @@ interface TaskListProps {
   emptyLabel?: string;
   emptyIcon?: ReactNode;
   fill?: boolean;
+  emptyFill?: boolean;
   onToggle: (task: Task) => void;
+  onRename?: (task: Task, title: string) => void;
+  onDelete?: (task: Task) => void;
 }
 
-const zoneStyle = (isOver: boolean, fill: boolean): CSSProperties => ({
+const zoneStyle = (
+  isOver: boolean,
+  fill: boolean,
+  grow: boolean,
+): CSSProperties => ({
   display: "flex",
   flexDirection: "column",
   gap: 2,
-  flex: fill ? 1 : undefined,
+  flex: fill || grow ? 1 : undefined,
   minHeight: fill ? 0 : 44,
   overflowY: fill ? "auto" : "visible",
   borderRadius: "var(--mantine-radius-md)",
@@ -43,7 +50,10 @@ export const TaskList = ({
   emptyLabel,
   emptyIcon,
   fill = false,
+  emptyFill = false,
   onToggle,
+  onRename,
+  onDelete,
 }: TaskListProps) => {
   const { setNodeRef, isOver } = useDroppable({ id: containerId });
   const reduced = useReducedMotionPref();
@@ -55,6 +65,8 @@ export const TaskList = ({
       task.tagIds.some((id) => tagFilter.includes(id)),
     )
     : sorted;
+  const showEmpty = display.length === 0 && !filtering;
+  const grow = emptyFill && showEmpty && emptyLabel !== undefined;
 
   return (
     <SortableContext
@@ -62,7 +74,7 @@ export const TaskList = ({
       items={display.map((task) => task.id)}
       strategy={verticalListSortingStrategy}
     >
-      <div ref={setNodeRef} style={zoneStyle(isOver, fill)}>
+      <div ref={setNodeRef} style={zoneStyle(isOver, fill, grow)}>
         <AnimatePresence initial={false}>
           {display.map((task, taskIndex) => (
             <m.div
@@ -80,13 +92,37 @@ export const TaskList = ({
                 task={task}
                 onToggle={() => onToggle(task)}
                 onOpen={() => useUiStore.getState().openTask(task.id)}
+                onRename={
+                  onRename ? (title) => onRename(task, title) : undefined
+                }
+                onDelete={onDelete ? () => onDelete(task) : undefined}
               />
             </m.div>
           ))}
         </AnimatePresence>
-        {display.length === 0 && emptyLabel && !filtering && (
-          <EmptyState icon={emptyIcon ?? <SparkleDoodle />} label={emptyLabel} />
-        )}
+        {showEmpty &&
+          emptyLabel !== undefined &&
+          (grow ? (
+            <div
+              style={{
+                flex: 1,
+                minHeight: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <EmptyState
+                icon={emptyIcon ?? <SparkleDoodle />}
+                label={emptyLabel}
+              />
+            </div>
+          ) : (
+            <EmptyState
+              icon={emptyIcon ?? <SparkleDoodle />}
+              label={emptyLabel}
+            />
+          ))}
       </div>
     </SortableContext>
   );

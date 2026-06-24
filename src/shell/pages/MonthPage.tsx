@@ -20,38 +20,9 @@ import { useUiStore } from "../../state/uiStore.ts";
 import { EmptyState } from "../components/common/EmptyState.tsx";
 import { MoonDoodle } from "../components/common/doodles.tsx";
 import { MonthGrid } from "../components/month/MonthGrid.tsx";
+import { ChevronLeftGlyph, ChevronRightGlyph } from "../components/icons/glyphs.tsx";
 
 const EMPTY_MOODS: Record<string, string> = {};
-
-const ChevronLeftIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M15 5l-7 7 7 7" />
-  </svg>
-);
-
-const ChevronRightIcon = () => (
-  <svg
-    width="18"
-    height="18"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M9 5l7 7-7 7" />
-  </svg>
-);
 
 export const MonthPage = () => {
   const { t } = useTranslation(["month", "common"]);
@@ -101,7 +72,7 @@ export const MonthPage = () => {
             aria-label={t("month:prevMonth")}
             onClick={() => navigate(`/month/${addMonths(monthId, -1)}`)}
           >
-            <ChevronLeftIcon />
+            <ChevronLeftGlyph size={18} strokeWidth={2} />
           </ActionIcon>
           <Text fw={700} fz="lg" c="var(--sw-ink)" style={{ minWidth: 0 }}>
             {monthTitle(monthId)}
@@ -112,7 +83,7 @@ export const MonthPage = () => {
             aria-label={t("month:nextMonth")}
             onClick={() => navigate(`/month/${addMonths(monthId, 1)}`)}
           >
-            <ChevronRightIcon />
+            <ChevronRightGlyph size={18} strokeWidth={2} />
           </ActionIcon>
         </Group>
         {!isCurrent && (

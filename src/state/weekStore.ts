@@ -7,12 +7,18 @@ import {
   createTask,
   deleteTask,
   setStatus,
+  setTaskEmoji as setTaskEmojiDoc,
   setTaskReminder,
   setTaskTime,
   subscribeWeekTasks,
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
+import {
+  cheerDayClear,
+  cheerHabit,
+  cheerTask,
+} from "../services/cheer/cheerService.ts";
 import {
   playCheck,
   playPop,
@@ -38,6 +44,7 @@ import type {
 import { DEFAULT_DECORATION_ANIMATION } from "../data/decorations.tsx";
 import type { DecorationKind } from "../data/decorations.tsx";
 import { useDecorStore } from "./decorStore.ts";
+import { useHabitsStore } from "./habitsStore.ts";
 import { useProfileStore } from "./profileStore.ts";
 import { useUiStore } from "./uiStore.ts";
 
@@ -55,6 +62,7 @@ interface WeekState {
   addTask: (day: number, title: string) => void;
   toggleDone: (task: Task) => void;
   renameTask: (taskId: string, title: string) => void;
+  setTaskEmoji: (taskId: string, emoji: string | null) => void;
   removeTask: (taskId: string) => void;
   setTime: (taskId: string, time: string | null) => void;
   setReminder: (taskId: string, offsetMin: number | null) => void;
@@ -222,11 +230,24 @@ export const useWeekStore = create<WeekState>()(
         setStatus(activeUid, task.id, "done", now);
         bumpCompletion(activeUid, isoDateKeyOf(now), 1);
         playCheck();
+        const dayTasks =
+          task.day === null ? [] : (get().tasksByDay[task.day] ?? []);
+        const cleared =
+          dayTasks.length >= 2 &&
+          dayTasks.every(
+            (entry) => entry.id === task.id || entry.status === "done",
+          );
+        if (cleared) cheerDayClear();
+        else cheerTask();
       },
       renameTask: (taskId, title) => {
         const trimmed = title.trim();
         if (!activeUid || trimmed.length === 0) return;
         updateTitle(activeUid, taskId, trimmed);
+      },
+      setTaskEmoji: (taskId, emoji) => {
+        if (!activeUid) return;
+        setTaskEmojiDoc(activeUid, taskId, emoji);
       },
       removeTask: (taskId) => {
         if (!activeUid) return;
@@ -235,6 +256,9 @@ export const useWeekStore = create<WeekState>()(
           .find((entry) => entry.id === taskId);
         if (task && task.attachmentCount > 0) {
           purgeTaskAttachments(activeUid, taskId);
+        }
+        if (task && task.status === "done" && task.completedAt !== null) {
+          bumpCompletion(activeUid, isoDateKeyOf(task.completedAt), -1);
         }
         deleteTask(activeUid, taskId);
         playSwoosh();
@@ -263,6 +287,10 @@ export const useWeekStore = create<WeekState>()(
         const current =
           get().week?.habitChecks[habitId]?.[String(day)] === true;
         setHabitCheck(activeUid, activeWeekId, habitId, day, !current);
+        if (!current) {
+          cheerHabit();
+          useHabitsStore.getState().cheerHabitStreak(habitId);
+        }
       },
       toggleDayOff: (day) => {
         if (!activeUid || !activeWeekId) return;

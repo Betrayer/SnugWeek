@@ -1,5 +1,5 @@
 import { UnstyledButton } from "@mantine/core";
-import type { CSSProperties } from "react";
+import type { CSSProperties, ReactNode } from "react";
 import { useEffect, useRef } from "react";
 import { currentWeekId, todayIsoDay } from "../../../services/time.ts";
 import type { WeekDay } from "../../../services/time.ts";
@@ -12,6 +12,7 @@ interface MobileDayPagerProps {
   days: WeekDay[];
   daysOff: number[];
   weekId: string;
+  rightSlot?: ReactNode;
 }
 
 const EMPTY: Task[] = [];
@@ -38,6 +39,7 @@ export const MobileDayPager = ({
   days,
   daysOff,
   weekId,
+  rightSlot,
 }: MobileDayPagerProps) => {
   const pagerRef = useRef<HTMLDivElement>(null);
   const tasksByDay = useWeekStore((state) => state.tasksByDay);
@@ -80,6 +82,7 @@ export const MobileDayPager = ({
     >
       <div
         style={{
+          position: "relative",
           display: "flex",
           justifyContent: "center",
           gap: 8,
@@ -116,6 +119,7 @@ export const MobileDayPager = ({
             </UnstyledButton>
           );
         })}
+        {rightSlot}
       </div>
       <div
         ref={pagerRef}

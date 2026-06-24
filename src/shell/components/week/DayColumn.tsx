@@ -11,6 +11,7 @@ import { AttachmentsArea } from "../attachments/AttachmentsArea.tsx";
 import { MemoriesStrip } from "../attachments/MemoriesStrip.tsx";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { DecorationLayer } from "../decor/DecorationLayer.tsx";
+import { DayHabitRow } from "../habits/DayHabitRow.tsx";
 import { DayNote } from "../note/DayNote.tsx";
 import { ListSection } from "../sidebar/ListSection.tsx";
 import { dayColumnId, dayContainerId } from "../tasks/dndIds.ts";
@@ -34,14 +35,18 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
   const showTrackers = useProfileStore(
     (state) => state.moduleToggles.dayTrackers,
   );
+  const showHabits = useProfileStore((state) => state.moduleToggles.habits);
   const showNote = useProfileStore((state) => state.moduleToggles.weekNote);
   const [memoriesOpen, setMemoriesOpen] = useState(false);
+  const [composerActive, setComposerActive] = useState(false);
   const { setNodeRef, isOver } = useDroppable({ id: dayColumnId(day.iso) });
   const dayLists = lists.filter(
     (list) => list.kind === "custom" && list.day === day.iso,
   );
 
-  const borderColor = isOver ? "var(--sw-accent)" : "var(--sw-line)";
+  const borderColor = isOver
+    ? "var(--sw-accent)"
+    : "color-mix(in srgb, var(--sw-line) 70%, transparent)";
 
   return (
     <Stack
@@ -49,8 +54,9 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
       gap="xs"
       style={{
         position: "relative",
-        backgroundColor: isOff ? "var(--sw-paper-2)" : "var(--sw-card)",
-        backgroundImage: "var(--sw-paper-texture)",
+        backgroundColor: isOff
+          ? "var(--sw-off-day, var(--sw-paper-2))"
+          : "var(--sw-card)",
         border: `1px solid ${borderColor}`,
         borderRadius: "var(--mantine-radius-lg)",
         padding: "var(--mantine-spacing-sm)",
@@ -64,9 +70,11 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
       <DayHeader
         day={day}
         isOff={isOff}
+        onAdd={() => setComposerActive(true)}
         onAddMemory={weekId ? () => setMemoriesOpen(true) : undefined}
       />
       {showTrackers && <DayTrackerRow day={day.iso} />}
+      {showHabits && <DayHabitRow day={day.iso} dayLabel={day.label} />}
       {weekId && (
         <MemoriesStrip
           weekId={weekId}
@@ -89,10 +97,17 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
           tasks={tasks}
           containerId={dayContainerId(day.iso)}
           emptyLabel={t("emptyDay")}
+          emptyFill
           onToggle={(task) => useWeekStore.getState().toggleDone(task)}
+          onRename={(task, title) =>
+            useWeekStore.getState().renameTask(task.id, title)
+          }
+          onDelete={(task) => useWeekStore.getState().removeTask(task.id)}
         />
         <TaskComposer
           dataDay={day.iso}
+          active={composerActive}
+          onActiveChange={setComposerActive}
           onAdd={(title) => useWeekStore.getState().addTask(day.iso, title)}
         />
         {dayLists.map((list) => (

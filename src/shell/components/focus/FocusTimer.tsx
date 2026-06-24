@@ -2,7 +2,6 @@ import {
   ActionIcon,
   Button,
   Group,
-  NumberInput,
   RingProgress,
   Select,
   Stack,
@@ -12,10 +11,12 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
   DEFAULT_CUSTOM_MIN,
-  MAX_CUSTOM_MIN,
-  MIN_CUSTOM_MIN,
+  clampDurationMin,
+  clockToMinutes,
   formatRemaining,
+  minutesToClock,
 } from "../../../services/focus/focusTimer.ts";
+import { TimeField } from "../common/TimeField.tsx";
 import {
   currentWeekId,
   isoDateKey,
@@ -25,6 +26,7 @@ import {
 import { useAuthStore } from "../../../state/authStore.ts";
 import { useFocusStore } from "../../../state/focusStore.ts";
 import { useRecapStore } from "../../../state/recapStore.ts";
+import { CloseGlyph } from "../icons/glyphs.tsx";
 
 const phaseColor = (phase: "focus" | "break"): string =>
   phase === "focus" ? "var(--sw-accent)" : "var(--sw-done)";
@@ -38,22 +40,6 @@ const useNow = (active: boolean): number => {
   }, [active]);
   return now;
 };
-
-const ClearIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="1.8"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path d="M6 6l12 12M18 6 6 18" />
-  </svg>
-);
 
 export const FocusTimer = () => {
   const { t } = useTranslation("focus");
@@ -113,7 +99,7 @@ export const FocusTimer = () => {
             aria-label={t("clearTask")}
             onClick={() => useFocusStore.getState().setTask(null, null)}
           >
-            <ClearIcon />
+            <CloseGlyph size={16} strokeWidth={1.8} />
           </ActionIcon>
         </Group>
       ) : (
@@ -241,21 +227,16 @@ export const FocusTimer = () => {
             </Button>
           </Group>
           <Group gap="sm" align="flex-end" wrap="nowrap">
-            <NumberInput
+            <TimeField
               label={t("customMinutes")}
-              value={customMin}
+              value={minutesToClock(customMin)}
               onChange={(value) =>
                 setCustomMin(
-                  typeof value === "number"
-                    ? value
-                    : Number(value) || DEFAULT_CUSTOM_MIN,
+                  value ? clampDurationMin(clockToMinutes(value)) : DEFAULT_CUSTOM_MIN,
                 )
               }
-              min={MIN_CUSTOM_MIN}
-              max={MAX_CUSTOM_MIN}
-              step={5}
-              allowDecimal={false}
-              clampBehavior="strict"
+              clearable={false}
+              presets={["00:15", "00:25", "00:45", "01:00", "01:30"]}
               style={{ flex: 1 }}
             />
             <Button

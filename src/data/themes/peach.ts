@@ -6,6 +6,7 @@ export const peach: ThemeSpec = {
   vars: {
     "--sw-paper": "#fdf3ee",
     "--sw-paper-2": "#f9e6db",
+    "--sw-off-day": "#f8ddc9",
     "--sw-card": "#fffcf9",
     "--sw-ink": "#4e3d34",
     "--sw-ink-2": "#79604f",
@@ -20,8 +21,6 @@ export const peach: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(110, 70, 50, 0.1)",
     "--sw-fold-shade": "rgba(70, 40, 24, 0.3)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#fdf3ee", accent: "#e08868", ink: "#4e3d34" },

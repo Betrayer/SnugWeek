@@ -52,6 +52,50 @@
           root.style.setProperty("--boot-ink", inks[id]);
           if (localStorage.getItem("snugweek-paper-texture") === "on")
             root.dataset.paperTexture = "on";
+          var covers = {
+            cream:
+              "linear-gradient(180deg, var(--sw-paper) 0%, var(--sw-paper-2) 100%)",
+            accent:
+              "linear-gradient(135deg, var(--sw-accent) 0%, var(--sw-accent-2) 100%)",
+            blush:
+              "linear-gradient(160deg, var(--sw-highlight) 0%, var(--sw-card) 72%)",
+            dots: "radial-gradient(var(--sw-line) 1.4px, transparent 1.6px) 0 0 / 16px 16px, var(--sw-paper)",
+            grid: "linear-gradient(var(--sw-line) 1px, transparent 1px) 0 0 / 22px 22px, linear-gradient(90deg, var(--sw-line) 1px, transparent 1px) 0 0 / 22px 22px, var(--sw-paper)",
+            stripes:
+              "repeating-linear-gradient(45deg, var(--sw-paper-2) 0 10px, var(--sw-paper) 10px 22px)",
+          };
+          var coverId = localStorage.getItem("snugweek-cover");
+          if (coverId && covers[coverId]) {
+            root.dataset.snugCover = coverId;
+            root.style.setProperty("--boot-cover", covers[coverId]);
+          }
+          var fonts = null;
+          try {
+            fonts = JSON.parse(localStorage.getItem("snugweek-fonts"));
+          } catch (e2) {}
+          if (fonts) {
+            if (fonts.body)
+              root.style.setProperty("--sw-font-body", fonts.body);
+            if (fonts.hand)
+              root.style.setProperty("--sw-font-hand", fonts.hand);
+            if (fonts.tasks)
+              root.style.setProperty("--sw-font-tasks", fonts.tasks);
+          }
+          var preload = (fonts && fonts.preload) || [
+            "/fonts/nunito-latin-400.woff2",
+            "/fonts/nunito-cyrillic-400.woff2",
+            "/fonts/caveat-latin-600.woff2",
+            "/fonts/caveat-cyrillic-600.woff2",
+          ];
+          for (var i = 0; i < preload.length; i++) {
+            var fl = document.createElement("link");
+            fl.rel = "preload";
+            fl.as = "font";
+            fl.type = "font/woff2";
+            fl.crossOrigin = "anonymous";
+            fl.href = preload[i];
+            document.head.appendChild(fl);
+          }
         } catch (e) {}
       })();
     </script>
@@ -65,12 +109,21 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: var(--boot-paper, #faf6ef);
+        background: var(--boot-cover, var(--boot-paper, #faf6ef));
+      }
+      #sw-boot-name {
         color: var(--boot-ink, #7d6e5f);
-        font-family: "Caveat", "Segoe Script", cursive;
+        font-family: var(--sw-font-hand, "Caveat", cursive);
         font-weight: 600;
         font-size: 44px;
         letter-spacing: 0.5px;
+      }
+      [data-snug-cover] #sw-boot-plate {
+        padding: 14px 28px;
+        background-color: var(--sw-card);
+        border: 1px solid var(--sw-line);
+        border-radius: var(--mantine-radius-lg, 16px);
+        box-shadow: var(--sw-shadow);
       }
     </style>
 
@@ -84,21 +137,6 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
-
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/caveat-latin-600.woff2"
-      crossorigin
-    />
-    <link
-      rel="preload"
-      as="font"
-      type="font/woff2"
-      href="/fonts/nunito-latin-400.woff2"
-      crossorigin
-    />
 
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="mobile-web-app-capable" content="yes" />
@@ -143,13 +181,15 @@
   </head>
   <body>
     <div id="root">
-      <div id="sw-boot">SnugWeek</div>
+      <div id="sw-boot">
+        <div id="sw-boot-plate"><span id="sw-boot-name">SnugWeek</span></div>
+      </div>
     </div>
     <script>
       (function () {
         try {
           var name = localStorage.getItem("snugweek-notebook-name");
-          if (name) document.getElementById("sw-boot").textContent = name;
+          if (name) document.getElementById("sw-boot-name").textContent = name;
         } catch (e) {}
       })();
     </script>

@@ -1,7 +1,8 @@
+import type { ListKind } from "../repos/listsRepo.ts";
 import type { TrackerType } from "../repos/trackersRepo.ts";
 import type { Decoration, TrackerValue } from "../repos/weeksRepo.ts";
 
-export const SHARE_SCHEMA_VERSION = 1;
+export const SHARE_SCHEMA_VERSION = 2;
 
 export interface ShareInclude {
   tasks: boolean;
@@ -9,6 +10,7 @@ export interface ShareInclude {
   trackers: boolean;
   habits: boolean;
   decorations: boolean;
+  lists: boolean;
 }
 
 export interface WeekViewTask {
@@ -16,6 +18,14 @@ export interface WeekViewTask {
   title: string;
   done: boolean;
   time: string | null;
+}
+
+export interface WeekViewList {
+  id: string;
+  name: string | null;
+  kind: ListKind;
+  emoji: string | null;
+  tasks: WeekViewTask[];
 }
 
 export interface WeekViewDay {
@@ -47,6 +57,7 @@ export interface ShareSnapshot {
   habits: WeekViewHabit[];
   habitChecks: Record<string, Record<string, boolean>>;
   decorations: Decoration[];
+  lists: WeekViewList[];
 }
 
 export interface ShareDoc {

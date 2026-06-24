@@ -5,6 +5,7 @@ import type { Tracker } from "../../../services/repos/trackersRepo.ts";
 import type { TrackerValue } from "../../../services/repos/weeksRepo.ts";
 import { MOOD_EMOJIS } from "../../../services/stats/moodScale.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
+import { CheckGlyph } from "../icons/glyphs.tsx";
 import { TrackerIcon } from "./TrackerIcon.tsx";
 import { trackerDisplayName } from "./trackerName.ts";
 
@@ -15,22 +16,6 @@ interface TrackerControlProps {
 }
 
 const NUMBER_MAX = 999;
-
-const CheckGlyph = () => (
-  <svg
-    width="12"
-    height="12"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-accent-ink)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path d="M5 12l4.5 4.5L19 7" />
-  </svg>
-);
 
 interface ControlProps {
   tracker: Tracker;

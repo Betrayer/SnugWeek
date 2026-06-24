@@ -1,0 +1,27 @@
+{
+  "habit": {
+    "0": "Nice one!",
+    "1": "Keep it up!",
+    "2": "Lovely!",
+    "3": "Small win!"
+  },
+  "task": {
+    "0": "Done!",
+    "1": "One more done!",
+    "2": "Nice work!",
+    "3": "Tidy!"
+  },
+  "dayClear": {
+    "0": "Whole day cleared!",
+    "1": "Everything done today!",
+    "2": "A perfectly tidy day!"
+  },
+  "streak": {
+    "0_one": "{{count}}-day streak!",
+    "0_other": "{{count}}-day streak!",
+    "1_one": "{{count}} day in a row!",
+    "1_other": "{{count}} days in a row!",
+    "2_one": "{{name}}: {{count}} day strong!",
+    "2_other": "{{name}}: {{count}} days strong!"
+  }
+}

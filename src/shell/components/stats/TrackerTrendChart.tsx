@@ -1,50 +1,44 @@
 import { LineChart } from "@mantine/charts";
 import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
-import type { MonthTrendPoint } from "../../../services/stats/monthStatsData.ts";
+import type {
+  MonthTrendPoint,
+  TrendSeries,
+} from "../../../services/stats/monthStatsData.ts";
 
 interface TrackerTrendChartProps {
   data: MonthTrendPoint[];
-  showMood: boolean;
-  showEnergy: boolean;
+  series: TrendSeries[];
 }
 
-interface TrendSeries {
-  name: string;
-  label: string;
-  color: string;
-}
-
-export const TrackerTrendChart = ({
-  data,
-  showMood,
-  showEnergy,
-}: TrackerTrendChartProps) => {
-  const { t } = useTranslation(["stats", "trackers"]);
-  const pointCount = data.filter(
-    (point) => point.mood !== null || point.energy !== null,
-  ).length;
-  const series: TrendSeries[] = [];
-  if (showMood) {
-    series.push({
-      name: "mood",
-      label: t("trackers:defaults.mood"),
-      color: "var(--sw-accent)",
-    });
+export const TrackerTrendChart = ({ data, series }: TrackerTrendChartProps) => {
+  const { t } = useTranslation("stats");
+  let pointCount = 0;
+  let maxValue = 5;
+  for (const point of data) {
+    let hasValue = false;
+    for (const item of series) {
+      const value = point[item.id];
+      if (typeof value === "number") {
+        hasValue = true;
+        if (value > maxValue) maxValue = value;
+      }
+    }
+    if (hasValue) pointCount += 1;
   }
-  if (showEnergy) {
-    series.push({
-      name: "energy",
-      label: t("trackers:defaults.energy"),
-      color: "var(--sw-accent-2)",
-    });
-  }
+  const domainMax = Math.ceil(maxValue);
   return (
     <LineChart
       h={180}
       data={data}
       dataKey="day"
-      series={series}
+      series={series.map((item) => ({
+        name: item.id,
+        label: item.name,
+        color: item.color,
+      }))}
+      withLegend
+      legendProps={{ verticalAlign: "bottom", height: 36 }}
       connectNulls={false}
       curveType="monotone"
       strokeWidth={pointCount < 3 ? 0 : 2}
@@ -53,9 +47,9 @@ export const TrackerTrendChart = ({
       gridAxis="y"
       style={{ "--chart-text-color": "var(--sw-ink-3)" } as CSSProperties}
       gridColor="var(--sw-line)"
-      yAxisProps={{ domain: [0, 5], ticks: [1, 2, 3, 4, 5], width: 22 }}
+      yAxisProps={{ domain: [0, domainMax], allowDecimals: false, width: 24 }}
       xAxisProps={{ interval: 4, minTickGap: 4 }}
-      aria-label={t("stats:trendAria")}
+      aria-label={t("trendAria")}
     />
   );
 };

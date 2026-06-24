@@ -2,8 +2,9 @@ import { Anchor, Group, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { Attachment } from "../../../../services/repos/attachmentsRepo.ts";
 import { formatBytes } from "../format.ts";
-import { DownloadGlyph, FileGlyph } from "../icons.tsx";
+import { DownloadGlyph, FileGlyph } from "../../icons/glyphs.tsx";
 import { RemoveButton } from "../RemoveButton.tsx";
+import { cardSurface } from "../../../styles/surfaces.ts";
 
 interface FileItemProps {
   attachment: Attachment;
@@ -17,12 +18,7 @@ export const FileItem = ({ attachment, onRemove }: FileItemProps) => {
     <Group
       gap="sm"
       wrap="nowrap"
-      style={{
-        padding: "8px 10px",
-        borderRadius: "var(--mantine-radius-md)",
-        backgroundColor: "var(--sw-card)",
-        border: "1px solid var(--sw-line)",
-      }}
+      style={{ padding: "8px 10px", ...cardSurface("md") }}
     >
       <span
         aria-hidden

@@ -11,30 +11,8 @@ import {
 } from "../../../state/subtasksStore.ts";
 import { SortableItem } from "../settings/SortableItem.tsx";
 import { SortableList } from "../settings/SortableList.tsx";
-
-const CheckMark = ({ done }: { done: boolean }) => (
-  <svg
-    width="11"
-    height="11"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="var(--sw-accent-ink)"
-    strokeWidth="3.5"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden
-  >
-    <path
-      d="M5 12l4.5 4.5L19 7"
-      pathLength={1}
-      style={{
-        strokeDasharray: 1,
-        strokeDashoffset: done ? 0 : 1,
-        transition: "stroke-dashoffset 200ms ease",
-      }}
-    />
-  </svg>
-);
+import { inputFieldStyles } from "../../styles/fieldStyles.ts";
+import { DrawnCheckGlyph } from "../icons/glyphs.tsx";
 
 const TrashIcon = () => (
   <svg
@@ -110,7 +88,7 @@ const SubtaskRow = ({ item, taskId }: { item: Subtask; taskId: string }) => {
           transition: "background-color 150ms ease, border-color 150ms ease",
         }}
       >
-        <CheckMark done={item.done} />
+        <DrawnCheckGlyph size={11} done={item.done} />
       </UnstyledButton>
       <TextInput
         value={draft}
@@ -209,14 +187,7 @@ export const SubtaskList = ({ taskId }: { taskId: string }) => {
           onChange={(event) => setDraft(event.currentTarget.value)}
           onKeyDown={handleKey}
           leftSection={<span style={{ color: "var(--sw-ink-3)", fontSize: 18 }}>+</span>}
-          styles={{
-            input: {
-              backgroundColor: "var(--sw-card)",
-              borderColor: "var(--sw-line)",
-              color: "var(--sw-ink)",
-              "--input-placeholder-color": "var(--sw-ink-3)",
-            },
-          }}
+          styles={inputFieldStyles}
         />
       )}
     </Stack>

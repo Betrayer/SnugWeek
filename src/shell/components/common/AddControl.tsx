@@ -1,6 +1,7 @@
 import { Box, Button, Text, TextInput } from "@mantine/core";
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
+import { inputFieldStyles } from "../../styles/fieldStyles.ts";
 
 interface AddControlProps {
   label: string;
@@ -11,6 +12,8 @@ interface AddControlProps {
   counterFrom?: number;
   dataDay?: number;
   dataTour?: string;
+  active?: boolean;
+  onActiveChange?: (active: boolean) => void;
 }
 
 export const AddControl = ({
@@ -22,8 +25,15 @@ export const AddControl = ({
   counterFrom,
   dataDay,
   dataTour,
+  active: controlledActive,
+  onActiveChange,
 }: AddControlProps) => {
-  const [active, setActive] = useState(false);
+  const [internalActive, setInternalActive] = useState(false);
+  const active = controlledActive ?? internalActive;
+  const setActive = (next: boolean) => {
+    if (onActiveChange) onActiveChange(next);
+    else setInternalActive(next);
+  };
   const [value, setValue] = useState("");
 
   const submit = () => {
@@ -80,14 +90,7 @@ export const AddControl = ({
         onBlur={() => {
           if (value.trim().length === 0) setActive(false);
         }}
-        styles={{
-          input: {
-            backgroundColor: "var(--sw-card)",
-            borderColor: "var(--sw-line)",
-            color: "var(--sw-ink)",
-            "--input-placeholder-color": "var(--sw-ink-3)",
-          },
-        }}
+        styles={inputFieldStyles}
       />
       {counterFrom !== undefined && value.length > counterFrom && (
         <Text fz="xs" c="var(--sw-ink-3)" ta="right" mt={2}>

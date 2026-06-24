@@ -3,6 +3,7 @@ import { m } from "motion/react";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 import { TaskCard } from "./TaskCard.tsx";
+import { cardSurface } from "../../styles/surfaces.ts";
 
 interface TaskDragOverlayProps {
   task: Task | null;
@@ -42,9 +43,7 @@ export const TaskDragOverlay = ({ task, list }: TaskDragOverlayProps) => {
           style={{
             cursor: "grabbing",
             padding: "6px 12px",
-            borderRadius: "var(--mantine-radius-md)",
-            backgroundColor: "var(--sw-card)",
-            border: "1px solid var(--sw-line)",
+            ...cardSurface("md"),
             filter: "drop-shadow(0 8px 18px var(--sw-fold-shade))",
             fontFamily: "var(--sw-font-hand)",
             fontSize: 20,

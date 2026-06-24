@@ -13,6 +13,7 @@ import {
   ensureBuiltinLists,
   isBuiltinList,
   renameList as renameListDoc,
+  setListEmoji as setListEmojiDoc,
   subscribeLists,
   unassignList,
 } from "../services/repos/listsRepo.ts";
@@ -21,6 +22,7 @@ import {
   createTask,
   deleteTask,
   setStatus,
+  setTaskEmoji as setTaskEmojiDoc,
   subscribeListTasks,
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
@@ -42,9 +44,11 @@ interface ListsState {
   addTask: (listId: string, title: string) => void;
   toggleDone: (task: Task) => void;
   renameTask: (taskId: string, title: string) => void;
+  setTaskEmoji: (taskId: string, emoji: string | null) => void;
   removeTask: (taskId: string) => void;
   addList: (name: string) => void;
   renameList: (listId: string, name: string) => void;
+  setListEmoji: (listId: string, emoji: string | null) => void;
   removeList: (listId: string) => void;
   assignListToDay: (listId: string, day: number) => void;
   unassignList: (listId: string) => void;
@@ -128,6 +132,10 @@ export const useListsStore = create<ListsState>()(
         if (!activeUid || trimmed.length === 0) return;
         updateTitle(activeUid, taskId, trimmed);
       },
+      setTaskEmoji: (taskId, emoji) => {
+        if (!activeUid) return;
+        setTaskEmojiDoc(activeUid, taskId, emoji);
+      },
       removeTask: (taskId) => {
         if (!activeUid) return;
         const task = Object.values(get().tasksByList)
@@ -135,6 +143,9 @@ export const useListsStore = create<ListsState>()(
           .find((entry) => entry.id === taskId);
         if (task && task.attachmentCount > 0) {
           purgeTaskAttachments(activeUid, taskId);
+        }
+        if (task && task.status === "done" && task.completedAt !== null) {
+          bumpCompletion(activeUid, isoDateKeyOf(task.completedAt), -1);
         }
         deleteTask(activeUid, taskId);
         playSwoosh();
@@ -148,6 +159,10 @@ export const useListsStore = create<ListsState>()(
         const trimmed = name.trim();
         if (!activeUid || trimmed.length === 0 || isBuiltinList(listId)) return;
         renameListDoc(activeUid, listId, trimmed);
+      },
+      setListEmoji: (listId, emoji) => {
+        if (!activeUid) return;
+        setListEmojiDoc(activeUid, listId, emoji);
       },
       removeList: (listId) => {
         if (!activeUid || isBuiltinList(listId)) return;

@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { notifyInfo } from "../../../services/notify.ts";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { formatClock } from "./format.ts";
-import { MicGlyph, StopGlyph } from "./icons.tsx";
+import { MicGlyph, StopGlyph } from "../icons/glyphs.tsx";
 
 interface VoiceRecorderProps {
   opened: boolean;

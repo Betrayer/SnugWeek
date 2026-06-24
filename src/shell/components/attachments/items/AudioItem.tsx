@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Attachment } from "../../../../services/repos/attachmentsRepo.ts";
 import { formatClock } from "../format.ts";
-import { PauseGlyph, PlayGlyph } from "../icons.tsx";
+import { PauseGlyph, PlayGlyph } from "../../icons/glyphs.tsx";
 import { RemoveButton } from "../RemoveButton.tsx";
+import { cardSurface } from "../../../styles/surfaces.ts";
 
 interface AudioItemProps {
   attachment: Attachment;
@@ -64,12 +65,7 @@ export const AudioItem = ({ attachment, onRemove }: AudioItemProps) => {
     <Group
       gap="sm"
       wrap="nowrap"
-      style={{
-        padding: "8px 10px",
-        borderRadius: "var(--mantine-radius-md)",
-        backgroundColor: "var(--sw-card)",
-        border: "1px solid var(--sw-line)",
-      }}
+      style={{ padding: "8px 10px", ...cardSurface("md") }}
     >
       <UnstyledButton
         onClick={toggle}

@@ -6,7 +6,6 @@
   "move": "Move…",
   "done": "Mark done",
   "completed": "Completed",
-  "reopen": "Reopen",
   "openDetail": "Open “{{title}}”",
   "emptyDay": "a free day",
   "emptyList": "nothing here yet",
@@ -15,6 +14,12 @@
   "emptyWeek": "a quiet week ahead",
   "carriedFrom": "from {{week}}",
   "charLimit": "{{n}}/500",
+  "emoji": {
+    "set": "Emoji",
+    "clear": "Remove emoji",
+    "custom": "Custom emoji",
+    "customPlaceholder": "Type or paste…"
+  },
   "listDeletedToast": "List deleted - its tasks moved to Tasks",
   "count": {
     "open_one": "{{count}} open",
@@ -27,6 +32,8 @@
     "namePlaceholder": "List name…",
     "rename": "Rename",
     "renameTitle": "Rename list",
+    "setEmoji": "Set emoji",
+    "clearEmoji": "Remove emoji",
     "delete": "Delete list",
     "deleteTitle": "Delete list?",
     "deleteWarning": "Its tasks will move to “{{target}}”.",

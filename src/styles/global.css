@@ -1,7 +1,7 @@
 @font-face {
   font-family: "Nunito";
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-weight: 400;
   src: url("/fonts/nunito-latin-400.woff2") format("woff2");
   unicode-range:
@@ -25,7 +25,7 @@
 @font-face {
   font-family: "Nunito";
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-weight: 400;
   src: url("/fonts/nunito-cyrillic-400.woff2") format("woff2");
   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -173,7 +173,7 @@
 @font-face {
   font-family: "Caveat";
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-weight: 600;
   src: url("/fonts/caveat-latin-600.woff2") format("woff2");
   unicode-range:
@@ -197,7 +197,7 @@
 @font-face {
   font-family: "Caveat";
   font-style: normal;
-  font-display: swap;
+  font-display: optional;
   font-weight: 600;
   src: url("/fonts/caveat-cyrillic-600.woff2") format("woff2");
   unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
@@ -211,6 +211,125 @@
   src: url("/fonts/caveat-cyrillic-ext-600.woff2") format("woff2");
   unicode-range:
     U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Comfortaa";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/comfortaa-cyrillic-ext.woff2") format("woff2");
+  unicode-range:
+    U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Comfortaa";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/comfortaa-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Comfortaa";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/comfortaa-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Comfortaa";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/comfortaa-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/lora-cyrillic-ext.woff2") format("woff2");
+  unicode-range:
+    U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/lora-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/lora-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Lora";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400 700;
+  src: url("/fonts/lora-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Marck Script";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/marck-script-cyrillic.woff2") format("woff2");
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: "Marck Script";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/marck-script-latin-ext.woff2") format("woff2");
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: "Marck Script";
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url("/fonts/marck-script-latin.woff2") format("woff2");
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
 }
 
 body {
@@ -248,6 +367,19 @@ html {
   display: none;
 }
 
+.sw-week-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--mantine-spacing-sm);
+  align-items: start;
+}
+
+@media (min-width: 700px) {
+  .sw-week-grid {
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+  }
+}
+
 .mantine-Spotlight-actionDescription {
   color: var(--sw-ink-3);
 }
@@ -282,6 +414,55 @@ html {
   50% {
     opacity: 0.55;
   }
+}
+
+.sw-strike {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+
+.sw-strike::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background-color: var(--sw-ink-2);
+  -webkit-mask-repeat: repeat;
+  mask-repeat: repeat;
+  -webkit-mask-size: auto 1.4em;
+  mask-size: auto 1.4em;
+  -webkit-mask-position: 0 0;
+  mask-position: 0 0;
+  transform-origin: left center;
+  animation: sw-pencil-draw 280ms ease-out both;
+}
+
+@keyframes sw-pencil-draw {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.sw-strike-single::after {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 24'><path d='M0 11 C 10 7, 22 7, 32 11 S 54 15, 64 11' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 24'><path d='M0 11 C 10 7, 22 7, 32 11 S 54 15, 64 11' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/></svg>");
+}
+
+.sw-strike-scribble::after {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 24'><path d='M0 11 C 9 6, 20 16, 31 10 S 52 6, 64 12' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/><path d='M0 13 C 11 17, 23 8, 34 14 S 53 17, 64 11' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 24'><path d='M0 11 C 9 6, 20 16, 31 10 S 52 6, 64 12' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/><path d='M0 13 C 11 17, 23 8, 34 14 S 53 17, 64 11' fill='none' stroke='black' stroke-width='2.2' stroke-linecap='round'/></svg>");
+}
+
+.sw-strike-double::after {
+  -webkit-mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 24'><path d='M0 8 C 10 5, 22 5, 32 8 S 54 11, 64 8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'/><path d='M0 16 C 10 13, 22 13, 32 16 S 54 19, 64 16' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'/></svg>");
+  mask-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 24'><path d='M0 8 C 10 5, 22 5, 32 8 S 54 11, 64 8' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'/><path d='M0 16 C 10 13, 22 13, 32 16 S 54 19, 64 16' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round'/></svg>");
 }
 
 :focus-visible {
@@ -327,6 +508,7 @@ html {
     display: block !important;
     --sw-paper: #ffffff;
     --sw-paper-2: #f2f2f0;
+    --sw-off-day: #ececea;
     --sw-card: #ffffff;
     --sw-ink: #1a1a1a;
     --sw-ink-2: #333333;

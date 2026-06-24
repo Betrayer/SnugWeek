@@ -9,6 +9,8 @@ type TransitionSetting = "fold" | "none" | "curl";
 
 type LockMethod = "pin" | "passkey";
 
+export type CheerLevel = "off" | "subtle" | "full";
+
 interface PersistedSettings {
   language: SupportedLang;
   reduceMotion: boolean;
@@ -21,6 +23,7 @@ interface PersistedSettings {
   lockMethod: LockMethod | null;
   lockAfterMin: number;
   tourSeen: boolean;
+  cheerLevel: CheerLevel;
 }
 
 interface SettingsState extends PersistedSettings {
@@ -35,6 +38,7 @@ interface SettingsState extends PersistedSettings {
   setLockMethod: (lockMethod: LockMethod | null) => void;
   setLockAfterMin: (lockAfterMin: number) => void;
   setTourSeen: (tourSeen: boolean) => void;
+  setCheerLevel: (cheerLevel: CheerLevel) => void;
 }
 
 const defaultSettings: PersistedSettings = {
@@ -49,6 +53,7 @@ const defaultSettings: PersistedSettings = {
   lockMethod: null,
   lockAfterMin: 5,
   tourSeen: false,
+  cheerLevel: "subtle",
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -72,10 +77,11 @@ export const useSettingsStore = create<SettingsState>()(
         setLockMethod: (lockMethod) => set({ lockMethod }),
         setLockAfterMin: (lockAfterMin) => set({ lockAfterMin }),
         setTourSeen: (tourSeen) => set({ tourSeen }),
+        setCheerLevel: (cheerLevel) => set({ cheerLevel }),
       }),
       {
         name: "snugweek-settings",
-        version: 6,
+        version: 7,
         partialize: (state): PersistedSettings => ({
           language: state.language,
           reduceMotion: state.reduceMotion,
@@ -88,6 +94,7 @@ export const useSettingsStore = create<SettingsState>()(
           lockMethod: state.lockMethod,
           lockAfterMin: state.lockAfterMin,
           tourSeen: state.tourSeen,
+          cheerLevel: state.cheerLevel,
         }),
         migrate: (persisted, version) => {
           const stored = persisted as Partial<PersistedSettings> | undefined;

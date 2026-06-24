@@ -1,4 +1,5 @@
 import type { Habit } from "../repos/habitsRepo.ts";
+import type { List } from "../repos/listsRepo.ts";
 import type { Task } from "../repos/tasksRepo.ts";
 import type { Tracker } from "../repos/trackersRepo.ts";
 import type { TrackerValue, WeekDoc } from "../repos/weeksRepo.ts";
@@ -8,6 +9,8 @@ import type {
   ShareSnapshot,
   WeekViewDay,
   WeekViewHabit,
+  WeekViewList,
+  WeekViewTask,
   WeekViewTracker,
 } from "./shareTypes.ts";
 
@@ -16,11 +19,20 @@ export interface SnapshotInput {
   language: string;
   week: WeekDoc | null;
   tasksByDay: Record<number, Task[]>;
+  lists: List[];
+  tasksByList: Record<string, Task[]>;
   trackers: Tracker[];
   habits: Habit[];
   weekend: number[];
   include: ShareInclude;
 }
+
+const toViewTask = (task: Task): WeekViewTask => ({
+  id: task.id,
+  title: task.title,
+  done: task.status === "done",
+  time: task.time,
+});
 
 export interface BuiltSnapshot {
   weekTitle: string;
@@ -36,16 +48,21 @@ export const buildSnapshot = (input: SnapshotInput): BuiltSnapshot => {
     iso: day.iso,
     label: day.label,
     isOff: daysOff.includes(day.iso),
-    tasks: include.tasks
-      ? (tasksByDay[day.iso] ?? []).map((task) => ({
-          id: task.id,
-          title: task.title,
-          done: task.status === "done",
-          time: task.time,
-        }))
-      : [],
+    tasks: include.tasks ? (tasksByDay[day.iso] ?? []).map(toViewTask) : [],
     note: include.note ? (week?.dayNotes[String(day.iso)] ?? "") : "",
   }));
+
+  const lists: WeekViewList[] = include.lists
+    ? input.lists
+        .map((list) => ({
+          id: list.id,
+          name: list.name,
+          kind: list.kind,
+          emoji: list.emoji,
+          tasks: (input.tasksByList[list.id] ?? []).map(toViewTask),
+        }))
+        .filter((list) => list.tasks.length > 0)
+    : [];
 
   const enabledTrackers: WeekViewTracker[] = include.trackers
     ? trackers
@@ -97,6 +114,7 @@ export const buildSnapshot = (input: SnapshotInput): BuiltSnapshot => {
       habits: activeHabits,
       habitChecks,
       decorations: include.decorations ? (week?.decorations ?? []) : [],
+      lists,
     },
   };
 };

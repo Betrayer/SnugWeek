@@ -11,6 +11,7 @@ interface Cover {
 
 interface CurlTransitionHostProps {
   weekId: string;
+  pageBackground: string;
   children: ReactNode;
 }
 
@@ -18,6 +19,7 @@ const SHADOW = "18px 0 36px -8px var(--sw-fold-shade)";
 
 export const CurlTransitionHost = ({
   weekId,
+  pageBackground,
   children,
 }: CurlTransitionHostProps) => {
   const liveRef = useRef<HTMLDivElement>(null);
@@ -65,7 +67,6 @@ export const CurlTransitionHost = ({
         width: "100%",
         height: "100%",
         overflow: "hidden",
-        backgroundColor: "var(--sw-paper)",
       }}
     >
       {backward && cover && (
@@ -75,7 +76,7 @@ export const CurlTransitionHost = ({
             position: "absolute",
             inset: 0,
             display: "flex",
-            backgroundColor: "var(--sw-paper)",
+            background: pageBackground,
             zIndex: 0,
           }}
           dangerouslySetInnerHTML={{ __html: cover.html }}
@@ -89,7 +90,7 @@ export const CurlTransitionHost = ({
           position: "absolute",
           inset: 0,
           display: "flex",
-          backgroundColor: "var(--sw-paper)",
+          background: cover ? pageBackground : undefined,
           zIndex: backward ? 1 : 0,
           boxShadow: backward ? SHADOW : undefined,
           willChange: backward ? "transform" : undefined,
@@ -115,7 +116,7 @@ export const CurlTransitionHost = ({
             position: "absolute",
             inset: 0,
             display: "flex",
-            backgroundColor: "var(--sw-paper)",
+            background: pageBackground,
             boxShadow: SHADOW,
             zIndex: 2,
             willChange: "transform",

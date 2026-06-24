@@ -8,11 +8,13 @@ import { resolveTransition } from "./transitions.ts";
 
 interface WeekTransitionHostProps {
   weekId: string;
+  pageBackground: string;
   children: ReactNode;
 }
 
 export const WeekTransitionHost = ({
   weekId,
+  pageBackground,
   children,
 }: WeekTransitionHostProps) => {
   const setting = useSettingsStore((state) => state.transition);
@@ -22,7 +24,11 @@ export const WeekTransitionHost = ({
   const transition = resolveTransition(setting, reduced || dragging);
 
   if (transition.kind === "curl") {
-    return <CurlTransitionHost weekId={weekId}>{children}</CurlTransitionHost>;
+    return (
+      <CurlTransitionHost weekId={weekId} pageBackground={pageBackground}>
+        {children}
+      </CurlTransitionHost>
+    );
   }
 
   return (

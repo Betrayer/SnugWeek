@@ -13,6 +13,15 @@ import {
 import type { DocumentData } from "firebase/firestore";
 import { seedContentFor } from "../../data/defaults.ts";
 import { DEFAULT_THEME_ID, themeById } from "../../data/themes/registry.ts";
+import {
+  DEFAULT_BODY_FONT_ID,
+  DEFAULT_FONT_SCOPE,
+  DEFAULT_HAND_FONT_ID,
+  FONT_SCOPES,
+  bodyFontById,
+  handFontById,
+} from "../../data/fonts/registry.ts";
+import type { FontScope } from "../../data/fonts/registry.ts";
 import type { SupportedLang } from "../../i18n/languages.ts";
 import { ORDER_SPACING } from "../ordering.ts";
 import { currentWeekId, todayIsoDay } from "../time.ts";
@@ -20,7 +29,7 @@ import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
 import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
-import { createHabit } from "./habitsRepo.ts";
+import { ALL_WEEK_DAYS, createHabit } from "./habitsRepo.ts";
 import { createTask } from "./tasksRepo.ts";
 import { MOOD_TRACKER_ID, seedDefaultTrackers } from "./trackersRepo.ts";
 import { setTrackerValue } from "./weeksRepo.ts";
@@ -39,6 +48,27 @@ export interface AutoTheme {
   dark: string;
 }
 
+export type TaskDoneStyle = "strike" | "dim" | "dimStrike" | "fade";
+
+export const TASK_DONE_STYLES: TaskDoneStyle[] = [
+  "strike",
+  "dim",
+  "dimStrike",
+  "fade",
+];
+
+export const DEFAULT_TASK_DONE_STYLE: TaskDoneStyle = "dimStrike";
+
+export type TaskStrikeStyle = "single" | "scribble" | "double";
+
+export const TASK_STRIKE_STYLES: TaskStrikeStyle[] = [
+  "single",
+  "scribble",
+  "double",
+];
+
+export const DEFAULT_TASK_STRIKE_STYLE: TaskStrikeStyle = "single";
+
 export interface ProfileDoc {
   schemaVersion: number;
   createdAt: number;
@@ -49,6 +79,11 @@ export interface ProfileDoc {
   moduleToggles: ModuleToggles;
   weekend: number[];
   columnMode: "cozy" | "equal";
+  taskDoneStyle: TaskDoneStyle;
+  taskStrikeStyle: TaskStrikeStyle;
+  fontBodyId: string;
+  fontHandId: string;
+  fontScope: FontScope;
   statsBackfilledAt: number | null;
   notebookName: string | null;
   coverStyle: string | null;
@@ -92,6 +127,31 @@ const coerceThemeId = (
   return spec.id === id && spec.kind === kind ? id : fallback;
 };
 
+const normalizeTaskDoneStyle = (value: unknown): TaskDoneStyle =>
+  TASK_DONE_STYLES.includes(value as TaskDoneStyle)
+    ? (value as TaskDoneStyle)
+    : DEFAULT_TASK_DONE_STYLE;
+
+const normalizeTaskStrikeStyle = (value: unknown): TaskStrikeStyle =>
+  TASK_STRIKE_STYLES.includes(value as TaskStrikeStyle)
+    ? (value as TaskStrikeStyle)
+    : DEFAULT_TASK_STRIKE_STYLE;
+
+const normalizeBodyFont = (value: unknown): string =>
+  typeof value === "string" && bodyFontById(value).id === value
+    ? value
+    : DEFAULT_BODY_FONT_ID;
+
+const normalizeHandFont = (value: unknown): string =>
+  typeof value === "string" && handFontById(value).id === value
+    ? value
+    : DEFAULT_HAND_FONT_ID;
+
+const normalizeFontScope = (value: unknown): FontScope =>
+  FONT_SCOPES.includes(value as FontScope)
+    ? (value as FontScope)
+    : DEFAULT_FONT_SCOPE;
+
 const normalizeAutoTheme = (value: unknown): AutoTheme | null => {
   if (typeof value !== "object" || value === null) return null;
   const source = value as Record<string, unknown>;
@@ -115,6 +175,11 @@ const normalizeProfile = (data: DocumentData): ProfileDoc => ({
   moduleToggles: normalizeToggles(data.moduleToggles),
   weekend: isNumberArray(data.weekend) ? data.weekend : DEFAULT_WEEKEND,
   columnMode: data.columnMode === "equal" ? "equal" : "cozy",
+  taskDoneStyle: normalizeTaskDoneStyle(data.taskDoneStyle),
+  taskStrikeStyle: normalizeTaskStrikeStyle(data.taskStrikeStyle),
+  fontBodyId: normalizeBodyFont(data.fontBodyId),
+  fontHandId: normalizeHandFont(data.fontHandId),
+  fontScope: normalizeFontScope(data.fontScope),
   statsBackfilledAt:
     typeof data.statsBackfilledAt === "number" ? data.statsBackfilledAt : null,
   notebookName:
@@ -171,7 +236,9 @@ const seedFirstRun = async (
       tagIds: [],
     });
   });
-  createHabit(uid, content.habit, content.habitIcon, ORDER_SPACING);
+  createHabit(uid, content.habit, content.habitIcon, ORDER_SPACING, [
+    ...ALL_WEEK_DAYS,
+  ]);
   setTrackerValue(
     uid,
     currentWeekId(),
@@ -256,6 +323,52 @@ export const setColumnMode = (
   notePendingWrite();
   void updateDoc(profileRef(uid), {
     columnMode,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setTaskDoneStyle = (
+  uid: string,
+  taskDoneStyle: TaskDoneStyle,
+): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    taskDoneStyle,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setTaskStrikeStyle = (
+  uid: string,
+  taskStrikeStyle: TaskStrikeStyle,
+): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    taskStrikeStyle,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setFontBody = (uid: string, fontBodyId: string): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    fontBodyId,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setFontHand = (uid: string, fontHandId: string): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    fontHandId,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setFontScope = (uid: string, fontScope: FontScope): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    fontScope,
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

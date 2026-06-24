@@ -48,6 +48,7 @@ export const ShareDialog = ({ opened, onClose }: ShareDialogProps) => {
   const [trackers, setTrackers] = useState(false);
   const [habits, setHabits] = useState(false);
   const [decorations, setDecorations] = useState(true);
+  const [lists, setLists] = useState(false);
   const [shares, setShares] = useState<ShareSummary[]>([]);
   const [lastCreatedId, setLastCreatedId] = useState<string | null>(null);
 
@@ -71,6 +72,7 @@ export const ShareDialog = ({ opened, onClose }: ShareDialogProps) => {
       trackers: modules.dayTrackers && trackers,
       habits: modules.habits && habits,
       decorations,
+      lists,
     });
     if (!collected || !uid) return;
     const id = createShare({
@@ -141,6 +143,12 @@ export const ShareDialog = ({ opened, onClose }: ShareDialogProps) => {
               checked={decorations}
               onChange={(event) => setDecorations(event.currentTarget.checked)}
               label={t("includeDecorations")}
+              color="var(--sw-accent)"
+            />
+            <Switch
+              checked={lists}
+              onChange={(event) => setLists(event.currentTarget.checked)}
+              label={t("includeLists")}
               color="var(--sw-accent)"
             />
           </Stack>

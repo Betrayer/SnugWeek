@@ -1,16 +1,24 @@
 import {
   Button,
+  CheckIcon,
+  ColorSwatch,
   Group,
   SegmentedControl,
   Stack,
   Switch,
   Text,
   TextInput,
+  UnstyledButton,
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  DEFAULT_TRACKER_COLOR,
+  TRACKER_SWATCHES,
+  trackerColorValue,
+} from "../../../data/trackerColors.ts";
 import type {
   Tracker,
   TrackerType,
@@ -26,7 +34,50 @@ import { trackerDisplayName } from "./trackerName.ts";
 
 const MAX_NAME = 60;
 const TRACKER_TYPES: TrackerType[] = ["scale5", "emoji", "number", "checkbox"];
-const DEFAULT_DRAFT = { name: "", type: "scale5" as TrackerType, icon: "star" };
+const DEFAULT_DRAFT = {
+  name: "",
+  type: "scale5" as TrackerType,
+  icon: "star",
+  color: DEFAULT_TRACKER_COLOR,
+};
+
+interface ColorPickerProps {
+  label: string;
+  value: string;
+  onChange: (color: string) => void;
+}
+
+const TrackerColorPicker = ({ label, value, onChange }: ColorPickerProps) => (
+  <Stack gap={4}>
+    <Text fz="sm" fw={600} c="var(--sw-ink-2)">
+      {label}
+    </Text>
+    <Group gap={8}>
+      {TRACKER_SWATCHES.map((swatch) => (
+        <UnstyledButton
+          key={swatch.id}
+          onClick={() => onChange(swatch.id)}
+          aria-label={swatch.id}
+          aria-pressed={value === swatch.id}
+        >
+          <ColorSwatch
+            color={swatch.value}
+            size={26}
+            withShadow={false}
+            style={{
+              color: "var(--mantine-color-white)",
+              outline:
+                value === swatch.id ? "2px solid var(--sw-ink-2)" : "none",
+              outlineOffset: 2,
+            }}
+          >
+            {value === swatch.id && <CheckIcon style={{ width: 12, height: 12 }} />}
+          </ColorSwatch>
+        </UnstyledButton>
+      ))}
+    </Group>
+  </Stack>
+);
 
 export const TrackerSettings = () => {
   const { t } = useTranslation(["trackers", "common"]);
@@ -34,7 +85,11 @@ export const TrackerSettings = () => {
   const [addOpened, addHandlers] = useDisclosure(false);
   const [draft, setDraft] = useState(DEFAULT_DRAFT);
   const [editing, setEditing] = useState<Tracker | null>(null);
-  const [editDraft, setEditDraft] = useState({ name: "", icon: "" });
+  const [editDraft, setEditDraft] = useState({
+    name: "",
+    icon: "",
+    color: DEFAULT_TRACKER_COLOR,
+  });
 
   const typeLabel = (type: TrackerType): string =>
     t(`settings.type.${type}`);
@@ -49,19 +104,26 @@ export const TrackerSettings = () => {
       name: draft.name,
       type: draft.type,
       icon: draft.icon,
+      color: draft.color,
     });
     addHandlers.close();
   };
 
   const openEdit = (tracker: Tracker) => {
     setEditing(tracker);
-    setEditDraft({ name: trackerDisplayName(tracker, t), icon: tracker.icon });
+    setEditDraft({
+      name: trackerDisplayName(tracker, t),
+      icon: tracker.icon,
+      color: tracker.color,
+    });
   };
   const submitEdit = () => {
     if (!editing || editDraft.name.trim().length === 0) return;
-    useTrackersStore
-      .getState()
-      .update(editing.id, { name: editDraft.name, icon: editDraft.icon });
+    useTrackersStore.getState().update(editing.id, {
+      name: editDraft.name,
+      icon: editDraft.icon,
+      color: editDraft.color,
+    });
     setEditing(null);
   };
 
@@ -105,7 +167,7 @@ export const TrackerSettings = () => {
                       <TrackerIcon
                         icon={tracker.icon}
                         size={18}
-                        color="var(--sw-ink-2)"
+                        color={trackerColorValue(tracker.color)}
                       />
                       <div style={{ minWidth: 0 }}>
                         <Text fw={600} c="var(--sw-ink)" truncate>
@@ -207,6 +269,11 @@ export const TrackerSettings = () => {
             value={draft.icon}
             onChange={(icon) => setDraft({ ...draft, icon })}
           />
+          <TrackerColorPicker
+            label={t("settings.colorLabel")}
+            value={draft.color}
+            onChange={(color) => setDraft({ ...draft, color })}
+          />
           <Group justify="flex-end">
             <Button variant="subtle" c="var(--sw-ink-2)" onClick={addHandlers.close}>
               {t("settings.cancel")}
@@ -238,6 +305,11 @@ export const TrackerSettings = () => {
           <IconPicker
             value={editDraft.icon}
             onChange={(icon) => setEditDraft({ ...editDraft, icon })}
+          />
+          <TrackerColorPicker
+            label={t("settings.colorLabel")}
+            value={editDraft.color}
+            onChange={(color) => setEditDraft({ ...editDraft, color })}
           />
           <Group justify="flex-end">
             <Button variant="subtle" c="var(--sw-ink-2)" onClick={() => setEditing(null)}>

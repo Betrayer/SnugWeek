@@ -1,5 +1,9 @@
 {
   "title": "Налаштування",
+  "tabs": {
+    "settings": "Налаштування",
+    "notebook": "Блокнот"
+  },
   "appearance": "Вигляд",
   "account": "Акаунт",
   "about": "Про застосунок",
@@ -23,6 +27,30 @@
   },
   "paperTexture": "Текстура паперу",
   "paperTextureHint": "Делікатна зернистість на папері (типово вимкнено).",
+  "taskDoneStyle": "Вигляд виконаних справ",
+  "taskDoneStyles": {
+    "strike": "Закреслені",
+    "dim": "Приглушені",
+    "dimStrike": "Приглушені й закреслені",
+    "fade": "Бляклі"
+  },
+  "taskStrikeStyle": "Закреслення",
+  "taskStrikeStyles": {
+    "single": "Одинарне",
+    "scribble": "Розчерк",
+    "double": "Подвійне"
+  },
+  "fonts": "Шрифти",
+  "fontBody": "Шрифт тексту",
+  "fontHand": "Акцентний шрифт",
+  "fontScope": "Застосувати до",
+  "fontScopes": {
+    "all": "Усього",
+    "exceptTasks": "Крім справ",
+    "onlyTasks": "Лише справи"
+  },
+  "fontPreviewBody": "Затишний тиждень маленьких планів.",
+  "fontPreviewTask": "Полити квіти",
   "theme": "Тема",
   "autoTheme": "Авто - за системою",
   "autoThemeHint": "Перемикати світлу й темну тему разом із пристроєм.",
@@ -52,6 +80,13 @@
   "transitionCurl": "Загинання",
   "transitionNone": "Без анімації",
   "reduceMotion": "Зменшити анімацію",
+  "cheers": "Похвала",
+  "cheersHint": "Делікатні моменти похвали, коли ви виконуєте звички та справи.",
+  "cheerLevels": {
+    "off": "Вимк.",
+    "subtle": "Делікатно",
+    "full": "Повна"
+  },
   "sound": "Звук",
   "soundEnable": "Звукові ефекти",
   "soundVolume": "Гучність",

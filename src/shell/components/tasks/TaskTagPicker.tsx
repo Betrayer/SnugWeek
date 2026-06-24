@@ -11,6 +11,7 @@ import {
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import { useTagsStore } from "../../../state/tagsStore.ts";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
+import { CloseGlyph } from "../icons/glyphs.tsx";
 
 const MAX_TAG_NAME = 40;
 
@@ -102,18 +103,7 @@ export const TaskTagPicker = ({ task }: { task: Task }) => {
                 padding: 2,
               }}
             >
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.4"
-                strokeLinecap="round"
-                aria-hidden
-              >
-                <path d="M6 6l12 12M18 6L6 18" />
-              </svg>
+              <CloseGlyph size={12} strokeWidth={2.4} />
             </UnstyledButton>
           </Group>
         ))}

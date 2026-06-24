@@ -6,6 +6,8 @@ interface TaskComposerProps {
   onAdd: (title: string) => void;
   placeholder?: string;
   dataDay?: number;
+  active?: boolean;
+  onActiveChange?: (active: boolean) => void;
 }
 
 const MAX_TITLE = 500;
@@ -15,6 +17,8 @@ export const TaskComposer = ({
   onAdd,
   placeholder,
   dataDay,
+  active,
+  onActiveChange,
 }: TaskComposerProps) => {
   const { t } = useTranslation("tasks");
   return (
@@ -26,6 +30,8 @@ export const TaskComposer = ({
       counterFrom={COUNTER_FROM}
       dataDay={dataDay}
       dataTour={dataDay !== undefined ? TOUR_ANCHORS.addTask : undefined}
+      active={active}
+      onActiveChange={onActiveChange}
       chained
     />
   );

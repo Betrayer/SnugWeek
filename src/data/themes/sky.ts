@@ -6,6 +6,7 @@ export const sky: ThemeSpec = {
   vars: {
     "--sw-paper": "#f2f6fb",
     "--sw-paper-2": "#e2ecf5",
+    "--sw-off-day": "#d3e4f2",
     "--sw-card": "#fbfdff",
     "--sw-ink": "#37414c",
     "--sw-ink-2": "#5d6975",
@@ -20,8 +21,6 @@ export const sky: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(40, 60, 90, 0.1)",
     "--sw-fold-shade": "rgba(28, 44, 66, 0.3)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#f2f6fb", accent: "#4076a8", ink: "#37414c" },

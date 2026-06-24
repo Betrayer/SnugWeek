@@ -1,20 +1,19 @@
 {
-  "title": "Habits",
   "add": "New habit",
   "namePlaceholder": "Habit name…",
   "check": "{{name}} on {{day}}",
   "edit": "Edit",
-  "rename": "Rename",
   "renameTitle": "Edit habit",
   "archive": "Archive",
   "restore": "Restore",
   "save": "Save",
   "cancel": "Cancel",
-  "empty": "No habits yet - add one to start a streak",
   "menu": "Options for {{name}}",
   "settings": {
     "title": "Habits",
     "name": "Name",
+    "days": "Days",
+    "daysHint": "Pick at least one day",
     "empty": "No active habits",
     "archived": "Archived",
     "reorder": "Reorder"

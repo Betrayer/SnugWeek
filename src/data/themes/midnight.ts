@@ -20,6 +20,7 @@ export const midnight: ThemeSpec = {
   vars: {
     "--sw-paper": "#1c1f27",
     "--sw-paper-2": "#242833",
+    "--sw-off-day": "#343029",
     "--sw-card": "#2a2f3b",
     "--sw-ink": "#e8e2d6",
     "--sw-ink-2": "#b3ab9c",
@@ -34,8 +35,6 @@ export const midnight: ThemeSpec = {
     "--sw-shadow": "0 4px 16px rgba(0, 0, 0, 0.4)",
     "--sw-fold-shade": "rgba(0, 0, 0, 0.55)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: { colors: { dark } },
   preview: { paper: "#1c1f27", accent: "#e3ad6f", ink: "#e8e2d6" },

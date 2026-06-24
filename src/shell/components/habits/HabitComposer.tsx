@@ -3,6 +3,7 @@ import { useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { useHabitsStore } from "../../../state/habitsStore.ts";
+import { inputFieldStyles } from "../../styles/fieldStyles.ts";
 
 const MAX_NAME = 60;
 
@@ -60,14 +61,7 @@ export const HabitComposer = () => {
         if (value.trim().length === 0) setActive(false);
       }}
       style={{ maxWidth: 260 }}
-      styles={{
-        input: {
-          backgroundColor: "var(--sw-card)",
-          borderColor: "var(--sw-line)",
-          color: "var(--sw-ink)",
-          "--input-placeholder-color": "var(--sw-ink-3)",
-        },
-      }}
+      styles={inputFieldStyles}
     />
   );
 };

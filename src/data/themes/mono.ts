@@ -6,6 +6,7 @@ export const mono: ThemeSpec = {
   vars: {
     "--sw-paper": "#f6f6f5",
     "--sw-paper-2": "#ececeb",
+    "--sw-off-day": "#e4e3e0",
     "--sw-card": "#ffffff",
     "--sw-ink": "#2b2b2b",
     "--sw-ink-2": "#5c5c5c",
@@ -20,8 +21,6 @@ export const mono: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(0, 0, 0, 0.06)",
     "--sw-fold-shade": "rgba(0, 0, 0, 0.25)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#f6f6f5", accent: "#3a3a3a", ink: "#2b2b2b" },

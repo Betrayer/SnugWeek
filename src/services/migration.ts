@@ -19,6 +19,7 @@ const NOTE_SEPARATOR = "\n···\n";
 const BATCH_LIMIT = 450;
 const BUILTIN_LISTS = ["tasks", "ideas"];
 const DEFAULT_TRACKERS = ["mood", "energy"];
+const DEFAULT_HABIT_DAYS = [1, 2, 3, 4, 5, 6, 7];
 
 const isBuiltinList = (id: string): boolean => BUILTIN_LISTS.includes(id);
 const isDefaultTracker = (id: string): boolean => DEFAULT_TRACKERS.includes(id);
@@ -80,6 +81,7 @@ type TrackerValue = number | string | boolean;
 
 interface TaskData {
   title: string;
+  emoji: string | null;
   status: TaskStatus;
   bucket: TaskBucket;
   weekId: string | null;
@@ -114,6 +116,7 @@ interface TagData {
 interface ListData {
   kind: "tasks" | "ideas" | "custom";
   name: string | null;
+  emoji: string | null;
   order: number;
   createdAt: number;
   day: number | null;
@@ -134,6 +137,7 @@ interface HabitData {
   order: number;
   archived: boolean;
   createdAt: number;
+  days: number[];
 }
 
 interface DecorationData {
@@ -194,6 +198,7 @@ export interface ExportCounts {
 
 const toTaskData = (data: DocumentData): TaskData => ({
   title: asString(data.title, ""),
+  emoji: asStringOrNull(data.emoji),
   status: data.status === "done" ? "done" : "open",
   bucket: data.bucket === "list" ? "list" : "day",
   weekId: asStringOrNull(data.weekId),
@@ -228,6 +233,7 @@ const toTagData = (data: DocumentData): TagData => ({
 const toListData = (data: DocumentData): ListData => ({
   kind: data.kind === "tasks" || data.kind === "ideas" ? data.kind : "custom",
   name: asStringOrNull(data.name),
+  emoji: asStringOrNull(data.emoji),
   order: asNumber(data.order, 0),
   createdAt: asNumber(data.createdAt, 0),
   day: asNumberOrNull(data.day),
@@ -256,6 +262,7 @@ const toHabitData = (data: DocumentData): HabitData => ({
   order: asNumber(data.order, 0),
   archived: asBool(data.archived, false),
   createdAt: asNumber(data.createdAt, 0),
+  days: asNumberArrayOrNull(data.days) ?? DEFAULT_HABIT_DAYS,
 });
 
 const toTrackerValues = (
@@ -570,6 +577,7 @@ export const runMerge = async (
       batch.set(ref, {
         kind: data.kind,
         name: data.name,
+        emoji: data.emoji,
         order: data.order,
         createdAt: data.createdAt,
         day: data.day,
@@ -614,6 +622,7 @@ export const runMerge = async (
         order: data.order,
         archived: data.archived,
         createdAt: data.createdAt,
+        days: data.days,
       }),
     );
   }
@@ -656,6 +665,7 @@ export const runMerge = async (
     ops.push((batch) =>
       batch.set(ref, {
         title: data.title,
+        emoji: data.emoji,
         status: data.status,
         bucket: data.bucket,
         weekId: data.weekId,

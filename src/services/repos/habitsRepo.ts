@@ -14,6 +14,8 @@ import { notePendingWrite } from "../syncSignal.ts";
 import { reportReadError } from "./readError.ts";
 import { reportWriteError } from "./writeError.ts";
 
+export const ALL_WEEK_DAYS = [1, 2, 3, 4, 5, 6, 7];
+
 export interface Habit {
   id: string;
   name: string;
@@ -21,7 +23,21 @@ export interface Habit {
   order: number;
   archived: boolean;
   createdAt: number;
+  days: number[];
 }
+
+const normalizeDays = (value: unknown): number[] => {
+  if (!Array.isArray(value)) return [...ALL_WEEK_DAYS];
+  const days = [
+    ...new Set(
+      value
+        .filter((day): day is number => typeof day === "number")
+        .map((day) => Math.trunc(day))
+        .filter((day) => day >= 1 && day <= 7),
+    ),
+  ].sort((a, b) => a - b);
+  return days.length > 0 ? days : [...ALL_WEEK_DAYS];
+};
 
 const normalizeHabit = (id: string, data: DocumentData): Habit => ({
   id,
@@ -30,6 +46,7 @@ const normalizeHabit = (id: string, data: DocumentData): Habit => ({
   order: typeof data.order === "number" ? data.order : 0,
   archived: typeof data.archived === "boolean" ? data.archived : false,
   createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
+  days: normalizeDays(data.days),
 });
 
 const habitsCol = (uid: string) => collection(db, "users", uid, "habits");
@@ -56,6 +73,7 @@ export const createHabit = (
   name: string,
   icon: string | null,
   order: number,
+  days: number[],
 ): void => {
   notePendingWrite();
   void addDoc(habitsCol(uid), {
@@ -64,18 +82,20 @@ export const createHabit = (
     order,
     archived: false,
     createdAt: Date.now(),
+    days,
   }).catch(reportWriteError);
 };
 
 export const updateHabit = (
   uid: string,
   habitId: string,
-  fields: { name: string; icon: string | null },
+  fields: { name: string; icon: string | null; days: number[] },
 ): void => {
   notePendingWrite();
   void updateDoc(habitRef(uid, habitId), {
     name: fields.name,
     icon: fields.icon,
+    days: fields.days,
   }).catch(reportWriteError);
 };
 

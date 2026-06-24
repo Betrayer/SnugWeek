@@ -1,5 +1,4 @@
 {
-  "menuLabel": "Share or print this week",
   "menuAction": "Share week",
   "title": "Share week",
   "intro": "Create a read-only link to show this week to a friend. It is a snapshot - later changes won't appear, and you can revoke it anytime.",
@@ -8,6 +7,7 @@
   "includeTrackers": "Trackers",
   "includeHabits": "Habits",
   "includeDecorations": "Decorations",
+  "includeLists": "Unscheduled tasks",
   "privacyNote": "Attachments are never shared. Notes are included only if you turn them on.",
   "createAction": "Create link",
   "linkReady": "Your link is ready",

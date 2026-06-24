@@ -13,7 +13,7 @@ import {
   MicGlyph,
   PlusGlyph,
   VideoGlyph,
-} from "./icons.tsx";
+} from "../icons/glyphs.tsx";
 
 interface AttachmentAdderProps {
   variant: "panel" | "strip";

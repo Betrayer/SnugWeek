@@ -6,6 +6,7 @@ export const snow: ThemeSpec = {
   vars: {
     "--sw-paper": "#fcfcfb",
     "--sw-paper-2": "#f3f3f0",
+    "--sw-off-day": "#efe6e2",
     "--sw-card": "#ffffff",
     "--sw-ink": "#33312e",
     "--sw-ink-2": "#6b6862",
@@ -20,8 +21,6 @@ export const snow: ThemeSpec = {
     "--sw-shadow": "0 2px 10px rgba(60, 55, 50, 0.06)",
     "--sw-fold-shade": "rgba(45, 42, 38, 0.25)",
     "--sw-paper-texture": "none",
-    "--sw-font-body": "'Nunito', 'Segoe UI', system-ui, sans-serif",
-    "--sw-font-hand": "'Caveat', cursive",
   },
   mantine: {},
   preview: { paper: "#fcfcfb", accent: "#a87f87", ink: "#33312e" },
