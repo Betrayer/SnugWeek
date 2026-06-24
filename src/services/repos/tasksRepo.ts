@@ -5,6 +5,7 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDocs,
   getDocsFromCache,
   onSnapshot,
   orderBy,
@@ -174,6 +175,52 @@ export const fetchCachedWeeksTasks = async (
       tasksCol(uid),
       where("bucket", "==", "day"),
       where("weekId", "in", weekIds),
+    ),
+  );
+  return snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data()));
+};
+
+export const getDoneTasksInRange = async (
+  uid: string,
+  start: number,
+  end: number,
+): Promise<Task[]> => {
+  const snap = await getDocs(
+    query(
+      tasksCol(uid),
+      where("completedAt", ">=", start),
+      where("completedAt", "<=", end),
+    ),
+  );
+  return snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data()));
+};
+
+export const getDayTasksByWeekIds = async (
+  uid: string,
+  weekIds: string[],
+): Promise<Task[]> => {
+  if (weekIds.length === 0) return [];
+  const snap = await getDocs(
+    query(
+      tasksCol(uid),
+      where("bucket", "==", "day"),
+      where("weekId", "in", weekIds),
+    ),
+  );
+  return snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data()));
+};
+
+export const getDayTasksByWeekRange = async (
+  uid: string,
+  startWeekId: string,
+  endWeekId: string,
+): Promise<Task[]> => {
+  const snap = await getDocs(
+    query(
+      tasksCol(uid),
+      where("bucket", "==", "day"),
+      where("weekId", ">=", startWeekId),
+      where("weekId", "<=", endWeekId),
     ),
   );
   return snap.docs.map((docSnap) => normalizeTask(docSnap.id, docSnap.data()));

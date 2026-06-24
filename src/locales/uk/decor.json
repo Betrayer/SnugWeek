@@ -6,15 +6,26 @@
   "editToolbar": "Інструменти прикрас",
   "target": "Розмістити на",
   "targetWeek": "Увесь тиждень",
+  "filterPlaceholder": "Пошук наліпок",
+  "allCategory": "Усі",
+  "category": {
+    "hearts": "Сердечка",
+    "celestial": "Небо та зорі",
+    "weather": "Погода",
+    "plants": "Рослини",
+    "animals": "Тварини",
+    "food": "Їжа та напої",
+    "seasonal": "Сезонні",
+    "scene": "Сценки",
+    "misc": "Різне",
+    "washi": "Стрічки washi",
+    "doodle": "Малюнки"
+  },
+  "noMatches": "Нічого не знайдено",
   "kind": {
     "sticker": "наліпка",
     "washi": "стрічка washi",
     "doodle": "малюнок"
-  },
-  "kindPlural": {
-    "sticker": "Наліпки",
-    "washi": "Стрічки washi",
-    "doodle": "Малюнки"
   },
   "addAsset": "Додати - {{kind}}",
   "itemLabel": "Прикраса: {{kind}}",

@@ -113,6 +113,8 @@ export const weeksOfMonth = (monthId: string): string[] => {
 export const isoDateKeyOf = (ms: number): string =>
   dayjs(ms).format("YYYY-MM-DD");
 
+export const todayDateKey = (): string => dayjs().format("YYYY-MM-DD");
+
 export const monthIdOfKey = (dateKey: string): string => dateKey.slice(0, 7);
 
 export const currentYear = (): number => dayjs().year();
@@ -139,6 +141,18 @@ export const monthRangeMs = (monthId: string): { start: number; end: number } =>
     start: base.startOf("month").valueOf(),
     end: base.endOf("month").valueOf(),
   };
+};
+
+export const yearRangeMs = (year: number): { start: number; end: number } => ({
+  start: dayjs(`${year}-01-01`).startOf("year").valueOf(),
+  end: dayjs(`${year}-12-31`).endOf("year").valueOf(),
+});
+
+export const weekdayLabels = (locale: string): string[] => {
+  const monday = dayjs().startOf("isoWeek");
+  return Array.from({ length: 7 }, (_, index) =>
+    capitalize(monday.add(index, "day").locale(locale).format("ddd")),
+  );
 };
 
 export const monthShortLabels = (locale: string): string[] =>

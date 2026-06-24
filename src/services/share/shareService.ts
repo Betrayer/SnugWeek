@@ -23,6 +23,7 @@ import type {
   ShareSummary,
   WeekViewDay,
   WeekViewHabit,
+  WeekViewList,
   WeekViewTask,
   WeekViewTracker,
 } from "./shareTypes.ts";
@@ -53,6 +54,21 @@ const normalizeInclude = (value: unknown): ShareInclude => {
     trackers: o.trackers === true,
     habits: o.habits === true,
     decorations: o.decorations === true,
+    lists: o.lists === true,
+  };
+};
+
+const normalizeListKind = (value: unknown): WeekViewList["kind"] =>
+  value === "tasks" || value === "ideas" ? value : "custom";
+
+const normalizeList = (value: unknown): WeekViewList => {
+  const o = asObject(value);
+  return {
+    id: asString(o.id),
+    name: typeof o.name === "string" ? o.name : null,
+    kind: normalizeListKind(o.kind),
+    emoji: typeof o.emoji === "string" ? o.emoji : null,
+    tasks: asArray(o.tasks).map(normalizeTask),
   };
 };
 
@@ -190,6 +206,7 @@ const normalizeSnapshot = (value: unknown): ShareSnapshot => {
     habits: asArray(o.habits).map(normalizeHabit),
     habitChecks: normalizeHabitChecks(o.habitChecks),
     decorations: normalizeDecorations(o.decorations),
+    lists: asArray(o.lists).map(normalizeList),
   };
 };
 

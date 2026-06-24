@@ -5,6 +5,7 @@ import type { WeekViewModel } from "../../../services/share/shareTypes.ts";
 import { StaticDayCard } from "./StaticDayCard.tsx";
 import { StaticDecorations } from "./StaticDecorations.tsx";
 import { StaticHabitGrid } from "./StaticHabitGrid.tsx";
+import { StaticListsPanel } from "./StaticListsPanel.tsx";
 import { cardSurface } from "../../styles/surfaces.ts";
 
 interface WeekViewProps {
@@ -12,15 +13,12 @@ interface WeekViewProps {
   variant: "screen" | "print";
 }
 
-const gridStyle = (variant: "screen" | "print"): CSSProperties => ({
+const printGridStyle: CSSProperties = {
   display: "grid",
-  gridTemplateColumns:
-    variant === "print"
-      ? "repeat(2, minmax(0, 1fr))"
-      : "repeat(auto-fill, minmax(170px, 1fr))",
+  gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
   gap: "var(--mantine-spacing-sm)",
   alignItems: "start",
-});
+};
 
 export const WeekView = ({ model, variant }: WeekViewProps) => {
   const { t } = useTranslation("share");
@@ -28,6 +26,19 @@ export const WeekView = ({ model, variant }: WeekViewProps) => {
   const hasWeekNote = include.note && model.snapshot.weekNote.trim().length > 0;
   const hasHabits = include.habits && snapshot.habits.length > 0;
   const showWeekDecor = variant === "screen" && include.decorations;
+  const showLists =
+    variant === "screen" && include.lists && snapshot.lists.length > 0;
+
+  const dayCards = snapshot.days.map((day) => (
+    <StaticDayCard
+      key={day.iso}
+      day={day}
+      include={include}
+      trackers={snapshot.trackers}
+      trackerValues={snapshot.trackerValues}
+      decorations={snapshot.decorations}
+    />
+  ));
 
   return (
     <Stack gap="lg">
@@ -47,21 +58,28 @@ export const WeekView = ({ model, variant }: WeekViewProps) => {
         </Text>
       </Stack>
 
-      <Box style={{ position: "relative" }}>
-        <div style={gridStyle(variant)}>
-          {snapshot.days.map((day) => (
-            <StaticDayCard
-              key={day.iso}
-              day={day}
-              include={include}
-              trackers={snapshot.trackers}
-              trackerValues={snapshot.trackerValues}
-              decorations={snapshot.decorations}
-            />
-          ))}
-        </div>
-        {showWeekDecor && (
-          <StaticDecorations decorations={snapshot.decorations} target="week" />
+      <Box
+        style={{
+          display: "flex",
+          gap: "var(--mantine-spacing-md)",
+          alignItems: "flex-start",
+          flexWrap: "wrap",
+        }}
+      >
+        <Box style={{ flex: "4 1 480px", minWidth: 0, position: "relative" }}>
+          {variant === "print" ? (
+            <div style={printGridStyle}>{dayCards}</div>
+          ) : (
+            <div className="sw-week-grid">{dayCards}</div>
+          )}
+          {showWeekDecor && (
+            <StaticDecorations decorations={snapshot.decorations} target="week" />
+          )}
+        </Box>
+        {showLists && (
+          <Box style={{ flex: "1 1 240px", minWidth: 0, maxWidth: 340 }}>
+            <StaticListsPanel lists={snapshot.lists} />
+          </Box>
         )}
       </Box>
 

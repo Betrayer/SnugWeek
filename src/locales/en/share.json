@@ -7,6 +7,7 @@
   "includeTrackers": "Trackers",
   "includeHabits": "Habits",
   "includeDecorations": "Decorations",
+  "includeLists": "Unscheduled tasks",
   "privacyNote": "Attachments are never shared. Notes are included only if you turn them on.",
   "createAction": "Create link",
   "linkReady": "Your link is ready",

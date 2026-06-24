@@ -21,6 +21,7 @@ export const BottomSheet = ({
     onClose={onClose}
     position="bottom"
     size={size}
+    zIndex={300}
     title={title}
     radius="lg"
     overlayProps={{ backgroundOpacity: 0.45 }}

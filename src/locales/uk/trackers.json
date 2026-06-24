@@ -17,6 +17,7 @@
     "name": "Назва",
     "namePlaceholder": "Назва показника…",
     "typeLabel": "Тип",
+    "colorLabel": "Колір",
     "type": {
       "scale5": "Шкала 1–5",
       "emoji": "Емодзі",

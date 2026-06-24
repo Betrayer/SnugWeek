@@ -19,7 +19,7 @@ interface TrackersState {
   start: (uid: string) => void;
   stop: () => void;
   add: (fields: Omit<NewTrackerFields, "order">) => void;
-  update: (id: string, fields: { name: string; icon: string }) => void;
+  update: (id: string, fields: { name: string; icon: string; color: string }) => void;
   setEnabled: (id: string, enabled: boolean) => void;
   reorder: (orderedIds: string[]) => void;
   remove: (id: string) => void;
@@ -54,13 +54,18 @@ export const useTrackersStore = create<TrackersState>()(
           name,
           type: fields.type,
           icon: fields.icon,
+          color: fields.color,
           order: orderForBottom(get().trackers),
         });
       },
       update: (id, fields) => {
         const name = fields.name.trim();
         if (!activeUid || name.length === 0) return;
-        updateTracker(activeUid, id, { name, icon: fields.icon });
+        updateTracker(activeUid, id, {
+          name,
+          icon: fields.icon,
+          color: fields.color,
+        });
       },
       setEnabled: (id, enabled) => {
         if (!activeUid) return;

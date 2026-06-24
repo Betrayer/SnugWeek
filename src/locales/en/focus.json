@@ -3,7 +3,7 @@
   "open": "Focus timer",
   "presetFocus": "Focus 25",
   "presetBreak": "Break 5",
-  "customMinutes": "Minutes",
+  "customMinutes": "Duration",
   "startCustom": "Start",
   "pause": "Pause",
   "resume": "Resume",

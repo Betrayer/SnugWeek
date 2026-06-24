@@ -6,15 +6,26 @@
   "editToolbar": "Decoration tools",
   "target": "Place on",
   "targetWeek": "Whole week",
+  "filterPlaceholder": "Search stickers",
+  "allCategory": "All",
+  "category": {
+    "hearts": "Hearts",
+    "celestial": "Sky & stars",
+    "weather": "Weather",
+    "plants": "Plants",
+    "animals": "Animals",
+    "food": "Food & drinks",
+    "seasonal": "Seasonal",
+    "scene": "Little scenes",
+    "misc": "Odds & ends",
+    "washi": "Washi tape",
+    "doodle": "Doodles"
+  },
+  "noMatches": "Nothing matches that",
   "kind": {
     "sticker": "sticker",
     "washi": "washi tape",
     "doodle": "doodle"
-  },
-  "kindPlural": {
-    "sticker": "Stickers",
-    "washi": "Washi tape",
-    "doodle": "Doodles"
   },
   "addAsset": "Add {{kind}}",
   "itemLabel": "{{kind}} decoration",

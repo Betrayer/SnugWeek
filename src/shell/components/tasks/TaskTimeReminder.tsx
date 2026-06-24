@@ -1,7 +1,5 @@
 import { Button, Group, Select, Stack, Text } from "@mantine/core";
-import { TimeInput } from "@mantine/dates";
 import { useState } from "react";
-import type { ChangeEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Task } from "../../../services/repos/tasksRepo.ts";
 import {
@@ -15,6 +13,7 @@ import { REMINDER_OFFSETS, offsetKey } from "../../../services/reminders/offsets
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
+import { TimeField } from "../common/TimeField.tsx";
 import { fieldStyles } from "../../styles/fieldStyles.ts";
 
 const NONE = "none";
@@ -41,13 +40,6 @@ export const TaskTimeReminder = ({ task }: { task: Task }) => {
     })),
   ];
 
-  const onTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const value = event.currentTarget.value;
-    setTime(task.id, value === "" ? null : value);
-  };
-
-  const clearTime = () => setTime(task.id, null);
-
   const maybeAskPermission = () => {
     if (notifSupported() && notifPermission() === "default" && !hasAskedNotif()) {
       setPermissionOpen(true);
@@ -71,23 +63,11 @@ export const TaskTimeReminder = ({ task }: { task: Task }) => {
 
   return (
     <Stack gap="sm" data-hint="reminders">
-      <Group align="flex-end" gap="sm" wrap="nowrap">
-        <TimeInput
-          label={t("timeLabel")}
-          value={task.time ?? ""}
-          onChange={onTimeChange}
-          styles={fieldStyles}
-          style={{ flex: 1 }}
-        />
-        <Button
-          variant="subtle"
-          color="var(--sw-ink-2)"
-          onClick={clearTime}
-          disabled={!hasTime}
-        >
-          {t("clearTime")}
-        </Button>
-      </Group>
+      <TimeField
+        label={t("timeLabel")}
+        value={task.time}
+        onChange={(value) => setTime(task.id, value)}
+      />
 
       <Select
         label={t("reminderLabel")}

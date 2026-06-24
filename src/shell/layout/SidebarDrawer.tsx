@@ -18,6 +18,7 @@ export const SidebarDrawer = () => {
       onClose={close}
       position="right"
       size="85%"
+      zIndex={150}
       title={t("lists.open")}
       styles={{
         content: {

@@ -257,6 +257,9 @@ export const useWeekStore = create<WeekState>()(
         if (task && task.attachmentCount > 0) {
           purgeTaskAttachments(activeUid, taskId);
         }
+        if (task && task.status === "done" && task.completedAt !== null) {
+          bumpCompletion(activeUid, isoDateKeyOf(task.completedAt), -1);
+        }
         deleteTask(activeUid, taskId);
         playSwoosh();
       },

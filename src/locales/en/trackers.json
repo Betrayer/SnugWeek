@@ -17,6 +17,7 @@
     "name": "Name",
     "namePlaceholder": "Tracker name…",
     "typeLabel": "Type",
+    "colorLabel": "Color",
     "type": {
       "scale5": "Scale 1–5",
       "emoji": "Emoji",

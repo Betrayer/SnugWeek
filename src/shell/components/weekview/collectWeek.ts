@@ -5,6 +5,7 @@ import type {
   WeekViewModel,
 } from "../../../services/share/shareTypes.ts";
 import { useHabitsStore } from "../../../state/habitsStore.ts";
+import { useListsStore } from "../../../state/listsStore.ts";
 import { useProfileStore } from "../../../state/profileStore.ts";
 import { useSettingsStore } from "../../../state/settingsStore.ts";
 import { useTrackersStore } from "../../../state/trackersStore.ts";
@@ -26,11 +27,14 @@ export const collectWeek = (include: ShareInclude): CollectedWeek | null => {
   if (!week.weekId) return null;
   const profile = useProfileStore.getState();
   const language = useSettingsStore.getState().language;
+  const lists = useListsStore.getState();
   const { weekTitle, snapshot } = buildSnapshot({
     weekId: week.weekId,
     language,
     week: week.week,
     tasksByDay: week.tasksByDay,
+    lists: lists.lists,
+    tasksByList: lists.tasksByList,
     trackers: useTrackersStore.getState().trackers,
     habits: useHabitsStore.getState().habits,
     weekend: profile.weekend,

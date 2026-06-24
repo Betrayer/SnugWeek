@@ -37,6 +37,7 @@ export const PrintDialog = ({ opened, onClose }: PrintDialogProps) => {
       trackers: modules.dayTrackers && trackers,
       habits: modules.habits && habits,
       decorations: false,
+      lists: false,
     });
     if (collected) setPrintModel(collected.model);
   };

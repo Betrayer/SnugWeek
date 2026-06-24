@@ -12,6 +12,12 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
+import {
+  ENERGY_TRACKER_COLOR,
+  MOOD_TRACKER_COLOR,
+  defaultTrackerColor,
+  isTrackerColor,
+} from "../../data/trackerColors.ts";
 import { ORDER_SPACING } from "../ordering.ts";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
@@ -25,6 +31,7 @@ export interface Tracker {
   name: string;
   type: TrackerType;
   icon: string;
+  color: string;
   order: number;
   enabled: boolean;
   createdAt: number;
@@ -34,6 +41,7 @@ export interface NewTrackerFields {
   name: string;
   type: TrackerType;
   icon: string;
+  color: string;
   order: number;
 }
 
@@ -56,6 +64,10 @@ const normalizeTracker = (id: string, data: DocumentData): Tracker => ({
   name: typeof data.name === "string" ? data.name : "",
   type: normalizeType(data.type),
   icon: typeof data.icon === "string" ? data.icon : "",
+  color:
+    typeof data.color === "string" && isTrackerColor(data.color)
+      ? data.color
+      : defaultTrackerColor(id),
   order: typeof data.order === "number" ? data.order : 0,
   enabled: typeof data.enabled === "boolean" ? data.enabled : true,
   createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
@@ -84,6 +96,7 @@ export const seedDefaultTrackers = async (uid: string): Promise<void> => {
       name: "",
       type: "emoji",
       icon: "🙂",
+      color: MOOD_TRACKER_COLOR,
       order: 0,
       enabled: true,
       createdAt: now,
@@ -92,6 +105,7 @@ export const seedDefaultTrackers = async (uid: string): Promise<void> => {
       name: "",
       type: "scale5",
       icon: "bolt",
+      color: ENERGY_TRACKER_COLOR,
       order: ORDER_SPACING,
       enabled: true,
       createdAt: now,
@@ -121,6 +135,7 @@ export const createTracker = (uid: string, fields: NewTrackerFields): void => {
     name: fields.name,
     type: fields.type,
     icon: fields.icon,
+    color: fields.color,
     order: fields.order,
     enabled: true,
     createdAt: Date.now(),
@@ -130,12 +145,13 @@ export const createTracker = (uid: string, fields: NewTrackerFields): void => {
 export const updateTracker = (
   uid: string,
   trackerId: string,
-  fields: { name: string; icon: string },
+  fields: { name: string; icon: string; color: string },
 ): void => {
   notePendingWrite();
   void updateDoc(trackerRef(uid, trackerId), {
     name: fields.name,
     icon: fields.icon,
+    color: fields.color,
   }).catch(reportWriteError);
 };
 
