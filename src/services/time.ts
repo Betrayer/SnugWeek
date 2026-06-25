@@ -268,6 +268,36 @@ export const buildMonthGrid = (
   return rows;
 };
 
+export interface MonthTrackerDay {
+  date: number;
+  dateKey: string;
+  iso: number;
+  initial: string;
+  isWeekend: boolean;
+  isToday: boolean;
+}
+
+export const monthDays = (
+  monthId: string,
+  weekend: number[],
+  locale: string,
+): MonthTrackerDay[] => {
+  const start = dayjs(`${monthId}-01`);
+  const count = start.daysInMonth();
+  const today = dayjs();
+  return Array.from({ length: count }, (_, index) => {
+    const day = start.add(index, "day");
+    return {
+      date: day.date(),
+      dateKey: day.format("YYYY-MM-DD"),
+      iso: day.isoWeekday(),
+      initial: capitalize(day.locale(locale).format("dd")).charAt(0),
+      isWeekend: weekend.includes(day.isoWeekday()),
+      isToday: day.isSame(today, "day"),
+    };
+  });
+};
+
 export const dayLabel = (day: Dayjs): string =>
   `${capitalize(day.format("dd"))} ${day.format("D.MM")}`;
 

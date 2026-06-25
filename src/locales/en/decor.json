@@ -25,7 +25,8 @@
   "kind": {
     "sticker": "sticker",
     "washi": "washi tape",
-    "doodle": "doodle"
+    "doodle": "doodle",
+    "photo": "photo"
   },
   "addAsset": "Add {{kind}}",
   "itemLabel": "{{kind}} decoration",

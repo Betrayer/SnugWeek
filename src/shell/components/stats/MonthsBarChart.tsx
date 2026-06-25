@@ -34,10 +34,12 @@ export const MonthsBarChart = ({ months }: MonthsBarChartProps) => {
         },
       ]}
       gridAxis="y"
+      tickLine="none"
+      strokeDasharray="3 7"
       textColor="var(--sw-ink-3)"
       gridColor="var(--sw-line)"
       yAxisProps={{ allowDecimals: false, width: 28 }}
-      barProps={{ radius: [4, 4, 0, 0] }}
+      barProps={{ radius: [7, 7, 0, 0] }}
       aria-label={t("monthsAria")}
     />
   );

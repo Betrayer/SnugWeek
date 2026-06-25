@@ -18,8 +18,7 @@ import {
   DEFAULT_FONT_SCOPE,
   DEFAULT_HAND_FONT_ID,
   FONT_SCOPES,
-  bodyFontById,
-  handFontById,
+  fontById,
 } from "../../data/fonts/registry.ts";
 import type { FontScope } from "../../data/fonts/registry.ts";
 import type { SupportedLang } from "../../i18n/languages.ts";
@@ -59,15 +58,18 @@ export const TASK_DONE_STYLES: TaskDoneStyle[] = [
 
 export const DEFAULT_TASK_DONE_STYLE: TaskDoneStyle = "dimStrike";
 
-export type TaskStrikeStyle = "single" | "scribble" | "double";
+export type TaskStrikeStyle = "line" | "pencil" | "cross" | "double";
 
 export const TASK_STRIKE_STYLES: TaskStrikeStyle[] = [
-  "single",
-  "scribble",
+  "line",
+  "pencil",
+  "cross",
   "double",
 ];
 
-export const DEFAULT_TASK_STRIKE_STYLE: TaskStrikeStyle = "single";
+export const DEFAULT_TASK_STRIKE_STYLE: TaskStrikeStyle = "line";
+
+export const DEFAULT_SHOW_TASK_CHECKBOX = true;
 
 export interface ProfileDoc {
   schemaVersion: number;
@@ -81,6 +83,7 @@ export interface ProfileDoc {
   columnMode: "cozy" | "equal";
   taskDoneStyle: TaskDoneStyle;
   taskStrikeStyle: TaskStrikeStyle;
+  showTaskCheckbox: boolean;
   fontBodyId: string;
   fontHandId: string;
   fontScope: FontScope;
@@ -132,18 +135,21 @@ const normalizeTaskDoneStyle = (value: unknown): TaskDoneStyle =>
     ? (value as TaskDoneStyle)
     : DEFAULT_TASK_DONE_STYLE;
 
-const normalizeTaskStrikeStyle = (value: unknown): TaskStrikeStyle =>
-  TASK_STRIKE_STYLES.includes(value as TaskStrikeStyle)
+const normalizeTaskStrikeStyle = (value: unknown): TaskStrikeStyle => {
+  if (value === "single") return "line";
+  if (value === "scribble") return "pencil";
+  return TASK_STRIKE_STYLES.includes(value as TaskStrikeStyle)
     ? (value as TaskStrikeStyle)
     : DEFAULT_TASK_STRIKE_STYLE;
+};
 
 const normalizeBodyFont = (value: unknown): string =>
-  typeof value === "string" && bodyFontById(value).id === value
+  typeof value === "string" && fontById(value) !== undefined
     ? value
     : DEFAULT_BODY_FONT_ID;
 
 const normalizeHandFont = (value: unknown): string =>
-  typeof value === "string" && handFontById(value).id === value
+  typeof value === "string" && fontById(value) !== undefined
     ? value
     : DEFAULT_HAND_FONT_ID;
 
@@ -177,6 +183,10 @@ const normalizeProfile = (data: DocumentData): ProfileDoc => ({
   columnMode: data.columnMode === "equal" ? "equal" : "cozy",
   taskDoneStyle: normalizeTaskDoneStyle(data.taskDoneStyle),
   taskStrikeStyle: normalizeTaskStrikeStyle(data.taskStrikeStyle),
+  showTaskCheckbox:
+    typeof data.showTaskCheckbox === "boolean"
+      ? data.showTaskCheckbox
+      : DEFAULT_SHOW_TASK_CHECKBOX,
   fontBodyId: normalizeBodyFont(data.fontBodyId),
   fontHandId: normalizeHandFont(data.fontHandId),
   fontScope: normalizeFontScope(data.fontScope),
@@ -345,6 +355,17 @@ export const setTaskStrikeStyle = (
   notePendingWrite();
   void updateDoc(profileRef(uid), {
     taskStrikeStyle,
+    updatedAt: Date.now(),
+  }).catch(reportWriteError);
+};
+
+export const setShowTaskCheckbox = (
+  uid: string,
+  showTaskCheckbox: boolean,
+): void => {
+  notePendingWrite();
+  void updateDoc(profileRef(uid), {
+    showTaskCheckbox,
     updatedAt: Date.now(),
   }).catch(reportWriteError);
 };

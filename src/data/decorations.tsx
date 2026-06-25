@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { DecorationCategory } from "./decorationCategories.ts";
 import { DROPPED_DECORATIONS } from "./stickerDrops.tsx";
 
-export type DecorationKind = "sticker" | "washi" | "doodle";
+export type DecorationKind = "sticker" | "washi" | "doodle" | "photo";
 
 export interface DecorationAsset {
   id: string;
@@ -20,7 +20,8 @@ export const isAnimatedAsset = (asset: DecorationAsset): boolean =>
   asset.animated ?? asset.kind === "sticker";
 
 export const assetCategory = (asset: DecorationAsset): DecorationCategory =>
-  asset.category ?? (asset.kind === "sticker" ? "misc" : asset.kind);
+  asset.category ??
+  (asset.kind === "washi" || asset.kind === "doodle" ? asset.kind : "misc");
 
 export interface DecorationAnimation {
   id: string;
@@ -1609,4 +1610,7 @@ export const decorationById = (id: string): DecorationAsset | undefined =>
   BY_ID.get(id);
 
 export const isDecorationKind = (value: string): value is DecorationKind =>
-  value === "sticker" || value === "washi" || value === "doodle";
+  value === "sticker" ||
+  value === "washi" ||
+  value === "doodle" ||
+  value === "photo";

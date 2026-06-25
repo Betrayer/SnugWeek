@@ -27,6 +27,8 @@
   },
   "paperTexture": "Paper texture",
   "paperTextureHint": "A subtle grain on the paper (off by default).",
+  "taskCheckbox": "Task checkbox",
+  "taskCheckboxHint": "Show a checkbox on each task (tap the row to open it).",
   "taskDoneStyle": "Completed tasks look",
   "taskDoneStyles": {
     "strike": "Crossed out",
@@ -36,8 +38,9 @@
   },
   "taskStrikeStyle": "Strikethrough",
   "taskStrikeStyles": {
-    "single": "Single",
-    "scribble": "Scribble",
+    "line": "Line",
+    "pencil": "Pencil",
+    "cross": "Cross",
     "double": "Double"
   },
   "fonts": "Fonts",

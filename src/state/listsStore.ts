@@ -27,7 +27,7 @@ import {
   updateTitle,
 } from "../services/repos/tasksRepo.ts";
 import type { Task } from "../services/repos/tasksRepo.ts";
-import { playCheck, playPop, playSwoosh } from "../services/sound/soundService.ts";
+import { playPop, playStrike, playSwoosh } from "../services/sound/soundService.ts";
 import { isoDateKeyOf } from "../services/time.ts";
 import { notifyInfo } from "../services/notify.ts";
 import { useUiStore } from "./uiStore.ts";
@@ -125,7 +125,7 @@ export const useListsStore = create<ListsState>()(
         const now = Date.now();
         setStatus(activeUid, task.id, "done", now);
         bumpCompletion(activeUid, isoDateKeyOf(now), 1);
-        playCheck();
+        playStrike();
       },
       renameTask: (taskId, title) => {
         const trimmed = title.trim();

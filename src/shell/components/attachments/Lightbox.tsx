@@ -6,6 +6,7 @@ import {
   ChevronLeftGlyph,
   ChevronRightGlyph,
   CloseGlyph,
+  PinGlyph,
 } from "../icons/glyphs.tsx";
 
 interface LightboxProps {
@@ -13,6 +14,7 @@ interface LightboxProps {
   index: number;
   onIndex: (index: number) => void;
   onClose: () => void;
+  onPin?: (attachment: Attachment) => void;
 }
 
 const navButtonStyle = {
@@ -27,7 +29,13 @@ const navButtonStyle = {
   boxShadow: "var(--sw-shadow)",
 } as const;
 
-export const Lightbox = ({ images, index, onIndex, onClose }: LightboxProps) => {
+export const Lightbox = ({
+  images,
+  index,
+  onIndex,
+  onClose,
+  onPin,
+}: LightboxProps) => {
   const { t } = useTranslation("attachments");
   const opened = index >= 0 && index < images.length;
   const current = opened ? images[index] : undefined;
@@ -54,6 +62,7 @@ export const Lightbox = ({ images, index, onIndex, onClose }: LightboxProps) => 
       size="auto"
       padding={0}
       radius="lg"
+      zIndex={400}
       overlayProps={{ backgroundOpacity: 0.65 }}
       styles={{ content: { backgroundColor: "var(--sw-paper)" } }}
     >
@@ -67,13 +76,24 @@ export const Lightbox = ({ images, index, onIndex, onClose }: LightboxProps) => 
         <Text fz="sm" c="var(--sw-ink-3)" fw={600}>
           {t("lightbox.counter", { index: index + 1, total: count })}
         </Text>
-        <UnstyledButton
-          onClick={onClose}
-          aria-label={t("lightbox.close")}
-          style={{ color: "var(--sw-ink-2)", display: "inline-flex" }}
-        >
-          <CloseGlyph size={20} />
-        </UnstyledButton>
+        <Group gap={4} wrap="nowrap">
+          {onPin && (
+            <UnstyledButton
+              onClick={() => onPin(current)}
+              aria-label={t("pin")}
+              style={{ color: "var(--sw-ink-2)", display: "inline-flex" }}
+            >
+              <PinGlyph size={20} />
+            </UnstyledButton>
+          )}
+          <UnstyledButton
+            onClick={onClose}
+            aria-label={t("lightbox.close")}
+            style={{ color: "var(--sw-ink-2)", display: "inline-flex" }}
+          >
+            <CloseGlyph size={20} />
+          </UnstyledButton>
+        </Group>
       </Group>
       <div
         style={{

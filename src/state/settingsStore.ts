@@ -11,6 +11,8 @@ type LockMethod = "pin" | "passkey";
 
 export type CheerLevel = "off" | "subtle" | "full";
 
+export type MonthView = "calendar" | "tracker";
+
 interface PersistedSettings {
   language: SupportedLang;
   reduceMotion: boolean;
@@ -24,6 +26,7 @@ interface PersistedSettings {
   lockAfterMin: number;
   tourSeen: boolean;
   cheerLevel: CheerLevel;
+  monthView: MonthView;
 }
 
 interface SettingsState extends PersistedSettings {
@@ -39,6 +42,7 @@ interface SettingsState extends PersistedSettings {
   setLockAfterMin: (lockAfterMin: number) => void;
   setTourSeen: (tourSeen: boolean) => void;
   setCheerLevel: (cheerLevel: CheerLevel) => void;
+  setMonthView: (monthView: MonthView) => void;
 }
 
 const defaultSettings: PersistedSettings = {
@@ -54,6 +58,7 @@ const defaultSettings: PersistedSettings = {
   lockAfterMin: 5,
   tourSeen: false,
   cheerLevel: "subtle",
+  monthView: "calendar",
 };
 
 export const useSettingsStore = create<SettingsState>()(
@@ -78,10 +83,11 @@ export const useSettingsStore = create<SettingsState>()(
         setLockAfterMin: (lockAfterMin) => set({ lockAfterMin }),
         setTourSeen: (tourSeen) => set({ tourSeen }),
         setCheerLevel: (cheerLevel) => set({ cheerLevel }),
+        setMonthView: (monthView) => set({ monthView }),
       }),
       {
         name: "snugweek-settings",
-        version: 7,
+        version: 8,
         partialize: (state): PersistedSettings => ({
           language: state.language,
           reduceMotion: state.reduceMotion,
@@ -95,6 +101,7 @@ export const useSettingsStore = create<SettingsState>()(
           lockAfterMin: state.lockAfterMin,
           tourSeen: state.tourSeen,
           cheerLevel: state.cheerLevel,
+          monthView: state.monthView,
         }),
         migrate: (persisted, version) => {
           const stored = persisted as Partial<PersistedSettings> | undefined;

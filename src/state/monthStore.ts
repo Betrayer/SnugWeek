@@ -16,6 +16,8 @@ interface MonthState {
   monthId: string | null;
   countsByDate: Record<string, DayCounts>;
   moodByDate: Record<string, string>;
+  tasks: Task[];
+  habitChecksByDate: Record<string, string[]>;
   open: (uid: string, monthId: string) => void;
   stop: () => void;
 }
@@ -51,12 +53,31 @@ const moodByDate = (weeks: WeekEntry[]): Record<string, string> => {
   return moods;
 };
 
+const habitChecksByDate = (weeks: WeekEntry[]): Record<string, string[]> => {
+  const result: Record<string, string[]> = {};
+  for (const entry of weeks) {
+    for (const [habitId, days] of Object.entries(entry.week.habitChecks)) {
+      for (const dayKey of Object.keys(days)) {
+        const day = Number(dayKey);
+        if (!Number.isInteger(day) || day < 1 || day > 7) continue;
+        const dateKey = isoDateKey(entry.id, day);
+        const list = result[dateKey] ?? [];
+        list.push(habitId);
+        result[dateKey] = list;
+      }
+    }
+  }
+  return result;
+};
+
 export const useMonthStore = create<MonthState>()(
   devtools(
     (set) => ({
       monthId: null,
       countsByDate: {},
       moodByDate: {},
+      tasks: [],
+      habitChecksByDate: {},
       open: (uid, monthId) => {
         if (activeUid === uid && activeMonthId === monthId && tasksUnsub)
           return;
@@ -64,13 +85,22 @@ export const useMonthStore = create<MonthState>()(
         if (weeksUnsub) weeksUnsub();
         activeUid = uid;
         activeMonthId = monthId;
-        set({ monthId, countsByDate: {}, moodByDate: {} });
+        set({
+          monthId,
+          countsByDate: {},
+          moodByDate: {},
+          tasks: [],
+          habitChecksByDate: {},
+        });
         const weekIds = weeksOfMonth(monthId);
         tasksUnsub = subscribeWeeksTasks(uid, weekIds, (tasks) => {
-          set({ countsByDate: countByDate(tasks) });
+          set({ countsByDate: countByDate(tasks), tasks });
         });
         weeksUnsub = subscribeWeeks(uid, weekIds, (weeks) => {
-          set({ moodByDate: moodByDate(weeks) });
+          set({
+            moodByDate: moodByDate(weeks),
+            habitChecksByDate: habitChecksByDate(weeks),
+          });
         });
       },
       stop: () => {
@@ -80,7 +110,13 @@ export const useMonthStore = create<MonthState>()(
         weeksUnsub = null;
         activeUid = null;
         activeMonthId = null;
-        set({ monthId: null, countsByDate: {}, moodByDate: {} });
+        set({
+          monthId: null,
+          countsByDate: {},
+          moodByDate: {},
+          tasks: [],
+          habitChecksByDate: {},
+        });
       },
     }),
     { name: "monthStore" },

@@ -13,11 +13,19 @@ interface ToneOptions {
 
 const FLIP_SOURCES = ["/sounds/flip.webm", "/sounds/flip.mp3"];
 
+const PENCIL_SOURCES: string[][] = [
+  ["/sounds/pencil-1.webm", "/sounds/pencil-1.mp3"],
+  ["/sounds/pencil-2.webm", "/sounds/pencil-2.mp3"],
+  ["/sounds/pencil-3.webm", "/sounds/pencil-3.mp3"],
+];
+
 let context: AudioContext | null = null;
 let master: GainNode | null = null;
 let unlocked = false;
 let flipBuffer: AudioBuffer | null = null;
 let flipLoadStarted = false;
+let pencilBuffers: (AudioBuffer | null)[] = [];
+let pencilLoadStarted = false;
 const lastPlayedAt: Record<string, number> = {};
 
 const resolveCtor = (): AudioContextCtor | null => {
@@ -57,12 +65,38 @@ const loadFlipSample = async (ctx: AudioContext): Promise<void> => {
   }
 };
 
+const decodeFirst = async (
+  ctx: AudioContext,
+  sources: string[],
+): Promise<AudioBuffer | null> => {
+  for (const url of sources) {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) continue;
+      const data = await response.arrayBuffer();
+      return await ctx.decodeAudioData(data);
+    } catch {
+      continue;
+    }
+  }
+  return null;
+};
+
+const loadPencilSamples = async (ctx: AudioContext): Promise<void> => {
+  if (pencilLoadStarted) return;
+  pencilLoadStarted = true;
+  pencilBuffers = await Promise.all(
+    PENCIL_SOURCES.map((sources) => decodeFirst(ctx, sources)),
+  );
+};
+
 export const unlockSound = (): void => {
   const ctx = ensureContext();
   if (!ctx) return;
   if (ctx.state === "suspended") void ctx.resume();
   unlocked = true;
   void loadFlipSample(ctx);
+  void loadPencilSamples(ctx);
 };
 
 export const setVolume = (volume: number): void => {
@@ -226,4 +260,48 @@ export const playFlip = (): void => {
     return;
   }
   swoosh(ctx);
+};
+
+const scratch = (ctx: AudioContext): void => {
+  if (!master) return;
+  const duration = 0.14;
+  const frameCount = Math.floor(ctx.sampleRate * duration);
+  const buffer = ctx.createBuffer(1, frameCount, ctx.sampleRate);
+  const channel = buffer.getChannelData(0);
+  for (let i = 0; i < frameCount; i += 1) {
+    const progress = i / frameCount;
+    const envelope = Math.sin(Math.PI * progress) * (1 - progress * 0.35);
+    channel[i] = (Math.random() * 2 - 1) * envelope;
+  }
+  const source = ctx.createBufferSource();
+  source.buffer = buffer;
+  const filter = ctx.createBiquadFilter();
+  filter.type = "bandpass";
+  filter.frequency.value = 2600;
+  filter.Q.value = 0.7;
+  const gain = ctx.createGain();
+  gain.gain.value = 0.26;
+  source.connect(filter);
+  filter.connect(gain);
+  gain.connect(master);
+  source.start(ctx.currentTime);
+};
+
+export const playStrike = (): void => {
+  const ctx = beginSound("strike", 90);
+  if (!ctx) return;
+  const available = pencilBuffers.filter(
+    (buffer): buffer is AudioBuffer => buffer !== null,
+  );
+  if (available.length > 0 && master) {
+    const pick = available[Math.floor(Math.random() * available.length)];
+    if (pick) {
+      const source = ctx.createBufferSource();
+      source.buffer = pick;
+      source.connect(master);
+      source.start();
+      return;
+    }
+  }
+  scratch(ctx);
 };

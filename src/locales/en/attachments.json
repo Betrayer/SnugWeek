@@ -30,6 +30,8 @@
   "remove": "Remove",
   "download": "Download",
   "open": "Open",
+  "pin": "Pin to page",
+  "pinnedToast": "Pinned to the page",
   "kind": {
     "image": "Image",
     "audio": "Voice note",

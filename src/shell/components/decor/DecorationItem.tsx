@@ -25,6 +25,7 @@ import { useDecorStore } from "../../../state/decorStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { useReducedMotionPref } from "../../hooks/useReducedMotionPref.ts";
 import { DecorationArt } from "./DecorationArt.tsx";
+import { PhotoDecorationArt } from "./PhotoDecorationArt.tsx";
 
 interface DecorationItemProps {
   decoration: Decoration;
@@ -53,6 +54,9 @@ interface DragState {
 
 const SCALE_MIN = 0.4;
 const SCALE_MAX = 2.5;
+
+const PHOTO_W = 116;
+const PHOTO_H = 132;
 
 const clampPct = (value: number): number => Math.min(94, Math.max(6, value));
 
@@ -91,8 +95,13 @@ export const DecorationItem = ({
     setDraft(null);
   }
 
+  const isPhoto = decoration.kind === "photo";
   const asset = decorationById(decoration.asset);
-  if (!asset) return null;
+  if (!isPhoto && !asset) return null;
+
+  const itemW = isPhoto ? PHOTO_W : (asset?.w ?? PHOTO_W);
+  const itemH = isPhoto ? PHOTO_H : (asset?.h ?? PHOTO_H);
+  const itemKind = isPhoto ? "photo" : (asset?.kind ?? "sticker");
 
   const base: Transform = {
     x: decoration.x,
@@ -187,7 +196,7 @@ export const DecorationItem = ({
     commit({ x: next.x, y: next.y });
   };
 
-  const animatable = isAnimatedAsset(asset);
+  const animatable = !isPhoto && asset ? isAnimatedAsset(asset) : false;
   const animation = decorationAnimationById(
     animatable ? decoration.animation : "none",
   );
@@ -197,7 +206,11 @@ export const DecorationItem = ({
     (!editMode || (selected && !moving));
   const phase =
     (decoration.id.charCodeAt(0) + decoration.id.charCodeAt(1)) % 5;
-  const art = <DecorationArt assetId={decoration.asset} />;
+  const art = isPhoto ? (
+    <PhotoDecorationArt src={decoration.thumbSrc ?? decoration.src} name={null} />
+  ) : (
+    <DecorationArt assetId={decoration.asset} />
+  );
 
   return (
     <Popover
@@ -215,7 +228,7 @@ export const DecorationItem = ({
         <div
           role={editMode ? "button" : undefined}
           aria-label={
-            editMode ? t("itemLabel", { kind: t(`kind.${asset.kind}`) }) : undefined
+            editMode ? t("itemLabel", { kind: t(`kind.${itemKind}`) }) : undefined
           }
           aria-hidden={editMode ? undefined : true}
           tabIndex={editMode ? 0 : -1}
@@ -229,8 +242,8 @@ export const DecorationItem = ({
             position: "absolute",
             left: `${view.x}%`,
             top: `${view.y}%`,
-            width: asset.w * view.scale,
-            height: asset.h * view.scale,
+            width: itemW * view.scale,
+            height: itemH * view.scale,
             transform: "translate(-50%, -50%)",
             pointerEvents: editMode ? "auto" : "none",
             touchAction: editMode ? "none" : undefined,

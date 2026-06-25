@@ -5,6 +5,7 @@
   "delete": "Delete",
   "move": "Move…",
   "done": "Mark done",
+  "reopen": "Reopen",
   "completed": "Completed",
   "openDetail": "Open “{{title}}”",
   "emptyDay": "a free day",

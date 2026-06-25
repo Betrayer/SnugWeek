@@ -12,6 +12,15 @@
   "completionCaption": "completed of created",
   "carriedTitle": "Carried over",
   "carriedCaption": "tasks moved onward",
+  "kpi": {
+    "completion": "completion",
+    "completed": "completed",
+    "carried": "carried over",
+    "streak": "best streak",
+    "total": "total done",
+    "bestMonth": "best month",
+    "activeDays": "active days"
+  },
   "createdTitle": "Created",
   "habitsTitle": "Habits",
   "trendTitle": "Tracker trends",

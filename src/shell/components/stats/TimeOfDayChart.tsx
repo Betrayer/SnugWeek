@@ -25,10 +25,12 @@ export const TimeOfDayChart = ({ data }: TimeOfDayChartProps) => {
         },
       ]}
       gridAxis="y"
+      tickLine="none"
+      strokeDasharray="3 7"
       textColor="var(--sw-ink-3)"
       gridColor="var(--sw-line)"
       yAxisProps={{ allowDecimals: false, width: 26 }}
-      barProps={{ radius: [4, 4, 0, 0] }}
+      barProps={{ radius: [8, 8, 0, 0] }}
       aria-label={t("timeOfDayAria")}
     />
   );

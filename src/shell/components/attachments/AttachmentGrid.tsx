@@ -1,8 +1,10 @@
 import { Button, Group, Stack, Text } from "@mantine/core";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { notifyInfo } from "../../../services/notify.ts";
 import type { Attachment } from "../../../services/repos/attachmentsRepo.ts";
 import { useAttachmentsStore } from "../../../state/attachmentsStore.ts";
+import { useWeekStore } from "../../../state/weekStore.ts";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import { Lightbox } from "./Lightbox.tsx";
 import { AudioItem } from "./items/AudioItem.tsx";
@@ -18,11 +20,17 @@ interface AttachmentGridProps {
 export const AttachmentGrid = ({ attachments }: AttachmentGridProps) => {
   const { t } = useTranslation(["attachments", "common"]);
   const remove = useAttachmentsStore((state) => state.remove);
+  const weekReady = useWeekStore((state) => state.status === "ready");
   const [lightboxIndex, setLightboxIndex] = useState(-1);
   const [pendingDelete, setPendingDelete] = useState<Attachment | null>(null);
 
   const images = attachments.filter((item) => item.kind === "image");
   const others = attachments.filter((item) => item.kind !== "image");
+
+  const pin = (attachment: Attachment) => {
+    useWeekStore.getState().addPhotoDecoration(attachment);
+    notifyInfo("attachments:pinnedToast");
+  };
 
   const requestRemove = (attachment: Attachment) => {
     if (attachment.kind === "link") {
@@ -53,6 +61,7 @@ export const AttachmentGrid = ({ attachments }: AttachmentGridProps) => {
               attachment={image}
               onOpen={() => setLightboxIndex(index)}
               onRemove={() => requestRemove(image)}
+              onPin={weekReady ? () => pin(image) : undefined}
             />
           ))}
         </div>
@@ -100,6 +109,14 @@ export const AttachmentGrid = ({ attachments }: AttachmentGridProps) => {
         index={lightboxIndex}
         onIndex={setLightboxIndex}
         onClose={() => setLightboxIndex(-1)}
+        onPin={
+          weekReady
+            ? (attachment) => {
+                pin(attachment);
+                setLightboxIndex(-1);
+              }
+            : undefined
+        }
       />
 
       <ResponsiveDialog

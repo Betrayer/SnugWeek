@@ -27,10 +27,17 @@ import { useStatsStore } from "../../../state/statsStore.ts";
 import { useTagsStore } from "../../../state/tagsStore.ts";
 import { useTrackersStore } from "../../../state/trackersStore.ts";
 import { EmptyState } from "../common/EmptyState.tsx";
-import { MoonDoodle } from "../common/doodles.tsx";
+import {
+  FlameDoodle,
+  LeafDoodle,
+  MoonDoodle,
+  SparkleDoodle,
+  StarDoodle,
+} from "../common/doodles.tsx";
 import { trackerDisplayName } from "../trackers/trackerName.ts";
 import { HabitConsistencyList } from "./HabitConsistencyList.tsx";
 import { HabitStreaks } from "./HabitStreaks.tsx";
+import { KpiTile } from "./KpiTile.tsx";
 import { MonthsBarChart } from "./MonthsBarChart.tsx";
 import { RoutineAdherenceList } from "./RoutineAdherenceList.tsx";
 import { StatCard } from "./StatCard.tsx";
@@ -168,9 +175,36 @@ export const YearStatsView = () => {
     icon: habit.icon,
     pct: habitStats.consistency[habit.id]?.pct ?? 0,
   }));
+  const bestMonth = Math.max(0, ...view.months.map((month) => month.done));
+  const activeDays = Object.values(view.perDay).filter((n) => n > 0).length;
+  const bestStreak = Math.max(0, ...Object.values(habitStats.longest));
 
   return (
-    <Stack gap="md">
+    <Stack gap="sm">
+      <SimpleGrid cols={{ base: 2, sm: showStreaks ? 4 : 3 }} spacing="sm">
+        <KpiTile
+          value={view.total}
+          caption={t("kpi.total")}
+          icon={<SparkleDoodle size={22} />}
+        />
+        <KpiTile
+          value={bestMonth}
+          caption={t("kpi.bestMonth")}
+          icon={<StarDoodle size={22} />}
+        />
+        <KpiTile
+          value={activeDays}
+          caption={t("kpi.activeDays")}
+          icon={<LeafDoodle size={22} />}
+        />
+        {showStreaks && (
+          <KpiTile
+            value={bestStreak}
+            caption={t("kpi.streak")}
+            icon={<FlameDoodle size={22} />}
+          />
+        )}
+      </SimpleGrid>
       <StatCard title={t("monthsTitle")}>
         <MonthsBarChart months={view.months} />
       </StatCard>
@@ -184,7 +218,7 @@ export const YearStatsView = () => {
       </StatCard>
 
       {(view.hasData || timeOfDay.total > 0) && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="sm">
           {view.hasData && (
             <StatCard title={t("weekdayTitle")}>
               <WeekdayChart data={weekday} />
@@ -220,7 +254,7 @@ export const YearStatsView = () => {
       )}
 
       {showStreaks && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="sm">
           <StatCard title={t("consistencyTitle")}>
             <HabitConsistencyList data={consistency} />
           </StatCard>

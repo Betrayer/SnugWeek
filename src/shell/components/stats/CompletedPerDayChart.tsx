@@ -14,11 +14,13 @@ export const CompletedPerDayChart = ({ data }: CompletedPerDayChartProps) => {
       dataKey="day"
       series={[{ name: "done", label: t("completed"), color: "var(--sw-accent)" }]}
       gridAxis="y"
+      tickLine="none"
+      strokeDasharray="3 7"
       textColor="var(--sw-ink-3)"
       gridColor="var(--sw-line)"
       yAxisProps={{ allowDecimals: false, width: 26 }}
       xAxisProps={{ interval: 4, minTickGap: 4 }}
-      barProps={{ radius: [4, 4, 0, 0] }}
+      barProps={{ radius: [8, 8, 0, 0] }}
       aria-label={t("perDayAria")}
     />
   );

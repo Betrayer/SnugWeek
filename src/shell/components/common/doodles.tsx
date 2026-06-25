@@ -43,3 +43,15 @@ export const MoonDoodle = ({ size = 32 }: DoodleProps) => (
     <circle cx="24" cy="9" r="1.1" fill="currentColor" stroke="none" />
   </svg>
 );
+
+export const FlameDoodle = ({ size = 32 }: DoodleProps) => (
+  <svg {...base(size)}>
+    <path d="M16 4c1 4 6 6 6 12a6 6 0 0 1-12 0c0-2 1-3.5 2-4 0 2 1.5 2.5 2 2.5C13 13 14 8 16 4z" />
+  </svg>
+);
+
+export const StarDoodle = ({ size = 32 }: DoodleProps) => (
+  <svg {...base(size)}>
+    <path d="M16 5l3 7 7 .6-5.3 4.6 1.7 6.8L16 24.4 9.9 28l1.7-6.8L6.3 16.6 13.3 12z" />
+  </svg>
+);

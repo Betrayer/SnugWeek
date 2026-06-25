@@ -12,6 +12,15 @@
   "completionCaption": "виконано зі створених",
   "carriedTitle": "Перенесено",
   "carriedCaption": "справ перейшло далі",
+  "kpi": {
+    "completion": "виконання",
+    "completed": "виконано",
+    "carried": "перенесено",
+    "streak": "найкраща серія",
+    "total": "усього виконано",
+    "bestMonth": "найкращий місяць",
+    "activeDays": "активні дні"
+  },
   "createdTitle": "Створено",
   "habitsTitle": "Звички",
   "trendTitle": "Динаміка трекерів",

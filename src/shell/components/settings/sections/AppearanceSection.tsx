@@ -11,11 +11,7 @@ import {
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { THEME_ORDER, themeById } from "../../../../data/themes/registry.ts";
-import {
-  BODY_FONTS,
-  FONT_SCOPES,
-  HAND_FONTS,
-} from "../../../../data/fonts/registry.ts";
+import { FONTS, FONT_SCOPES } from "../../../../data/fonts/registry.ts";
 import { SUPPORTED_LANGS, isSupportedLang } from "../../../../i18n/languages.ts";
 import {
   NOTEBOOK_NAME_MAX,
@@ -28,8 +24,7 @@ import { CoverPicker } from "../CoverPicker.tsx";
 import { ThemePicker } from "../ThemePicker.tsx";
 
 const fontStackById = (id: string): string =>
-  [...BODY_FONTS, ...HAND_FONTS].find((font) => font.id === id)?.stack ??
-  "inherit";
+  FONTS.find((font) => font.id === id)?.stack ?? "inherit";
 
 export const AppearanceSection = () => {
   const { t } = useTranslation(["settings", "common"]);
@@ -55,6 +50,10 @@ export const AppearanceSection = () => {
   const taskStrikeStyle = useProfileStore((state) => state.taskStrikeStyle);
   const setTaskStrikeStyle = useProfileStore(
     (state) => state.setTaskStrikeStyle,
+  );
+  const showTaskCheckbox = useProfileStore((state) => state.showTaskCheckbox);
+  const setShowTaskCheckbox = useProfileStore(
+    (state) => state.setShowTaskCheckbox,
   );
   const fontBodyId = useProfileStore((state) => state.fontBodyId);
   const setFontBodyId = useProfileStore((state) => state.setFontBodyId);
@@ -152,7 +151,7 @@ export const AppearanceSection = () => {
         <Group gap="md" grow align="flex-start">
           <Select
             label={t("settings:fontBody")}
-            data={BODY_FONTS.map((font) => ({
+            data={FONTS.map((font) => ({
               value: font.id,
               label: font.name,
             }))}
@@ -168,7 +167,7 @@ export const AppearanceSection = () => {
           />
           <Select
             label={t("settings:fontHand")}
-            data={HAND_FONTS.map((font) => ({
+            data={FONTS.map((font) => ({
               value: font.id,
               label: font.name,
             }))}
@@ -282,6 +281,16 @@ export const AppearanceSection = () => {
         />
       </Stack>
       <Stack gap="xs">
+        <Text fw={600}>{t("settings:taskCheckbox")}</Text>
+        <Switch
+          checked={showTaskCheckbox}
+          onChange={(event) =>
+            setShowTaskCheckbox(event.currentTarget.checked)
+          }
+          label={t("settings:taskCheckboxHint")}
+        />
+      </Stack>
+      <Stack gap="xs">
         <Text fw={600}>{t("settings:taskDoneStyle")}</Text>
         <Select
           data={TASK_DONE_STYLES.map((style) => ({
@@ -305,8 +314,9 @@ export const AppearanceSection = () => {
               value={taskStrikeStyle}
               onChange={(value) => {
                 if (
-                  value === "single" ||
-                  value === "scribble" ||
+                  value === "line" ||
+                  value === "pencil" ||
+                  value === "cross" ||
                   value === "double"
                 )
                   setTaskStrikeStyle(value);
