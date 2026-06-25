@@ -1,4 +1,11 @@
-import { ActionIcon, Button, Group, Stack, Text } from "@mantine/core";
+import {
+  ActionIcon,
+  Button,
+  Group,
+  SegmentedControl,
+  Stack,
+  Text,
+} from "@mantine/core";
 import { useEffect, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate, useParams } from "react-router";
@@ -7,6 +14,7 @@ import {
   buildMonthGrid,
   currentMonthId,
   isValidMonthId,
+  monthDays,
   monthTitle,
   weekdayInitials,
 } from "../../services/time.ts";
@@ -20,6 +28,7 @@ import { useUiStore } from "../../state/uiStore.ts";
 import { EmptyState } from "../components/common/EmptyState.tsx";
 import { MoonDoodle } from "../components/common/doodles.tsx";
 import { MonthGrid } from "../components/month/MonthGrid.tsx";
+import { MonthTracker } from "../components/month/MonthTracker.tsx";
 import { ChevronLeftGlyph, ChevronRightGlyph } from "../components/icons/glyphs.tsx";
 
 const EMPTY_MOODS: Record<string, string> = {};
@@ -34,6 +43,9 @@ export const MonthPage = () => {
     (state) => state.moduleToggles.dayTrackers,
   );
   const language = useSettingsStore((state) => state.language);
+  const monthView = useSettingsStore((state) => state.monthView);
+  const setMonthView = useSettingsStore((state) => state.setMonthView);
+  const showHabits = useProfileStore((state) => state.moduleToggles.habits);
   const countsByDate = useMonthStore((state) => state.countsByDate);
   const moodByDate = useMonthStore((state) => state.moodByDate);
   const moodEnabled = useTrackersStore((state) =>
@@ -53,6 +65,10 @@ export const MonthPage = () => {
   }, [uid, monthId]);
 
   const rows = useMemo(() => buildMonthGrid(monthId, weekend), [monthId, weekend]);
+  const days = useMemo(
+    () => monthDays(monthId, weekend, language),
+    [monthId, weekend, language],
+  );
   const initials = useMemo(() => weekdayInitials(language), [language]);
   const isEmpty = Object.keys(countsByDate).length === 0;
   const moods = showTrackers && moodEnabled ? moodByDate : EMPTY_MOODS;
@@ -97,18 +113,40 @@ export const MonthPage = () => {
           </Button>
         )}
       </Group>
-      <MonthGrid
-        rows={rows}
-        initials={initials}
-        counts={countsByDate}
-        moods={moods}
-        onOpenWeek={openWeek}
+      <SegmentedControl
+        value={monthView}
+        onChange={(value) => {
+          if (value === "calendar" || value === "tracker") setMonthView(value);
+        }}
+        data={[
+          { value: "calendar", label: t("month:calendar") },
+          { value: "tracker", label: t("month:tracker") },
+        ]}
+        style={{ alignSelf: "flex-start" }}
       />
-      {isEmpty && (
-        <EmptyState
-          icon={<MoonDoodle size={40} />}
-          label={t("month:empty")}
-          minHeight={0}
+      {monthView === "calendar" ? (
+        <>
+          <MonthGrid
+            rows={rows}
+            initials={initials}
+            counts={countsByDate}
+            moods={moods}
+            onOpenWeek={openWeek}
+          />
+          {isEmpty && (
+            <EmptyState
+              icon={<MoonDoodle size={40} />}
+              label={t("month:empty")}
+              minHeight={0}
+            />
+          )}
+        </>
+      ) : (
+        <MonthTracker
+          monthId={monthId}
+          days={days}
+          showHabits={showHabits}
+          onOpenWeek={openWeek}
         />
       )}
     </Stack>

@@ -33,6 +33,9 @@ export interface Decoration {
   rotation: number;
   scale: number;
   animation: string;
+  attachmentId: string | null;
+  src: string | null;
+  thumbSrc: string | null;
 }
 
 export interface WeekDoc {
@@ -98,6 +101,9 @@ const normalizeDecoration = (value: unknown): Decoration | null => {
     rotation: d.rotation,
     scale: d.scale,
     animation: typeof d.animation === "string" ? d.animation : "none",
+    attachmentId: typeof d.attachmentId === "string" ? d.attachmentId : null,
+    src: typeof d.src === "string" ? d.src : null,
+    thumbSrc: typeof d.thumbSrc === "string" ? d.thumbSrc : null,
   };
 };
 

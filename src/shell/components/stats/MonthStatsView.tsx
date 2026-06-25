@@ -20,17 +20,23 @@ import { useStatsStore } from "../../../state/statsStore.ts";
 import { useTagsStore } from "../../../state/tagsStore.ts";
 import { useTrackersStore } from "../../../state/trackersStore.ts";
 import { EmptyState } from "../common/EmptyState.tsx";
-import { SparkleDoodle } from "../common/doodles.tsx";
+import {
+  FlameDoodle,
+  LeafDoodle,
+  MoonDoodle,
+  SparkleDoodle,
+  StarDoodle,
+} from "../common/doodles.tsx";
 import { trackerDisplayName } from "../trackers/trackerName.ts";
 import { CompletedPerDayChart } from "./CompletedPerDayChart.tsx";
 import { CompletionRing } from "./CompletionRing.tsx";
 import { HabitConsistencyList } from "./HabitConsistencyList.tsx";
 import { HabitMonthList } from "./HabitMonthList.tsx";
 import { HabitStreaks } from "./HabitStreaks.tsx";
+import { KpiTile } from "./KpiTile.tsx";
 import { MonthComparison } from "./MonthComparison.tsx";
 import { RoutineAdherenceList } from "./RoutineAdherenceList.tsx";
 import { StatCard } from "./StatCard.tsx";
-import { StatTile } from "./StatTile.tsx";
 import { TimeOfDayChart } from "./TimeOfDayChart.tsx";
 import { TagBreakdownList } from "./TagBreakdownList.tsx";
 import { TrackerAverages } from "./TrackerAverages.tsx";
@@ -169,16 +175,40 @@ export const MonthStatsView = () => {
     pct: habit.pct,
   }));
   const showComparison = view.completed > 0 || monthPrevCompleted > 0;
+  const bestStreak = Math.max(0, ...Object.values(monthLongest));
 
   return (
-    <Stack gap="md">
-      <SimpleGrid cols={{ base: 1, sm: 2 }} spacing="md">
-        <StatCard title={t("completionTitle")}>
-          <CompletionRing completed={view.completed} created={view.created} />
-        </StatCard>
-        <StatCard title={t("carriedTitle")}>
-          <StatTile value={view.carried} caption={t("carriedCaption")} />
-        </StatCard>
+    <Stack gap="sm">
+      <SimpleGrid cols={{ base: 2, sm: 4 }} spacing="sm">
+        <KpiTile
+          value={
+            <CompletionRing completed={view.completed} created={view.created} />
+          }
+          caption={t("kpi.completion")}
+        />
+        <KpiTile
+          value={view.completed}
+          caption={t("kpi.completed")}
+          icon={<LeafDoodle size={22} />}
+        />
+        <KpiTile
+          value={view.carried}
+          caption={t("kpi.carried")}
+          icon={<MoonDoodle size={22} />}
+        />
+        {moduleToggles.habits ? (
+          <KpiTile
+            value={bestStreak}
+            caption={t("kpi.streak")}
+            icon={<FlameDoodle size={22} />}
+          />
+        ) : (
+          <KpiTile
+            value={view.created}
+            caption={t("createdTitle")}
+            icon={<StarDoodle size={22} />}
+          />
+        )}
       </SimpleGrid>
 
       {showComparison && (
@@ -197,7 +227,7 @@ export const MonthStatsView = () => {
       )}
 
       {(view.completed > 0 || timeOfDay.total > 0) && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="sm">
           {view.completed > 0 && (
             <StatCard title={t("weekdayTitle")}>
               <WeekdayChart data={weekday} />
@@ -212,7 +242,7 @@ export const MonthStatsView = () => {
       )}
 
       {(showTrend || trackerAvg.length > 0) && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="sm">
           {showTrend && (
             <StatCard title={t("trendTitle")}>
               <TrackerTrendChart data={view.trend} series={view.trendSeries} />
@@ -239,7 +269,7 @@ export const MonthStatsView = () => {
       )}
 
       {showHabits && (
-        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="md">
+        <SimpleGrid cols={{ base: 1, md: 2 }} spacing="sm">
           <StatCard title={t("consistencyTitle")}>
             <HabitConsistencyList data={consistency} />
           </StatCard>

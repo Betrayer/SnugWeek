@@ -3,5 +3,19 @@
   "nextMonth": "Наступний місяць",
   "empty": "спокійний місяць - поки нічого не заплановано",
   "weekRow": "Тиждень {{week}}",
-  "dayCell": "{{date}}: {{open}} відкрито, {{done}} виконано"
+  "dayCell": "{{date}}: {{open}} відкрито, {{done}} виконано",
+  "calendar": "Календар",
+  "tracker": "Трекер",
+  "trackerEmpty": "цього місяця поки нічого відстежувати",
+  "trackerSections": {
+    "habits": "Звички",
+    "routines": "Рутини",
+    "tasks": "Задачі"
+  },
+  "trackerStates": {
+    "full": "виконано",
+    "light": "заплановано",
+    "empty": "немає"
+  },
+  "trackerCellAria": "{{name}}, день {{date}}: {{state}}"
 }

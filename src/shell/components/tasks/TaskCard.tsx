@@ -13,6 +13,7 @@ import { useIsMobile } from "../../hooks/useIsMobile.ts";
 import { inputFieldStyles } from "../../styles/fieldStyles.ts";
 import { ResponsiveDialog } from "../common/ResponsiveDialog.tsx";
 import {
+  DrawnCheckGlyph,
   ExpandGlyph,
   PaperclipGlyph,
   PencilGlyph,
@@ -241,6 +242,7 @@ export const TaskCard = ({
   const isMobile = useIsMobile();
   const taskDoneStyle = useProfileStore((state) => state.taskDoneStyle);
   const taskStrikeStyle = useProfileStore((state) => state.taskStrikeStyle);
+  const showTaskCheckbox = useProfileStore((state) => state.showTaskCheckbox);
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(task.title);
   const [confirming, setConfirming] = useState(false);
@@ -340,7 +342,7 @@ export const TaskCard = ({
           <PencilGlyph size={14} />
         </ActionIcon>
       )}
-      {onOpen && (
+      {onOpen && !showTaskCheckbox && (
         <ActionIcon
           variant="subtle"
           color="var(--sw-ink-3)"
@@ -378,6 +380,33 @@ export const TaskCard = ({
       style={{ ...cardStyle(done, hovered, false), position: "relative" }}
     >
       <div style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
+        {showTaskCheckbox && !editing && (
+          <UnstyledButton
+            onClick={onToggle}
+            onKeyDown={(event: KeyboardEvent<HTMLElement>) =>
+              event.stopPropagation()
+            }
+            aria-pressed={done}
+            aria-label={done ? t("tasks:reopen") : t("tasks:done")}
+            style={{
+              flex: "0 0 auto",
+              width: 20,
+              height: 20,
+              marginTop: 1,
+              borderRadius: "50%",
+              border: `2px solid ${done ? "var(--sw-done)" : "var(--sw-line)"}`,
+              backgroundColor: done ? "var(--sw-done)" : "transparent",
+              display: "inline-flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              transition:
+                "background-color 150ms ease, border-color 150ms ease",
+            }}
+          >
+            <DrawnCheckGlyph size={11} done={done} />
+          </UnstyledButton>
+        )}
         <div style={{ flex: 1, minWidth: 0 }}>
           {editing ? (
             <TextInput
@@ -399,12 +428,16 @@ export const TaskCard = ({
             />
           ) : (
             <UnstyledButton
-              onClick={onToggle}
+              onClick={showTaskCheckbox ? (onOpen ?? onToggle) : onToggle}
               onKeyDown={(event: KeyboardEvent<HTMLElement>) =>
                 event.stopPropagation()
               }
-              aria-pressed={done}
-              aria-label={task.title}
+              aria-pressed={showTaskCheckbox ? undefined : done}
+              aria-label={
+                showTaskCheckbox
+                  ? t("tasks:openDetail", { title: task.title })
+                  : task.title
+              }
               style={{
                 width: "100%",
                 display: "flex",

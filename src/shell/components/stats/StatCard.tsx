@@ -8,13 +8,16 @@ interface StatCardProps {
 
 export const StatCard = ({ title, children }: StatCardProps) => (
   <Card
-    withBorder
     radius="lg"
     padding="md"
     h="100%"
-    style={{ borderColor: "var(--sw-line)" }}
+    style={{
+      border: "1px solid var(--sw-line)",
+      backgroundColor: "var(--sw-card)",
+      boxShadow: "var(--sw-shadow)",
+    }}
   >
-    <Stack gap="sm" h="100%">
+    <Stack gap="xs" h="100%">
       <Text fw={700} fz="sm" c="var(--sw-ink-2)">
         {title}
       </Text>

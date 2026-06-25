@@ -27,6 +27,8 @@
   },
   "paperTexture": "Текстура паперу",
   "paperTextureHint": "Делікатна зернистість на папері (типово вимкнено).",
+  "taskCheckbox": "Прапорець справи",
+  "taskCheckboxHint": "Показувати прапорець на кожній справі (торкніться рядка, щоб відкрити).",
   "taskDoneStyle": "Вигляд виконаних справ",
   "taskDoneStyles": {
     "strike": "Закреслені",
@@ -36,8 +38,9 @@
   },
   "taskStrikeStyle": "Закреслення",
   "taskStrikeStyles": {
-    "single": "Одинарне",
-    "scribble": "Розчерк",
+    "line": "Лінія",
+    "pencil": "Олівець",
+    "cross": "Хрестик",
     "double": "Подвійне"
   },
   "fonts": "Шрифти",

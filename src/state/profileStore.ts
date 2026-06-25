@@ -9,6 +9,7 @@ import {
 import type { FontScope } from "../data/fonts/registry.ts";
 import {
   DEFAULT_MODULE_TOGGLES,
+  DEFAULT_SHOW_TASK_CHECKBOX,
   DEFAULT_TASK_DONE_STYLE,
   DEFAULT_TASK_STRIKE_STYLE,
   DEFAULT_WEEKEND,
@@ -22,6 +23,7 @@ import {
   setModuleToggle,
   setNotebookName,
   setPaperTexture,
+  setShowTaskCheckbox,
   setTaskDoneStyle,
   setTaskStrikeStyle,
   setTheme,
@@ -45,6 +47,7 @@ interface ProfileState {
   columnMode: "cozy" | "equal";
   taskDoneStyle: TaskDoneStyle;
   taskStrikeStyle: TaskStrikeStyle;
+  showTaskCheckbox: boolean;
   fontBodyId: string;
   fontHandId: string;
   fontScope: FontScope;
@@ -61,6 +64,7 @@ interface ProfileState {
   setColumnMode: (columnMode: "cozy" | "equal") => void;
   setTaskDoneStyle: (taskDoneStyle: TaskDoneStyle) => void;
   setTaskStrikeStyle: (taskStrikeStyle: TaskStrikeStyle) => void;
+  setShowTaskCheckbox: (showTaskCheckbox: boolean) => void;
   setFontBodyId: (fontBodyId: string) => void;
   setFontHandId: (fontHandId: string) => void;
   setFontScope: (fontScope: FontScope) => void;
@@ -83,6 +87,7 @@ export const useProfileStore = create<ProfileState>()(
       columnMode: "cozy",
       taskDoneStyle: DEFAULT_TASK_DONE_STYLE,
       taskStrikeStyle: DEFAULT_TASK_STRIKE_STYLE,
+      showTaskCheckbox: DEFAULT_SHOW_TASK_CHECKBOX,
       fontBodyId: DEFAULT_BODY_FONT_ID,
       fontHandId: DEFAULT_HAND_FONT_ID,
       fontScope: DEFAULT_FONT_SCOPE,
@@ -113,6 +118,7 @@ export const useProfileStore = create<ProfileState>()(
             columnMode: profile.columnMode,
             taskDoneStyle: profile.taskDoneStyle,
             taskStrikeStyle: profile.taskStrikeStyle,
+            showTaskCheckbox: profile.showTaskCheckbox,
             fontBodyId: profile.fontBodyId,
             fontHandId: profile.fontHandId,
             fontScope: profile.fontScope,
@@ -136,6 +142,7 @@ export const useProfileStore = create<ProfileState>()(
           columnMode: "cozy",
           taskDoneStyle: DEFAULT_TASK_DONE_STYLE,
           taskStrikeStyle: DEFAULT_TASK_STRIKE_STYLE,
+          showTaskCheckbox: DEFAULT_SHOW_TASK_CHECKBOX,
           fontBodyId: DEFAULT_BODY_FONT_ID,
           fontHandId: DEFAULT_HAND_FONT_ID,
           fontScope: DEFAULT_FONT_SCOPE,
@@ -172,6 +179,10 @@ export const useProfileStore = create<ProfileState>()(
       setTaskStrikeStyle: (taskStrikeStyle) => {
         if (!activeUid) return;
         setTaskStrikeStyle(activeUid, taskStrikeStyle);
+      },
+      setShowTaskCheckbox: (showTaskCheckbox) => {
+        if (!activeUid) return;
+        setShowTaskCheckbox(activeUid, showTaskCheckbox);
       },
       setFontBodyId: (fontBodyId) => {
         if (!activeUid) return;

@@ -28,9 +28,12 @@ export const TrackerAveragesTrend = ({
       legendProps={{ verticalAlign: "bottom", height: 36 }}
       connectNulls
       curveType="monotone"
+      strokeWidth={2.4}
       withDots
-      dotProps={{ r: 3 }}
+      dotProps={{ r: 3.2, strokeWidth: 0 }}
       gridAxis="y"
+      tickLine="none"
+      strokeDasharray="3 7"
       style={{ "--chart-text-color": "var(--sw-ink-3)" } as CSSProperties}
       gridColor="var(--sw-line)"
       yAxisProps={{ allowDecimals: false, width: 24 }}

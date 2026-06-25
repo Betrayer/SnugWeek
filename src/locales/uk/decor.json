@@ -25,7 +25,8 @@
   "kind": {
     "sticker": "наліпка",
     "washi": "стрічка washi",
-    "doodle": "малюнок"
+    "doodle": "малюнок",
+    "photo": "фото"
   },
   "addAsset": "Додати - {{kind}}",
   "itemLabel": "Прикраса: {{kind}}",

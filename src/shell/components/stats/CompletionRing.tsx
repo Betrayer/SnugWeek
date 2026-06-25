@@ -1,33 +1,36 @@
-import { RingProgress, Stack, Text } from "@mantine/core";
-import { useTranslation } from "react-i18next";
+import { RingProgress, Text } from "@mantine/core";
 
 interface CompletionRingProps {
   completed: number;
   created: number;
+  size?: number;
 }
 
-export const CompletionRing = ({ completed, created }: CompletionRingProps) => {
-  const { t } = useTranslation("stats");
+export const CompletionRing = ({
+  completed,
+  created,
+  size = 86,
+}: CompletionRingProps) => {
   const ratio = created > 0 ? Math.min(1, completed / created) : 0;
   return (
-    <Stack align="center" justify="center" gap={4} h="100%">
-      <RingProgress
-        size={132}
-        thickness={12}
-        roundCaps
-        sections={[{ value: ratio * 100, color: "var(--sw-done)" }]}
-        label={
-          <Text ta="center" fw={700} fz="xl" c="var(--sw-ink)">
-            {created > 0 ? `${Math.round(ratio * 100)}%` : "-"}
-          </Text>
-        }
-      />
-      <Text fz="sm" fw={600} c="var(--sw-ink-2)">
-        {completed} / {created}
-      </Text>
-      <Text fz="xs" c="var(--sw-ink-3)" ta="center">
-        {t("completionCaption")}
-      </Text>
-    </Stack>
+    <RingProgress
+      size={size}
+      thickness={11}
+      roundCaps
+      rootColor="color-mix(in srgb, var(--sw-done) 18%, transparent)"
+      sections={[{ value: ratio * 100, color: "var(--sw-done)" }]}
+      label={
+        <Text
+          ta="center"
+          ff="var(--sw-font-hand)"
+          fw={700}
+          fz={26}
+          lh={1}
+          c="var(--sw-ink)"
+        >
+          {created > 0 ? `${Math.round(ratio * 100)}%` : "-"}
+        </Text>
+      }
+    />
   );
 };

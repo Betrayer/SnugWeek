@@ -3,5 +3,19 @@
   "nextMonth": "Next month",
   "empty": "a calm month - nothing planned yet",
   "weekRow": "Week {{week}}",
-  "dayCell": "{{date}}: {{open}} open, {{done}} done"
+  "dayCell": "{{date}}: {{open}} open, {{done}} done",
+  "calendar": "Calendar",
+  "tracker": "Tracker",
+  "trackerEmpty": "nothing to track this month yet",
+  "trackerSections": {
+    "habits": "Habits",
+    "routines": "Routines",
+    "tasks": "Tasks"
+  },
+  "trackerStates": {
+    "full": "done",
+    "light": "planned",
+    "empty": "none"
+  },
+  "trackerCellAria": "{{name}}, day {{date}}: {{state}}"
 }

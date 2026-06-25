@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { orderForBottom } from "../services/ordering.ts";
 import { purgeTaskAttachments } from "../services/repos/attachmentsRepo.ts";
+import type { Attachment } from "../services/repos/attachmentsRepo.ts";
 import { bumpCompletion } from "../services/repos/statsRepo.ts";
 import {
   createTask,
@@ -20,8 +21,8 @@ import {
   cheerTask,
 } from "../services/cheer/cheerService.ts";
 import {
-  playCheck,
   playPop,
+  playStrike,
   playSwoosh,
 } from "../services/sound/soundService.ts";
 import { isoDateKeyOf } from "../services/time.ts";
@@ -75,6 +76,8 @@ interface WeekState {
   toggleHabit: (habitId: string, day: number) => void;
   toggleDayOff: (day: number) => void;
   addDecoration: (assetId: string, kind: DecorationKind) => void;
+  addPhotoDecoration: (attachment: Attachment) => void;
+  removePhotoDecorations: (attachmentId: string) => void;
   updateDecoration: (
     id: string,
     patch: Partial<
@@ -229,7 +232,7 @@ export const useWeekStore = create<WeekState>()(
         const now = Date.now();
         setStatus(activeUid, task.id, "done", now);
         bumpCompletion(activeUid, isoDateKeyOf(now), 1);
-        playCheck();
+        playStrike();
         const dayTasks =
           task.day === null ? [] : (get().tasksByDay[task.day] ?? []);
         const cleared =
@@ -321,9 +324,50 @@ export const useWeekStore = create<WeekState>()(
           rotation: kind === "washi" ? Math.round(tilt / 2) : tilt,
           scale: 1,
           animation: DEFAULT_DECORATION_ANIMATION,
+          attachmentId: null,
+          src: null,
+          thumbSrc: null,
         };
         setDecorations(activeUid, activeWeekId, [...current, decoration]);
         useDecorStore.getState().select(decoration.id);
+      },
+      addPhotoDecoration: (attachment) => {
+        if (!activeUid || !activeWeekId || get().status !== "ready") return;
+        const current = get().week?.decorations ?? [];
+        if (current.length >= MAX_DECORATIONS) return;
+        const target = attachment.day ?? "week";
+        const sameTarget = current.filter(
+          (item) => item.target === target,
+        ).length;
+        const tilt =
+          DECORATION_TILTS[sameTarget % DECORATION_TILTS.length] ?? 0;
+        const decoration: Decoration = {
+          id: newDecorationId(activeUid),
+          kind: "photo",
+          asset: "",
+          target,
+          x: clampPct(50 + ((sameTarget % 3) - 1) * 8),
+          y: clampPct(42 + (sameTarget % 4) * 6),
+          rotation: tilt,
+          scale: 1,
+          animation: DEFAULT_DECORATION_ANIMATION,
+          attachmentId: attachment.id,
+          src: attachment.url,
+          thumbSrc: attachment.thumbUrl ?? attachment.url,
+        };
+        setDecorations(activeUid, activeWeekId, [...current, decoration]);
+        useDecorStore.getState().setTarget(target);
+        useDecorStore.getState().enterEdit();
+        useDecorStore.getState().select(decoration.id);
+      },
+      removePhotoDecorations: (attachmentId) => {
+        if (!activeUid || !activeWeekId || get().status !== "ready") return;
+        const current = get().week?.decorations ?? [];
+        const next = current.filter(
+          (item) => item.attachmentId !== attachmentId,
+        );
+        if (next.length === current.length) return;
+        setDecorations(activeUid, activeWeekId, next);
       },
       updateDecoration: (id, patch) => {
         if (!activeUid || !activeWeekId || get().status !== "ready") return;

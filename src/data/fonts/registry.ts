@@ -7,45 +7,48 @@ const HAND_FALLBACK = "cursive";
 const nunito: FontSpec = {
   id: "nunito",
   name: "Nunito",
-  slot: "body",
   stack: `"Nunito", ${SANS_FALLBACK}`,
   preload: ["/fonts/nunito-latin-400.woff2", "/fonts/nunito-cyrillic-400.woff2"],
+};
+
+const rubik: FontSpec = {
+  id: "rubik",
+  name: "Rubik",
+  stack: `"Rubik", ${SANS_FALLBACK}`,
+  preload: ["/fonts/rubik-latin.woff2", "/fonts/rubik-cyrillic.woff2"],
 };
 
 const comfortaa: FontSpec = {
   id: "comfortaa",
   name: "Comfortaa",
-  slot: "body",
   stack: `"Comfortaa", ${SANS_FALLBACK}`,
-  preload: [
-    "/fonts/comfortaa-latin.woff2",
-    "/fonts/comfortaa-cyrillic.woff2",
-  ],
+  preload: ["/fonts/comfortaa-latin.woff2", "/fonts/comfortaa-cyrillic.woff2"],
 };
 
 const lora: FontSpec = {
   id: "lora",
   name: "Lora",
-  slot: "body",
   stack: `"Lora", ${SERIF_FALLBACK}`,
   preload: ["/fonts/lora-latin.woff2", "/fonts/lora-cyrillic.woff2"],
+};
+
+const pangolin: FontSpec = {
+  id: "pangolin",
+  name: "Pangolin",
+  stack: `"Pangolin", ${HAND_FALLBACK}`,
+  preload: ["/fonts/pangolin-latin.woff2", "/fonts/pangolin-cyrillic.woff2"],
 };
 
 const caveat: FontSpec = {
   id: "caveat",
   name: "Caveat",
-  slot: "hand",
   stack: `"Caveat", ${HAND_FALLBACK}`,
-  preload: [
-    "/fonts/caveat-latin-600.woff2",
-    "/fonts/caveat-cyrillic-600.woff2",
-  ],
+  preload: ["/fonts/caveat-latin-600.woff2", "/fonts/caveat-cyrillic-600.woff2"],
 };
 
 const marck: FontSpec = {
   id: "marck",
   name: "Marck Script",
-  slot: "hand",
   stack: `"Marck Script", ${HAND_FALLBACK}`,
   preload: [
     "/fonts/marck-script-latin.woff2",
@@ -53,17 +56,32 @@ const marck: FontSpec = {
   ],
 };
 
-export const BODY_FONTS: FontSpec[] = [nunito, comfortaa, lora];
-export const HAND_FONTS: FontSpec[] = [caveat, marck];
+const amatic: FontSpec = {
+  id: "amatic",
+  name: "Amatic SC",
+  stack: `"Amatic SC", ${HAND_FALLBACK}`,
+  preload: [
+    "/fonts/amatic-sc-latin.woff2",
+    "/fonts/amatic-sc-cyrillic.woff2",
+  ],
+};
+
+export const FONTS: FontSpec[] = [
+  nunito,
+  rubik,
+  comfortaa,
+  lora,
+  pangolin,
+  caveat,
+  marck,
+  amatic,
+];
 
 export const DEFAULT_BODY_FONT_ID = nunito.id;
 export const DEFAULT_HAND_FONT_ID = caveat.id;
 
-export const bodyFontById = (id: string): FontSpec =>
-  BODY_FONTS.find((font) => font.id === id) ?? nunito;
-
-export const handFontById = (id: string): FontSpec =>
-  HAND_FONTS.find((font) => font.id === id) ?? caveat;
+export const fontById = (id: string): FontSpec | undefined =>
+  FONTS.find((font) => font.id === id);
 
 export type FontScope = "all" | "exceptTasks" | "onlyTasks";
 
@@ -83,8 +101,8 @@ export const resolveFontVars = (
   handId: string,
   scope: FontScope,
 ): ResolvedFontVars => {
-  const body = bodyFontById(bodyId);
-  const hand = handFontById(handId);
+  const body = fontById(bodyId) ?? nunito;
+  const hand = fontById(handId) ?? caveat;
   return {
     body: scope === "onlyTasks" ? nunito.stack : body.stack,
     hand: hand.stack,

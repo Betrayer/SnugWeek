@@ -13,6 +13,7 @@ import type {
   AttachmentKind,
 } from "../services/repos/attachmentsRepo.ts";
 import { playPop, playSwoosh } from "../services/sound/soundService.ts";
+import { useWeekStore } from "./weekStore.ts";
 
 export const MAX_ATTACHMENTS = 50;
 
@@ -164,6 +165,9 @@ export const useAttachmentsStore = create<AttachmentsState>()(
       remove: (attachment) => {
         if (!activeUid) return;
         removeAttachment(activeUid, attachment);
+        if (attachment.kind === "image") {
+          useWeekStore.getState().removePhotoDecorations(attachment.id);
+        }
         playSwoosh();
       },
     }),

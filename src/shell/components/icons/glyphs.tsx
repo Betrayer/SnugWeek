@@ -21,6 +21,13 @@ export const PaperclipGlyph = ({ size = 14, strokeWidth }: GlyphProps) => (
   </svg>
 );
 
+export const PinGlyph = ({ size = 16, strokeWidth }: GlyphProps) => (
+  <svg {...stroke(size, strokeWidth)}>
+    <path d="M9 4h6l-1 5 3 3v2H7v-2l3-3-1-5z" />
+    <path d="M12 14v6" />
+  </svg>
+);
+
 export const ImageGlyph = ({ size = 18, strokeWidth }: GlyphProps) => (
   <svg {...stroke(size, strokeWidth)}>
     <rect x="3" y="4" width="18" height="16" rx="2.5" />
