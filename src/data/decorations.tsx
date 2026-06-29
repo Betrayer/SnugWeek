@@ -8,13 +8,17 @@ export interface DecorationAsset {
   id: string;
   kind: DecorationKind;
   category?: DecorationCategory;
-  tint: string;
+  tint?: string;
   w: number;
   h: number;
-  viewBox: string;
-  body: ReactNode;
+  viewBox?: string;
+  body?: ReactNode;
+  src?: string;
   animated?: boolean;
 }
+
+export const isRasterAsset = (asset: DecorationAsset): boolean =>
+  typeof asset.src === "string";
 
 export const isAnimatedAsset = (asset: DecorationAsset): boolean =>
   asset.animated ?? asset.kind === "sticker";

@@ -1,4 +1,3 @@
-import { TAG_SWATCHES } from "../../data/tagColors.ts";
 import type { Habit } from "../repos/habitsRepo.ts";
 import type { Routine } from "../repos/routinesRepo.ts";
 import type { Task } from "../repos/tasksRepo.ts";
@@ -14,7 +13,7 @@ export interface TrackerRow {
   cells: Record<string, TrackerCellState>;
 }
 
-export type TrackerSectionId = "habits" | "routines" | "tasks";
+export type TrackerSectionId = "habits" | "routines";
 
 export interface TrackerSection {
   id: TrackerSectionId;
@@ -30,10 +29,25 @@ export interface MonthTrackerInput {
   showHabits: boolean;
 }
 
-const FALLBACK_COLOR = "#d28aa0";
+export const MONTH_ROW_COLORS = [
+  "#e2574c",
+  "#e88a36",
+  "#d9b13a",
+  "#86b94e",
+  "#3fae8f",
+  "#3f93cf",
+  "#6f74d6",
+  "#a566cf",
+  "#d65ea6",
+  "#c47b50",
+  "#5aa6a0",
+  "#b0863a",
+];
+
+const FALLBACK_COLOR = MONTH_ROW_COLORS[0] ?? "#e2574c";
 
 const colorAt = (index: number): string =>
-  TAG_SWATCHES[index % TAG_SWATCHES.length]?.value ?? FALLBACK_COLOR;
+  MONTH_ROW_COLORS[index % MONTH_ROW_COLORS.length] ?? FALLBACK_COLOR;
 
 interface DayTask {
   task: Task;
@@ -110,21 +124,6 @@ const buildRoutineRows = (
   });
 };
 
-const buildTaskRows = (dayTasks: DayTask[]): TrackerRow[] =>
-  dayTasks
-    .filter(({ task }) => task.routineId === null)
-    .sort((a, b) => {
-      if (a.dateKey !== b.dateKey) return a.dateKey < b.dateKey ? -1 : 1;
-      return a.task.order - b.task.order;
-    })
-    .map(({ task, dateKey }) => ({
-      id: `task-${task.id}`,
-      label: task.title,
-      icon: task.emoji,
-      color: "",
-      cells: { [dateKey]: task.status === "done" ? "full" : "light" },
-    }));
-
 export const buildMonthTracker = (
   input: MonthTrackerInput,
 ): TrackerSection[] => {
@@ -133,7 +132,6 @@ export const buildMonthTracker = (
     ? buildHabitRows(input.habits, input.habitChecksByDate, input.monthId)
     : [];
   const routineRows = buildRoutineRows(dayTasks, input.routines);
-  const taskRows = buildTaskRows(dayTasks);
 
   let colorIndex = 0;
   const paint = (rows: TrackerRow[]): TrackerRow[] =>
@@ -142,7 +140,6 @@ export const buildMonthTracker = (
   const sections: TrackerSection[] = [
     { id: "habits", rows: paint(habitRows) },
     { id: "routines", rows: paint(routineRows) },
-    { id: "tasks", rows: paint(taskRows) },
   ];
   return sections.filter((section) => section.rows.length > 0);
 };

@@ -16,7 +16,10 @@ const dark: MantineColorsTuple = [
 
 export const noir: ThemeSpec = {
   id: "noir",
+  name: "Noir",
+  category: "dark",
   kind: "dark",
+  order: 1,
   vars: {
     "--sw-paper": "#161616",
     "--sw-paper-2": "#1e1e1e",

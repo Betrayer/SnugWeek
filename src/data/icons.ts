@@ -17,11 +17,56 @@ export const TRACKER_ICONS: Record<string, string> = {
     "M12 4.4a7.6 7.6 0 1 0 0 15.2 7.6 7.6 0 0 0 0-15.2zM9 10.3h.01M15 10.3h.01M8.6 14.2c1 1 2.1 1.5 3.4 1.5s2.4-.5 3.4-1.5",
   sparkle: "M12 4l1.6 4.6L18 10l-4.4 1.4L12 16l-1.6-4.6L6 10l4.4-1.4z",
   pen: "M16.5 4.8l2.7 2.7-9.6 9.6-3.4.7.7-3.4zM14.4 6.9l2.7 2.7",
+  check: "M5 12.5l4 4 10-10",
+  clock:
+    "M12 4.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM12 8v4.2l2.8 2.1",
+  bed: "M4 18v-9M4 14h16v4M4 14a3 3 0 0 1 3-3h6a3 3 0 0 1 3 3M20 18v-4",
+  music:
+    "M9 17.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM19 15.5a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM9 17.5v-11l10-2v11",
+  pill: "M7.5 13.5l6-6a3.4 3.4 0 0 1 4.8 4.8l-6 6a3.4 3.4 0 0 1-4.8-4.8zM10 11l3 3",
+  cloud:
+    "M7.5 17.5h8.5a3.3 3.3 0 0 0 .4-6.6 4.7 4.7 0 0 0-9-.9A3.3 3.3 0 0 0 7.5 17.5z",
+  target:
+    "M12 4.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z",
+  mountain: "M3 18.5l5.5-9 3.5 4.5 2.5-3.5 6.5 8z",
+  brush: "M14.5 5.5l4 4-7 7-4 1 1-4zM5 19.5l1.5-1.5",
+  coin: "M12 4.5a7.5 7.5 0 1 0 0 15 7.5 7.5 0 0 0 0-15zM10 10h3.2a1.6 1.6 0 0 1 0 3.2H10.5a1.6 1.6 0 0 0 0 3.2H14M12 8v9",
+  bottle:
+    "M10.5 4h3v2l1 2v9a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-9l1-2zM9.5 12h5",
+  sprout:
+    "M12 20v-7M12 13c0-3-2.5-4.5-5-4.5 0 3 2 4.5 5 4.5zM12 11c0-2.5 2-4 4.5-4 0 2.5-1.8 4-4.5 4z",
 };
 
 export const ICON_KEYS = Object.keys(TRACKER_ICONS);
 
-export const isIconKey = (icon: string): boolean => icon in TRACKER_ICONS;
+export const ICON_KEYWORDS: Record<string, string> = {
+  heart: "love like gratitude care",
+  star: "favorite goal wish",
+  drop: "water hydrate drink rain",
+  flame: "fire streak hot burn",
+  bolt: "energy power charge electric",
+  book: "read study learn",
+  dumbbell: "gym workout exercise strength lift fitness",
+  moon: "sleep night rest",
+  leaf: "plant nature green vegan",
+  sun: "morning light wake day",
+  coffee: "caffeine drink morning tea cup",
+  smile: "mood happy face joy",
+  sparkle: "clean tidy magic shine",
+  pen: "write journal draw note",
+  check: "done complete task tick",
+  clock: "time schedule routine alarm",
+  bed: "sleep rest nap night",
+  music: "practice play song instrument listen",
+  pill: "medicine vitamin supplement meds health",
+  cloud: "weather sky rain",
+  target: "goal focus aim bullseye",
+  mountain: "hike climb outdoors nature trek",
+  brush: "paint art draw clean",
+  coin: "money save budget finance spend",
+  bottle: "water hydrate drink",
+  sprout: "plant grow garden seedling nature",
+};
 
 export const TRACKER_EMOJIS = [
   "🙂",
@@ -36,4 +81,84 @@ export const TRACKER_EMOJIS = [
   "🍎",
   "☕",
   "🎯",
+  "🛏️",
+  "🚶",
+  "🚴",
+  "🏊",
+  "🎨",
+  "🎵",
+  "💊",
+  "🦷",
+  "🧹",
+  "🌙",
+  "🌞",
+  "💪",
+  "🥗",
+  "🍵",
+  "🚰",
+  "✍️",
+  "📖",
+  "💤",
+  "🧠",
+  "🙏",
+  "💰",
+  "🎸",
+  "🛁",
+  "🌸",
+  "🍅",
+  "⏰",
 ];
+
+export const EMOJI_KEYWORDS: Record<string, string> = {
+  "🙂": "mood happy smile",
+  "😴": "sleep tired rest nap",
+  "💧": "water drop hydrate drink",
+  "🔥": "fire flame streak hot",
+  "⚡": "energy power charge",
+  "🌱": "plant grow seedling garden",
+  "📚": "read study books learn",
+  "🏃": "run jog exercise cardio",
+  "🧘": "meditate yoga calm mindful",
+  "🍎": "apple fruit eat healthy diet",
+  "☕": "coffee caffeine morning drink",
+  "🎯": "goal focus aim target",
+  "🛏️": "bed sleep rest nap",
+  "🚶": "walk steps stroll",
+  "🚴": "bike cycle ride",
+  "🏊": "swim pool",
+  "🎨": "paint art draw create",
+  "🎵": "music song listen",
+  "💊": "pill medicine vitamin meds",
+  "🦷": "teeth brush dental floss",
+  "🧹": "clean tidy chores sweep",
+  "🌙": "night sleep moon",
+  "🌞": "sun morning wake day",
+  "💪": "gym workout strength muscle",
+  "🥗": "salad healthy eat veggies diet",
+  "🍵": "tea drink calm",
+  "🚰": "water hydrate drink",
+  "✍️": "write journal note",
+  "📖": "read book study",
+  "💤": "sleep rest nap",
+  "🧠": "mind brain focus learn",
+  "🙏": "pray gratitude thanks",
+  "💰": "money save budget finance",
+  "🎸": "guitar music practice play",
+  "🛁": "bath shower clean relax",
+  "🌸": "flower bloom nature",
+  "🍅": "tomato food pomodoro focus",
+  "⏰": "alarm time wake clock",
+};
+
+export const iconMatchesQuery = (key: string, query: string): boolean => {
+  if (query.length === 0) return true;
+  return (
+    key.toLowerCase().includes(query) ||
+    (ICON_KEYWORDS[key] ?? "").includes(query)
+  );
+};
+
+export const emojiMatchesQuery = (emoji: string, query: string): boolean => {
+  if (query.length === 0) return true;
+  return (EMOJI_KEYWORDS[emoji] ?? "").includes(query);
+};

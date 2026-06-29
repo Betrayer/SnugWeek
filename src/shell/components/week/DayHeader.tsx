@@ -1,19 +1,24 @@
-import { ActionIcon, Box, Group, Text } from "@mantine/core";
+import { Box, Group, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import type { WeekDay } from "../../../services/time.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
 import { ActionMenu } from "../common/ActionMenu.tsx";
-import { PlusGlyph } from "../icons/glyphs.tsx";
+import { TaskAddPopover } from "../tasks/TaskAddPopover.tsx";
 
 interface DayHeaderProps {
   day: WeekDay;
   isOff: boolean;
-  onAdd: () => void;
+  onAddTask: (title: string) => void;
   onAddMemory?: () => void;
 }
 
-export const DayHeader = ({ day, isOff, onAdd, onAddMemory }: DayHeaderProps) => {
-  const { t } = useTranslation(["week", "tasks", "attachments"]);
+export const DayHeader = ({
+  day,
+  isOff,
+  onAddTask,
+  onAddMemory,
+}: DayHeaderProps) => {
+  const { t } = useTranslation(["week", "attachments"]);
   const color = isOff
     ? "var(--sw-ink-3)"
     : day.isToday
@@ -52,15 +57,7 @@ export const DayHeader = ({ day, isOff, onAdd, onAddMemory }: DayHeaderProps) =>
         </Text>
       </Box>
       <Group gap={2} wrap="nowrap">
-        <ActionIcon
-          variant="subtle"
-          color="var(--sw-ink-3)"
-          size="sm"
-          aria-label={t("tasks:quickAdd.title", { day: day.label })}
-          onClick={onAdd}
-        >
-          <PlusGlyph size={16} />
-        </ActionIcon>
+        <TaskAddPopover day={day} onAdd={onAddTask} />
         <ActionMenu
           label={t("dayOptions", { day: day.label })}
           iconSize={16}

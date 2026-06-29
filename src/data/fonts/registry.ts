@@ -25,6 +25,23 @@ const comfortaa: FontSpec = {
   preload: ["/fonts/comfortaa-latin.woff2", "/fonts/comfortaa-cyrillic.woff2"],
 };
 
+const sourceSans: FontSpec = {
+  id: "sourceSans",
+  name: "Source Sans 3",
+  stack: `"Source Sans 3", ${SANS_FALLBACK}`,
+  preload: [
+    "/fonts/source-sans-3-latin.woff2",
+    "/fonts/source-sans-3-cyrillic.woff2",
+  ],
+};
+
+const inter: FontSpec = {
+  id: "inter",
+  name: "Inter",
+  stack: `"Inter", ${SANS_FALLBACK}`,
+  preload: ["/fonts/inter-latin.woff2", "/fonts/inter-cyrillic.woff2"],
+};
+
 const lora: FontSpec = {
   id: "lora",
   name: "Lora",
@@ -37,6 +54,13 @@ const pangolin: FontSpec = {
   name: "Pangolin",
   stack: `"Pangolin", ${HAND_FALLBACK}`,
   preload: ["/fonts/pangolin-latin.woff2", "/fonts/pangolin-cyrillic.woff2"],
+};
+
+const neucha: FontSpec = {
+  id: "neucha",
+  name: "Neucha",
+  stack: `"Neucha", ${HAND_FALLBACK}`,
+  preload: ["/fonts/neucha-latin.woff2", "/fonts/neucha-cyrillic.woff2"],
 };
 
 const caveat: FontSpec = {
@@ -70,8 +94,11 @@ export const FONTS: FontSpec[] = [
   nunito,
   rubik,
   comfortaa,
+  sourceSans,
+  inter,
   lora,
   pangolin,
+  neucha,
   caveat,
   marck,
   amatic,

@@ -31,6 +31,7 @@ const countByDate = (tasks: Task[]): Record<string, DayCounts> => {
   const counts: Record<string, DayCounts> = {};
   for (const task of tasks) {
     if (task.weekId === null || task.day === null) continue;
+    if (task.carriedOut) continue;
     const key = isoDateKey(task.weekId, task.day);
     const bucket = counts[key] ?? { open: 0, done: 0 };
     if (task.status === "done") bucket.done += 1;

@@ -16,7 +16,10 @@ const dark: MantineColorsTuple = [
 
 export const midnight: ThemeSpec = {
   id: "midnight",
+  name: "Midnight",
+  category: "dark",
   kind: "dark",
+  order: 0,
   vars: {
     "--sw-paper": "#1c1f27",
     "--sw-paper-2": "#242833",

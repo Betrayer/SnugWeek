@@ -5,6 +5,7 @@ import {
   increment,
   onSnapshot,
   query,
+  updateDoc,
   where,
   writeBatch,
 } from "firebase/firestore";
@@ -41,6 +42,9 @@ export interface Attachment {
   href: string | null;
   title: string | null;
   previewImage: string | null;
+  cropX: number | null;
+  cropY: number | null;
+  cropZoom: number | null;
 }
 
 export interface NewAttachment {
@@ -65,6 +69,9 @@ export interface NewAttachment {
   href?: string | null;
   title?: string | null;
   previewImage?: string | null;
+  cropX?: number | null;
+  cropY?: number | null;
+  cropZoom?: number | null;
 }
 
 const asStringOrNull = (value: unknown): string | null =>
@@ -107,6 +114,9 @@ const normalizeAttachment = (id: string, data: DocumentData): Attachment => ({
   href: asStringOrNull(data.href),
   title: asStringOrNull(data.title),
   previewImage: asStringOrNull(data.previewImage),
+  cropX: asNumberOrNull(data.cropX),
+  cropY: asNumberOrNull(data.cropY),
+  cropZoom: asNumberOrNull(data.cropZoom),
 });
 
 const byOrder = (a: Attachment, b: Attachment): number => {
@@ -193,6 +203,9 @@ export const addAttachment = (uid: string, attachment: NewAttachment): void => {
     href: attachment.href ?? null,
     title: attachment.title ?? null,
     previewImage: attachment.previewImage ?? null,
+    cropX: attachment.cropX ?? null,
+    cropY: attachment.cropY ?? null,
+    cropZoom: attachment.cropZoom ?? null,
   });
   if (attachment.targetType === "task" && attachment.taskId) {
     batch.update(taskRef(uid, attachment.taskId), {
@@ -205,6 +218,19 @@ export const addAttachment = (uid: string, attachment: NewAttachment): void => {
     });
   }
   void batch.commit().catch(reportWriteError);
+};
+
+export const updateAttachmentCrop = (
+  uid: string,
+  attachmentId: string,
+  crop: { cropX: number; cropY: number; cropZoom: number },
+): void => {
+  notePendingWrite();
+  void updateDoc(attachmentRef(uid, attachmentId), {
+    cropX: crop.cropX,
+    cropY: crop.cropY,
+    cropZoom: crop.cropZoom,
+  }).catch(reportWriteError);
 };
 
 const deleteStorageObjects = (...paths: (string | null)[]): void => {

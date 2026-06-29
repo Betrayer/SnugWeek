@@ -3,6 +3,7 @@ import type { MouseEvent } from "react";
 import { useTranslation } from "react-i18next";
 import type { Attachment } from "../../../../services/repos/attachmentsRepo.ts";
 import { PinGlyph } from "../../icons/glyphs.tsx";
+import { cropImageStyle } from "../cropStyle.ts";
 import { RemoveButton } from "../RemoveButton.tsx";
 
 interface ImageItemProps {
@@ -42,8 +43,8 @@ export const ImageItem = ({
           style={{
             width: "100%",
             height: "100%",
-            objectFit: "cover",
             display: "block",
+            ...cropImageStyle(attachment),
           }}
         />
       </UnstyledButton>

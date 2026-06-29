@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const mono: ThemeSpec = {
   id: "mono",
+  name: "Mono",
+  category: "minimal",
   kind: "light",
+  order: 1,
   vars: {
     "--sw-paper": "#f6f6f5",
     "--sw-paper-2": "#ececeb",

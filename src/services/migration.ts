@@ -11,6 +11,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import type { DocumentData, WriteBatch } from "firebase/firestore";
+import { DEFAULT_TRACKER_COLOR } from "../data/trackerColors.ts";
 import { db } from "./firebase.ts";
 import { notePendingWrite } from "./syncSignal.ts";
 
@@ -134,6 +135,7 @@ interface TrackerData {
 interface HabitData {
   name: string;
   icon: string | null;
+  color: string;
   order: number;
   archived: boolean;
   createdAt: number;
@@ -259,6 +261,7 @@ const toTrackerData = (data: DocumentData): TrackerData => ({
 const toHabitData = (data: DocumentData): HabitData => ({
   name: asString(data.name, ""),
   icon: asStringOrNull(data.icon),
+  color: asString(data.color, DEFAULT_TRACKER_COLOR),
   order: asNumber(data.order, 0),
   archived: asBool(data.archived, false),
   createdAt: asNumber(data.createdAt, 0),
@@ -619,6 +622,7 @@ export const runMerge = async (
       batch.set(ref, {
         name: data.name,
         icon: data.icon,
+        color: data.color,
         order: data.order,
         archived: data.archived,
         createdAt: data.createdAt,

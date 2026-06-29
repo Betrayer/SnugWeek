@@ -246,7 +246,7 @@ const seedFirstRun = async (
       tagIds: [],
     });
   });
-  createHabit(uid, content.habit, content.habitIcon, ORDER_SPACING, [
+  createHabit(uid, content.habit, content.habitIcon, "rose", ORDER_SPACING, [
     ...ALL_WEEK_DAYS,
   ]);
   setTrackerValue(

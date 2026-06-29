@@ -1,5 +1,6 @@
 import {
   collection,
+  doc,
   getDocs,
   limit,
   orderBy,
@@ -23,12 +24,16 @@ import { currentWeekId } from "./time.ts";
 
 const TASKS_LIST_ID = "tasks";
 const READ_PAGE = 300;
-const WRITE_BATCH = 450;
+const WRITE_BATCH = 200;
 const THROTTLE_MS = 60 * 60 * 1000;
 
 interface Candidate {
   ref: DocumentReference;
   weekId: string;
+  title: string;
+  emoji: string | null;
+  tagIds: string[];
+  carryCount: number;
 }
 
 const numberOrZero = (value: unknown): number =>
@@ -36,6 +41,14 @@ const numberOrZero = (value: unknown): number =>
 
 const stringOrEmpty = (value: unknown): string =>
   typeof value === "string" ? value : "";
+
+const stringOrNull = (value: unknown): string | null =>
+  typeof value === "string" ? value : null;
+
+const stringArray = (value: unknown): string[] =>
+  Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string")
+    : [];
 
 export const runCarryOver = async (uid: string): Promise<number> => {
   const cur = currentWeekId();
@@ -58,9 +71,14 @@ export const runCarryOver = async (uid: string): Promise<number> => {
     const snap: QuerySnapshot<DocumentData> = await getDocs(pageQuery);
     if (snap.empty) break;
     for (const docSnap of snap.docs) {
+      if (docSnap.get("carriedOut") === true) continue;
       candidates.push({
         ref: docSnap.ref,
         weekId: stringOrEmpty(docSnap.get("weekId")),
+        title: stringOrEmpty(docSnap.get("title")),
+        emoji: stringOrNull(docSnap.get("emoji")),
+        tagIds: stringArray(docSnap.get("tagIds")),
+        carryCount: numberOrZero(docSnap.get("carryCount")),
       });
     }
     if (snap.size < READ_PAGE) break;
@@ -87,16 +105,33 @@ export const runCarryOver = async (uid: string): Promise<number> => {
     const batch = writeBatch(db);
     for (const candidate of chunk) {
       order -= ORDER_SPACING;
-      batch.update(candidate.ref, {
+      const clone = doc(tasksCol, `${candidate.ref.id}__carry`);
+      batch.set(clone, {
+        title: candidate.title,
+        emoji: candidate.emoji,
+        status: "open",
         bucket: "list",
-        listId: TASKS_LIST_ID,
         weekId: null,
         day: null,
+        listId: TASKS_LIST_ID,
+        order,
+        createdAt: now,
+        updatedAt: now,
+        completedAt: null,
         carriedFrom: candidate.weekId,
+        carryCount: candidate.carryCount + 1,
+        carriedOut: false,
+        carrySourceId: candidate.ref.id,
+        tagIds: candidate.tagIds,
+        subtaskCount: 0,
+        subtaskDone: 0,
+        attachmentCount: 0,
         time: null,
         remindOffsetMin: null,
         routineId: null,
-        order,
+      });
+      batch.update(candidate.ref, {
+        carriedOut: true,
         updatedAt: now,
       });
     }

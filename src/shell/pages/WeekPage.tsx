@@ -64,12 +64,6 @@ export const WeekPage = () => {
   const pageBackground = cover
     ? `var(--sw-paper-texture), ${cover}`
     : "var(--sw-paper-texture), var(--sw-paper)";
-  const pageStyleProps = {
-    background: pageBackground,
-    ...(cover
-      ? { borderRadius: "var(--mantine-radius-lg)", padding: 6 }
-      : null),
-  };
 
   useEffect(() => {
     if (uid) useWeekStore.getState().open(uid, weekId);
@@ -136,7 +130,6 @@ export const WeekPage = () => {
         display: "flex",
         flexDirection: "column",
         gap: "var(--mantine-spacing-sm)",
-        ...pageStyleProps,
       }}
     >
       <div style={{ flex: 1, minHeight: 0 }}>
@@ -161,7 +154,6 @@ export const WeekPage = () => {
         flexDirection: "column",
         gap: "var(--mantine-spacing-sm)",
         height: DESKTOP_HEIGHT,
-        ...pageStyleProps,
       }}
     >
       <div

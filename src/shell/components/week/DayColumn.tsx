@@ -16,7 +16,6 @@ import { DayNote } from "../note/DayNote.tsx";
 import { ListSection } from "../sidebar/ListSection.tsx";
 import { dayColumnId, dayContainerId } from "../tasks/dndIds.ts";
 import { DayTrackerRow } from "../trackers/DayTrackerRow.tsx";
-import { TaskComposer } from "../tasks/TaskComposer.tsx";
 import { TaskList } from "../tasks/TaskList.tsx";
 import { DayHeader } from "./DayHeader.tsx";
 
@@ -38,7 +37,6 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
   const showHabits = useProfileStore((state) => state.moduleToggles.habits);
   const showNote = useProfileStore((state) => state.moduleToggles.weekNote);
   const [memoriesOpen, setMemoriesOpen] = useState(false);
-  const [composerActive, setComposerActive] = useState(false);
   const { setNodeRef, isOver } = useDroppable({ id: dayColumnId(day.iso) });
   const dayLists = lists.filter(
     (list) => list.kind === "custom" && list.day === day.iso,
@@ -70,7 +68,7 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
       <DayHeader
         day={day}
         isOff={isOff}
-        onAdd={() => setComposerActive(true)}
+        onAddTask={(title) => useWeekStore.getState().addTask(day.iso, title)}
         onAddMemory={weekId ? () => setMemoriesOpen(true) : undefined}
       />
       {showTrackers && <DayTrackerRow day={day.iso} />}
@@ -103,12 +101,6 @@ export const DayColumn = ({ day, isOff }: DayColumnProps) => {
             useWeekStore.getState().renameTask(task.id, title)
           }
           onDelete={(task) => useWeekStore.getState().removeTask(task.id)}
-        />
-        <TaskComposer
-          dataDay={day.iso}
-          active={composerActive}
-          onActiveChange={setComposerActive}
-          onAdd={(title) => useWeekStore.getState().addTask(day.iso, title)}
         />
         {dayLists.map((list) => (
           <ListSection key={list.id} list={list} collapsible />

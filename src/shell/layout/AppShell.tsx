@@ -1,5 +1,7 @@
 import { AppShell as MantineAppShell } from "@mantine/core";
-import { Outlet } from "react-router";
+import { Outlet, useMatch } from "react-router";
+import { coverBackground } from "../../data/covers.ts";
+import { useProfileStore } from "../../state/profileStore.ts";
 import { AccountDialogs } from "../components/account/AccountDialogs.tsx";
 import { CheerOverlay } from "../components/cheer/CheerOverlay.tsx";
 import { FocusTimerHost } from "../components/focus/FocusTimerHost.tsx";
@@ -16,6 +18,9 @@ import { SidebarDrawer } from "./SidebarDrawer.tsx";
 
 export const AppShell = () => {
   const isMobile = useIsMobile();
+  const onWeek = useMatch("/w/:weekId") !== null;
+  const coverStyle = useProfileStore((state) => state.coverStyle);
+  const cover = coverBackground(coverStyle);
   return (
     <MantineAppShell
       header={{ height: 56 }}
@@ -35,8 +40,22 @@ export const AppShell = () => {
       <MantineAppShell.Header>
         <HeaderBar />
       </MantineAppShell.Header>
-      <MantineAppShell.Main>
-        <Outlet />
+      <MantineAppShell.Main style={{ position: "relative" }}>
+        {onWeek && (
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 0,
+              pointerEvents: "none",
+              background: `var(--sw-paper-texture), ${cover ?? "var(--sw-paper)"}`,
+            }}
+          />
+        )}
+        <div style={{ position: "relative", zIndex: 1 }}>
+          <Outlet />
+        </div>
       </MantineAppShell.Main>
       {isMobile && (
         <MantineAppShell.Footer>

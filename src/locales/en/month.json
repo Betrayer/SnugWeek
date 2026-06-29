@@ -9,8 +9,7 @@
   "trackerEmpty": "nothing to track this month yet",
   "trackerSections": {
     "habits": "Habits",
-    "routines": "Routines",
-    "tasks": "Tasks"
+    "routines": "Routines"
   },
   "trackerStates": {
     "full": "done",

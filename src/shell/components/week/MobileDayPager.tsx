@@ -91,7 +91,7 @@ export const MobileDayPager = ({
       >
         {days.map((day, index) => {
           const openCount = (tasksByDay[day.iso] ?? EMPTY).filter(
-            (task) => task.status === "open",
+            (task) => task.status === "open" && !task.carriedOut,
           ).length;
           return (
             <UnstyledButton

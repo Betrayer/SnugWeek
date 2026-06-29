@@ -8,6 +8,12 @@ const rawFiles = import.meta.glob<string>("./stickers/**/*.svg", {
   eager: true,
 });
 
+const rasterFiles = import.meta.glob<string>("./stickers/**/*.png", {
+  query: "?url",
+  import: "default",
+  eager: true,
+});
+
 const BASE_SIZE = 54;
 
 const stripWrappers = (raw: string): string =>
@@ -47,11 +53,11 @@ interface ParsedPath {
   colorful: boolean;
 }
 
-const parsePath = (path: string): ParsedPath => {
+const parsePath = (path: string, ext: RegExp): ParsedPath => {
   const segments = path.split("/");
   const stickersAt = segments.indexOf("stickers");
   const rest = segments.slice(stickersAt + 1);
-  const file = (rest.pop() ?? "").replace(/\.svg$/i, "");
+  const file = (rest.pop() ?? "").replace(ext, "");
   const folder = rest[0] ?? "misc";
   const colorful = /\.color$/i.test(file);
   const name = file.replace(/\.color$/i, "");
@@ -67,7 +73,7 @@ const buildDropped = (): DecorationAsset[] => {
     const raw = stripWrappers(rawFiles[path] ?? "");
     const inner = innerOf(raw);
     if (inner.length === 0) continue;
-    const { category, name, colorful } = parsePath(path);
+    const { category, name, colorful } = parsePath(path, /\.svg$/i);
     const viewBox = viewBoxOf(raw);
     const { w, h } = sizeFromViewBox(viewBox);
     assets.push({
@@ -79,6 +85,19 @@ const buildDropped = (): DecorationAsset[] => {
       h,
       viewBox,
       body: <g dangerouslySetInnerHTML={{ __html: inner }} />,
+    });
+  }
+  for (const path of Object.keys(rasterFiles).sort()) {
+    const src = rasterFiles[path];
+    if (!src) continue;
+    const { category, name } = parsePath(path, /\.png$/i);
+    assets.push({
+      id: `drop-${category}-${name}`,
+      kind: "sticker",
+      category,
+      w: BASE_SIZE,
+      h: BASE_SIZE,
+      src,
     });
   }
   return assets;

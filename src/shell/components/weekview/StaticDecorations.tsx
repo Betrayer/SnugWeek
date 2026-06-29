@@ -1,11 +1,15 @@
 import { decorationById } from "../../../data/decorations.tsx";
 import type { Decoration } from "../../../services/repos/weeksRepo.ts";
 import { DecorationArt } from "../decor/DecorationArt.tsx";
+import { PhotoDecorationArt } from "../decor/PhotoDecorationArt.tsx";
 
 interface StaticDecorationsProps {
   decorations: Decoration[];
   target: "week" | number;
 }
+
+const PHOTO_W = 116;
+const PHOTO_H = 132;
 
 export const StaticDecorations = ({ decorations, target }: StaticDecorationsProps) => {
   const items = decorations.filter((decoration) => decoration.target === target);
@@ -16,8 +20,11 @@ export const StaticDecorations = ({ decorations, target }: StaticDecorationsProp
       style={{ position: "absolute", inset: 0, pointerEvents: "none", zIndex: 1 }}
     >
       {items.map((decoration) => {
-        const asset = decorationById(decoration.asset);
-        if (!asset) return null;
+        const isPhoto = decoration.kind === "photo";
+        const asset = isPhoto ? null : decorationById(decoration.asset);
+        if (!isPhoto && !asset) return null;
+        const w = isPhoto ? PHOTO_W : (asset?.w ?? PHOTO_W);
+        const h = isPhoto ? PHOTO_H : (asset?.h ?? PHOTO_H);
         return (
           <div
             key={decoration.id}
@@ -25,8 +32,8 @@ export const StaticDecorations = ({ decorations, target }: StaticDecorationsProp
               position: "absolute",
               left: `${decoration.x}%`,
               top: `${decoration.y}%`,
-              width: asset.w * decoration.scale,
-              height: asset.h * decoration.scale,
+              width: w * decoration.scale,
+              height: h * decoration.scale,
               transform: "translate(-50%, -50%)",
             }}
           >
@@ -38,7 +45,17 @@ export const StaticDecorations = ({ decorations, target }: StaticDecorationsProp
                 transformOrigin: "center",
               }}
             >
-              <DecorationArt assetId={decoration.asset} />
+              {isPhoto ? (
+                <PhotoDecorationArt
+                  src={decoration.src ?? decoration.thumbSrc}
+                  name={null}
+                  cropX={decoration.cropX}
+                  cropY={decoration.cropY}
+                  cropZoom={decoration.cropZoom}
+                />
+              ) : (
+                <DecorationArt assetId={decoration.asset} />
+              )}
             </div>
           </div>
         );

@@ -9,8 +9,7 @@
   "trackerEmpty": "цього місяця поки нічого відстежувати",
   "trackerSections": {
     "habits": "Звички",
-    "routines": "Рутини",
-    "tasks": "Задачі"
+    "routines": "Рутини"
   },
   "trackerStates": {
     "full": "виконано",

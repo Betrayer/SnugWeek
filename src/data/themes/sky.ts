@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const sky: ThemeSpec = {
   id: "sky",
+  name: "Sky",
+  category: "colorful",
   kind: "light",
+  order: 0,
   vars: {
     "--sw-paper": "#f2f6fb",
     "--sw-paper-2": "#e2ecf5",

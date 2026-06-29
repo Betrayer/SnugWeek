@@ -27,7 +27,7 @@ export const SortableTaskCard = ({
     transition,
     isDragging,
     isOver,
-  } = useSortable({ id: task.id });
+  } = useSortable({ id: task.id, disabled: task.carriedOut });
 
   const style: CSSProperties = {
     transform: CSS.Transform.toString(transform),

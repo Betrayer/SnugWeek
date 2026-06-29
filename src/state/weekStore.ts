@@ -327,6 +327,9 @@ export const useWeekStore = create<WeekState>()(
           attachmentId: null,
           src: null,
           thumbSrc: null,
+          cropX: null,
+          cropY: null,
+          cropZoom: null,
         };
         setDecorations(activeUid, activeWeekId, [...current, decoration]);
         useDecorStore.getState().select(decoration.id);
@@ -354,6 +357,9 @@ export const useWeekStore = create<WeekState>()(
           attachmentId: attachment.id,
           src: attachment.url,
           thumbSrc: attachment.thumbUrl ?? attachment.url,
+          cropX: attachment.cropX,
+          cropY: attachment.cropY,
+          cropZoom: attachment.cropZoom,
         };
         setDecorations(activeUid, activeWeekId, [...current, decoration]);
         useDecorStore.getState().setTarget(target);

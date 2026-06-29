@@ -7,10 +7,11 @@ export interface ProcessedImage {
   mime: string;
 }
 
-const MAX_FULL_EDGE = 1600;
-const MAX_THUMB_EDGE = 320;
-const FULL_QUALITY = 0.82;
-const THUMB_QUALITY = 0.7;
+const MAX_FULL_EDGE = 2560;
+const MAX_THUMB_EDGE = 480;
+const FULL_QUALITY_STEPS = [0.9, 0.82, 0.74];
+const THUMB_QUALITY = 0.78;
+const FULL_SIZE_TARGET = 9.5 * 1024 * 1024;
 
 let webpSupport: boolean | null = null;
 
@@ -81,12 +82,27 @@ const encode = (
   });
 };
 
+const encodeFull = async (
+  image: HTMLImageElement,
+  mime: string,
+): Promise<Blob> => {
+  let blob = await encode(image, MAX_FULL_EDGE, mime, FULL_QUALITY_STEPS[0] ?? 0.9);
+  for (
+    let step = 1;
+    step < FULL_QUALITY_STEPS.length && blob.size > FULL_SIZE_TARGET;
+    step += 1
+  ) {
+    blob = await encode(image, MAX_FULL_EDGE, mime, FULL_QUALITY_STEPS[step] ?? 0.74);
+  }
+  return blob;
+};
+
 export const processImage = async (file: File): Promise<ProcessedImage> => {
   const image = await loadImage(file);
   const useWebp = supportsWebp();
   const mime = useWebp ? "image/webp" : "image/jpeg";
   const ext = useWebp ? "webp" : "jpg";
-  const full = await encode(image, MAX_FULL_EDGE, mime, FULL_QUALITY);
+  const full = await encodeFull(image, mime);
   const thumb = await encode(image, MAX_THUMB_EDGE, mime, THUMB_QUALITY);
   return {
     full,

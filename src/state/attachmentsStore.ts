@@ -7,6 +7,7 @@ import {
   subscribeListAttachments,
   subscribeTaskAttachments,
   subscribeWeekDayAttachments,
+  updateAttachmentCrop,
 } from "../services/repos/attachmentsRepo.ts";
 import type {
   Attachment,
@@ -43,6 +44,9 @@ export interface AttachmentDraft {
   href?: string | null;
   title?: string | null;
   previewImage?: string | null;
+  cropX?: number | null;
+  cropY?: number | null;
+  cropZoom?: number | null;
 }
 
 interface AttachmentsState {
@@ -51,6 +55,10 @@ interface AttachmentsState {
   release: (target: RetainTarget) => void;
   stop: () => void;
   add: (target: AddTarget, draft: AttachmentDraft) => boolean;
+  updateCrop: (
+    attachment: Attachment,
+    crop: { cropX: number; cropY: number; cropZoom: number },
+  ) => void;
   remove: (attachment: Attachment) => void;
 }
 
@@ -158,9 +166,16 @@ export const useAttachmentsStore = create<AttachmentsState>()(
           href: draft.href ?? null,
           title: draft.title ?? null,
           previewImage: draft.previewImage ?? null,
+          cropX: draft.cropX ?? null,
+          cropY: draft.cropY ?? null,
+          cropZoom: draft.cropZoom ?? null,
         });
         playPop();
         return true;
+      },
+      updateCrop: (attachment, crop) => {
+        if (!activeUid) return;
+        updateAttachmentCrop(activeUid, attachment.id, crop);
       },
       remove: (attachment) => {
         if (!activeUid) return;

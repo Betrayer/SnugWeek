@@ -25,6 +25,10 @@
       "checkbox": "Чекбокс"
     },
     "icon": "Іконка",
+    "iconSearch": "Пошук іконок…",
+    "iconNoMatch": "Іконок не знайдено",
+    "iconNone": "Без іконки",
+    "iconNoneShort": "Немає",
     "enabledLabel": "Показувати «{{name}}»",
     "edit": "Редагувати",
     "delete": "Видалити",

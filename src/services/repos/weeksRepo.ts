@@ -36,6 +36,9 @@ export interface Decoration {
   attachmentId: string | null;
   src: string | null;
   thumbSrc: string | null;
+  cropX: number | null;
+  cropY: number | null;
+  cropZoom: number | null;
 }
 
 export interface WeekDoc {
@@ -104,6 +107,9 @@ const normalizeDecoration = (value: unknown): Decoration | null => {
     attachmentId: typeof d.attachmentId === "string" ? d.attachmentId : null,
     src: typeof d.src === "string" ? d.src : null,
     thumbSrc: typeof d.thumbSrc === "string" ? d.thumbSrc : null,
+    cropX: typeof d.cropX === "number" ? d.cropX : null,
+    cropY: typeof d.cropY === "number" ? d.cropY : null,
+    cropZoom: typeof d.cropZoom === "number" ? d.cropZoom : null,
   };
 };
 

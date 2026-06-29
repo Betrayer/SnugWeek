@@ -98,6 +98,23 @@ const BellGlyph = () => (
   </svg>
 );
 
+const ForwardGlyph = () => (
+  <svg
+    width="9"
+    height="9"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2.6"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden
+  >
+    <path d="M5 12h14" />
+    <path d="M13 6l6 6-6 6" />
+  </svg>
+);
+
 const CardTags = ({ task }: { task: Task }) => {
   const tags = useTagsStore((state) => state.tags);
   const taskTags = task.tagIds
@@ -212,7 +229,12 @@ const TaskBody = ({
       <CardTags task={task} />
       {task.carriedFrom && (
         <Pill tone="accent-2">
-          {t("tasks:carriedFrom", { week: task.carriedFrom.slice(5) })}
+          {task.carryCount > 1
+            ? t("tasks:carriedFromCount", {
+                week: task.carriedFrom.slice(5),
+                count: task.carryCount,
+              })
+            : t("tasks:carriedFrom", { week: task.carriedFrom.slice(5) })}
         </Pill>
       )}
       {task.routineId !== null && (
@@ -248,6 +270,7 @@ export const TaskCard = ({
   const [confirming, setConfirming] = useState(false);
   const [focused, setFocused] = useState(false);
   const done = task.status === "done";
+  const frozen = task.carriedOut;
 
   const titleStyle: CSSProperties = { color: doneTextColor(taskDoneStyle, done) };
   const struck =
@@ -270,6 +293,43 @@ export const TaskCard = ({
           }}
         >
           <TaskBody task={task} style={titleStyle} titleClassName={titleClassName} />
+        </div>
+      </Box>
+    );
+  }
+
+  if (frozen) {
+    return (
+      <Box
+        style={{
+          ...cardStyle(false, false, false),
+          position: "relative",
+          opacity: 0.6,
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "flex-start", gap: 6 }}>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <Text
+              component="span"
+              style={{
+                width: "100%",
+                lineHeight: 1.4,
+                wordBreak: "break-word",
+                fontFamily: "var(--sw-font-tasks)",
+                color: "var(--sw-ink-3)",
+              }}
+            >
+              {task.emoji && (
+                <span style={{ marginInlineEnd: 4 }}>{task.emoji}</span>
+              )}
+              {task.title}
+            </Text>
+            <div style={{ marginTop: 2 }}>
+              <Pill tone="muted" icon={<ForwardGlyph />}>
+                {t("tasks:carriedOut")}
+              </Pill>
+            </div>
+          </div>
         </div>
       </Box>
     );
