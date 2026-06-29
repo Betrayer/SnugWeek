@@ -178,7 +178,10 @@ export const useAttachmentUploads = (target: AddTarget) => {
   }, []);
 
   const addImageFiles = useCallback(
-    (files: File[]) => {
+    (
+      files: File[],
+      crop?: { cropX: number; cropY: number; cropZoom: number },
+    ) => {
       if (!uid) return;
       for (const file of files) {
         if (!file.type.startsWith("image/")) {
@@ -228,6 +231,9 @@ export const useAttachmentUploads = (target: AddTarget) => {
                 name: file.name,
                 mime: processed.mime,
                 size: processed.full.size,
+                cropX: crop?.cropX ?? null,
+                cropY: crop?.cropY ?? null,
+                cropZoom: crop?.cropZoom ?? null,
               },
               paths,
             );

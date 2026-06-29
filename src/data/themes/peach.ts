@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const peach: ThemeSpec = {
   id: "peach",
+  name: "Peach",
+  category: "light",
   kind: "light",
+  order: 1,
   vars: {
     "--sw-paper": "#fdf3ee",
     "--sw-paper-2": "#f9e6db",

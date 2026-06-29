@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const lavender: ThemeSpec = {
   id: "lavender",
+  name: "Lavender",
+  category: "colorful",
   kind: "light",
+  order: 1,
   vars: {
     "--sw-paper": "#f6f4fb",
     "--sw-paper-2": "#ece7f5",

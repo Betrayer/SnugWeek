@@ -27,6 +27,9 @@ const TASK_KEYS = [
   "updatedAt",
   "completedAt",
   "carriedFrom",
+  "carryCount",
+  "carriedOut",
+  "carrySourceId",
   "tagIds",
   "subtaskCount",
   "subtaskDone",
@@ -56,6 +59,7 @@ const TRACKER_KEYS = [
 const HABIT_KEYS = [
   "name",
   "icon",
+  "color",
   "order",
   "archived",
   "createdAt",
@@ -94,6 +98,9 @@ const ATTACHMENT_KEYS = [
   "href",
   "title",
   "previewImage",
+  "cropX",
+  "cropY",
+  "cropZoom",
 ] as const;
 const PROFILE_KEYS = [
   "themeId",

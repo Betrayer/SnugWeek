@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const sage: ThemeSpec = {
   id: "sage",
+  name: "Sage",
+  category: "colorful",
   kind: "light",
+  order: 2,
   vars: {
     "--sw-paper": "#f3f6f1",
     "--sw-paper-2": "#e6ede1",

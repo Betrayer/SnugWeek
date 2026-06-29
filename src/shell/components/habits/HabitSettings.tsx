@@ -1,7 +1,21 @@
-import { Button, Chip, Group, Stack, Text, TextInput } from "@mantine/core";
+import {
+  Button,
+  CheckIcon,
+  Chip,
+  ColorSwatch,
+  Group,
+  Stack,
+  Text,
+  TextInput,
+  UnstyledButton,
+} from "@mantine/core";
 import { useEffect, useMemo, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTranslation } from "react-i18next";
+import {
+  TRACKER_SWATCHES,
+  trackerColorValue,
+} from "../../../data/trackerColors.ts";
 import type { Habit } from "../../../services/repos/habitsRepo.ts";
 import { ALL_WEEK_DAYS } from "../../../services/repos/habitsRepo.ts";
 import { weekdayInitials } from "../../../services/time.ts";
@@ -23,6 +37,7 @@ const EMPTY_CHECKS: Record<string, Record<string, true>> = {};
 interface EditDraft {
   name: string;
   icon: string;
+  color: string;
   days: number[];
 }
 
@@ -38,7 +53,8 @@ export const HabitSettings = () => {
   const [editing, setEditing] = useState<Habit | null>(null);
   const [editDraft, setEditDraft] = useState<EditDraft>({
     name: "",
-    icon: "star",
+    icon: "",
+    color: "rose",
     days: [...ALL_WEEK_DAYS],
   });
 
@@ -57,7 +73,8 @@ export const HabitSettings = () => {
     setEditing(habit);
     setEditDraft({
       name: habit.name,
-      icon: habit.icon ?? "star",
+      icon: habit.icon ?? "",
+      color: habit.color,
       days: habit.days,
     });
   };
@@ -66,7 +83,8 @@ export const HabitSettings = () => {
     if (editDraft.days.length === 0) return;
     useHabitsStore.getState().update(editing.id, {
       name: editDraft.name,
-      icon: editDraft.icon,
+      icon: editDraft.icon.length > 0 ? editDraft.icon : null,
+      color: editDraft.color,
       days: editDraft.days,
     });
     setEditing(null);
@@ -103,7 +121,7 @@ export const HabitSettings = () => {
                       <TrackerIcon
                         icon={habit.icon}
                         size={18}
-                        color="var(--sw-ink-2)"
+                        color={trackerColorValue(habit.color)}
                       />
                     )}
                     <Stack gap={0} style={{ minWidth: 0 }}>
@@ -197,7 +215,41 @@ export const HabitSettings = () => {
           <IconPicker
             value={editDraft.icon}
             onChange={(icon) => setEditDraft({ ...editDraft, icon })}
+            allowClear
           />
+          <Stack gap={4}>
+            <Text fz="sm" fw={600} c="var(--sw-ink-2)">
+              {t("settings.color")}
+            </Text>
+            <Group gap={8}>
+              {TRACKER_SWATCHES.map((swatch) => (
+                <UnstyledButton
+                  key={swatch.id}
+                  onClick={() => setEditDraft({ ...editDraft, color: swatch.id })}
+                  aria-label={swatch.id}
+                  aria-pressed={editDraft.color === swatch.id}
+                >
+                  <ColorSwatch
+                    color={swatch.value}
+                    size={26}
+                    withShadow={false}
+                    style={{
+                      color: "var(--mantine-color-white)",
+                      outline:
+                        editDraft.color === swatch.id
+                          ? "2px solid var(--sw-ink-2)"
+                          : "none",
+                      outlineOffset: 2,
+                    }}
+                  >
+                    {editDraft.color === swatch.id && (
+                      <CheckIcon style={{ width: 12, height: 12 }} />
+                    )}
+                  </ColorSwatch>
+                </UnstyledButton>
+              ))}
+            </Group>
+          </Stack>
           <Stack gap={6}>
             <Text fz="sm" fw={600} c="var(--sw-ink-2)">
               {t("settings.days")}

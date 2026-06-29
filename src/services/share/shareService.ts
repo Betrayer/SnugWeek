@@ -187,6 +187,9 @@ const normalizeDecoration = (value: unknown): Decoration | null => {
     attachmentId: typeof o.attachmentId === "string" ? o.attachmentId : null,
     src: typeof o.src === "string" ? o.src : null,
     thumbSrc: typeof o.thumbSrc === "string" ? o.thumbSrc : null,
+    cropX: typeof o.cropX === "number" ? o.cropX : null,
+    cropY: typeof o.cropY === "number" ? o.cropY : null,
+    cropZoom: typeof o.cropZoom === "number" ? o.cropZoom : null,
   };
 };
 

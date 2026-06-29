@@ -207,7 +207,13 @@ export const DecorationItem = ({
   const phase =
     (decoration.id.charCodeAt(0) + decoration.id.charCodeAt(1)) % 5;
   const art = isPhoto ? (
-    <PhotoDecorationArt src={decoration.thumbSrc ?? decoration.src} name={null} />
+    <PhotoDecorationArt
+      src={decoration.src ?? decoration.thumbSrc}
+      name={null}
+      cropX={decoration.cropX}
+      cropY={decoration.cropY}
+      cropZoom={decoration.cropZoom}
+    />
   ) : (
     <DecorationArt assetId={decoration.asset} />
   );

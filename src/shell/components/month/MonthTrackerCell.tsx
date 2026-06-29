@@ -11,21 +11,26 @@ interface MonthTrackerCellProps {
   onOpen: () => void;
 }
 
+const crossHatch = (color: string): CSSProperties => ({
+  backgroundColor: `color-mix(in srgb, ${color} 14%, transparent)`,
+  backgroundImage: [
+    `repeating-linear-gradient(45deg, ${color} 0 1.3px, transparent 1.3px 6px)`,
+    `repeating-linear-gradient(-45deg, ${color} 0 1.3px, transparent 1.3px 6px)`,
+  ].join(", "),
+});
+
+const sparseHatch = (color: string): CSSProperties => ({
+  backgroundColor: `color-mix(in srgb, ${color} 7%, transparent)`,
+  backgroundImage: `repeating-linear-gradient(45deg, color-mix(in srgb, ${color} 60%, transparent) 0 1px, transparent 1px 8px)`,
+});
+
 const fillStyle = (
   state: TrackerCellState | undefined,
   color: string,
 ): CSSProperties => {
-  if (state === "full") {
-    return { backgroundColor: color, border: `1px solid ${color}` };
-  }
-  if (state === "light") {
-    return {
-      backgroundColor: `color-mix(in srgb, ${color} 20%, transparent)`,
-      border: `1px solid color-mix(in srgb, ${color} 45%, transparent)`,
-      backgroundImage: `repeating-linear-gradient(45deg, color-mix(in srgb, ${color} 32%, transparent) 0 1.5px, transparent 1.5px 5px)`,
-    };
-  }
-  return { backgroundColor: "transparent", border: "1px solid transparent" };
+  if (state === "full") return crossHatch(color);
+  if (state === "light") return sparseHatch(color);
+  return {};
 };
 
 export const MonthTrackerCell = ({
@@ -40,8 +45,7 @@ export const MonthTrackerCell = ({
     onClick={onOpen}
     aria-label={label}
     style={{
-      height: 30,
-      padding: 3,
+      height: 32,
       display: "flex",
       borderInlineEnd: "1px solid var(--sw-line)",
       borderBottom: "1px solid var(--sw-line)",
@@ -52,6 +56,6 @@ export const MonthTrackerCell = ({
           : "transparent",
     }}
   >
-    <span style={{ flex: 1, borderRadius: 5, ...fillStyle(state, color) }} />
+    <span style={{ flex: 1, ...fillStyle(state, color) }} />
   </UnstyledButton>
 );

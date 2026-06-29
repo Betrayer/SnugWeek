@@ -17,6 +17,8 @@
   --sw-fold-shade: rgba(58, 44, 30, 0.3);
   --sw-paper-texture: none;
   --sw-scrim: rgba(28, 22, 16, 0.55);
+  --sw-diecut: var(--sw-card);
+  --sw-diecut-shadow: rgba(40, 30, 20, 0.25);
   --sw-font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
   --sw-font-hand: "Caveat", cursive;
   --sw-font-tasks: "Nunito", "Segoe UI", system-ui, sans-serif;

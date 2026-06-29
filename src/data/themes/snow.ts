@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const snow: ThemeSpec = {
   id: "snow",
+  name: "Snow",
+  category: "minimal",
   kind: "light",
+  order: 0,
   vars: {
     "--sw-paper": "#fcfcfb",
     "--sw-paper-2": "#f3f3f0",

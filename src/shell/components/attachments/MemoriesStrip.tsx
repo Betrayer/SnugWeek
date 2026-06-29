@@ -9,6 +9,7 @@ import {
 } from "../../../state/attachmentsStore.ts";
 import { useAuthStore } from "../../../state/authStore.ts";
 import { FileGlyph, LinkGlyph, MicGlyph, PlayGlyph, VideoGlyph } from "../icons/glyphs.tsx";
+import { cropImageStyle } from "./cropStyle.ts";
 
 interface MemoriesStripProps {
   weekId: string;
@@ -43,7 +44,14 @@ const Thumb = ({ attachment }: { attachment: Attachment }) => {
           src={poster}
           alt=""
           loading="lazy"
-          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          style={{
+            width: "100%",
+            height: "100%",
+            display: "block",
+            ...(attachment.kind === "image"
+              ? cropImageStyle(attachment)
+              : { objectFit: "cover" }),
+          }}
         />
         {attachment.kind === "video" && (
           <span

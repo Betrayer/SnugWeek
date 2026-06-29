@@ -121,6 +121,13 @@ export const DownloadGlyph = ({ size = 16, strokeWidth }: GlyphProps) => (
   </svg>
 );
 
+export const CropGlyph = ({ size = 16, strokeWidth }: GlyphProps) => (
+  <svg {...stroke(size, strokeWidth)}>
+    <path d="M6 2v16h16" />
+    <path d="M18 22V6H2" />
+  </svg>
+);
+
 export const CloseGlyph = ({ size = 18, strokeWidth }: GlyphProps) => (
   <svg {...stroke(size, strokeWidth)}>
     <path d="M6 6l12 12M18 6 6 18" />

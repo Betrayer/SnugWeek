@@ -12,6 +12,7 @@
   "settings": {
     "title": "Habits",
     "name": "Name",
+    "color": "Color",
     "days": "Days",
     "daysHint": "Pick at least one day",
     "empty": "No active habits",

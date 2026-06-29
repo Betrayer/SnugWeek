@@ -25,6 +25,10 @@
       "checkbox": "Checkbox"
     },
     "icon": "Icon",
+    "iconSearch": "Search icons…",
+    "iconNoMatch": "No icons found",
+    "iconNone": "No icon",
+    "iconNoneShort": "None",
     "enabledLabel": "Show {{name}}",
     "edit": "Edit",
     "delete": "Delete",

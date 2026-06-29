@@ -61,24 +61,23 @@ const RepeatGlyph = () => (
   </svg>
 );
 
-const rowIcon = (sectionId: TrackerSectionId, icon: string | null): ReactNode => {
+const rowIcon = (
+  sectionId: TrackerSectionId,
+  icon: string | null,
+  color: string,
+): ReactNode => {
   if (sectionId === "routines") {
     return (
-      <span style={{ color: "var(--sw-ink-3)", flex: "0 0 auto", display: "inline-flex" }}>
+      <span style={{ color, flex: "0 0 auto", display: "inline-flex" }}>
         <RepeatGlyph />
       </span>
     );
   }
   if (!icon) return null;
-  if (sectionId === "habits") {
-    return (
-      <span style={{ flex: "0 0 auto", display: "inline-flex" }}>
-        <TrackerIcon icon={icon} size={14} color="var(--sw-ink-3)" />
-      </span>
-    );
-  }
   return (
-    <span style={{ flex: "0 0 auto", fontSize: 13, lineHeight: 1 }}>{icon}</span>
+    <span style={{ flex: "0 0 auto", display: "inline-flex" }}>
+      <TrackerIcon icon={icon} size={14} color={color} />
+    </span>
   );
 };
 
@@ -107,7 +106,8 @@ export const MonthTracker = ({
     [monthId, habits, routines, tasks, habitChecksByDate, showHabits],
   );
 
-  const templateColumns = `minmax(116px, 168px) repeat(${days.length}, 30px)`;
+  const templateColumns = `minmax(116px, 168px) repeat(${days.length}, minmax(30px, 1fr))`;
+  const gridMaxWidth = `calc(168px + ${days.length} * 46px)`;
 
   if (sections.length === 0) {
     return (
@@ -132,7 +132,7 @@ export const MonthTracker = ({
             backgroundColor: row.color,
           }}
         />
-        {rowIcon(sectionId, row.icon)}
+        {rowIcon(sectionId, row.icon, row.color)}
         <Text fz="xs" fw={600} c="var(--sw-ink)" truncate title={row.label}>
           {row.label}
         </Text>
@@ -164,12 +164,19 @@ export const MonthTracker = ({
       style={{
         overflow: "auto",
         maxHeight: "calc(100dvh - 210px)",
+        maxWidth: gridMaxWidth,
         border: "1px solid var(--sw-line)",
         borderRadius: "var(--mantine-radius-md)",
         backgroundColor: "var(--sw-card)",
       }}
     >
-      <div style={{ display: "grid", gridTemplateColumns: templateColumns }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: templateColumns,
+          width: "100%",
+        }}
+      >
         <div
           style={{
             position: "sticky",

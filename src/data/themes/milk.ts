@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const milk: ThemeSpec = {
   id: "milk",
+  name: "Milk",
+  category: "light",
   kind: "light",
+  order: 0,
   vars: {
     "--sw-paper": "#faf6ef",
     "--sw-paper-2": "#f3ecdf",

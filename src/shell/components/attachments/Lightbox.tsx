@@ -1,13 +1,16 @@
 import { Group, Modal, Text, UnstyledButton } from "@mantine/core";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Attachment } from "../../../services/repos/attachmentsRepo.ts";
+import { useAttachmentsStore } from "../../../state/attachmentsStore.ts";
 import {
   ChevronLeftGlyph,
   ChevronRightGlyph,
   CloseGlyph,
+  CropGlyph,
   PinGlyph,
 } from "../icons/glyphs.tsx";
+import { PhotoCropChooser, type CropResult } from "./PhotoCropChooser.tsx";
 
 interface LightboxProps {
   images: Attachment[];
@@ -40,6 +43,18 @@ export const Lightbox = ({
   const opened = index >= 0 && index < images.length;
   const current = opened ? images[index] : undefined;
   const count = images.length;
+  const [cropping, setCropping] = useState(false);
+  const [seenId, setSeenId] = useState(current?.id);
+
+  if (seenId !== current?.id) {
+    setSeenId(current?.id);
+    setCropping(false);
+  }
+
+  const applyCrop = (crop: CropResult) => {
+    if (current) useAttachmentsStore.getState().updateCrop(current, crop);
+    setCropping(false);
+  };
 
   useEffect(() => {
     if (!opened) return undefined;
@@ -54,6 +69,7 @@ export const Lightbox = ({
   if (!current) return null;
 
   return (
+    <>
     <Modal
       opened={opened}
       onClose={onClose}
@@ -77,6 +93,13 @@ export const Lightbox = ({
           {t("lightbox.counter", { index: index + 1, total: count })}
         </Text>
         <Group gap={4} wrap="nowrap">
+          <UnstyledButton
+            onClick={() => setCropping(true)}
+            aria-label={t("crop.adjust")}
+            style={{ color: "var(--sw-ink-2)", display: "inline-flex" }}
+          >
+            <CropGlyph size={19} />
+          </UnstyledButton>
           {onPin && (
             <UnstyledButton
               onClick={() => onPin(current)}
@@ -135,5 +158,21 @@ export const Lightbox = ({
         )}
       </div>
     </Modal>
+      <PhotoCropChooser
+        opened={cropping}
+        src={current.url ?? current.thumbUrl ?? null}
+        name={current.name}
+        total={1}
+        index={0}
+        initial={{
+          cropX: current.cropX ?? 50,
+          cropY: current.cropY ?? 50,
+          cropZoom: current.cropZoom ?? 1,
+        }}
+        confirmLabel={t("crop.save")}
+        onConfirm={applyCrop}
+        onCancel={() => setCropping(false)}
+      />
+    </>
   );
 };

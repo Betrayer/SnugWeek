@@ -1,10 +1,10 @@
-import { Group, Text, UnstyledButton } from "@mantine/core";
+import { Group, UnstyledButton } from "@mantine/core";
 import type { CSSProperties } from "react";
 import { useTranslation } from "react-i18next";
+import { trackerColorValue } from "../../../data/trackerColors.ts";
 import { TOUR_ANCHORS } from "../../../data/tourSteps.ts";
 import { useHabitsStore } from "../../../state/habitsStore.ts";
 import { useWeekStore } from "../../../state/weekStore.ts";
-import { CheckGlyph } from "../icons/glyphs.tsx";
 import { TrackerIcon } from "../trackers/TrackerIcon.tsx";
 
 interface DayHabitRowProps {
@@ -14,19 +14,22 @@ interface DayHabitRowProps {
 
 const EMPTY_CHECKS: Record<string, Record<string, true>> = {};
 
-const chipStyle = (checked: boolean): CSSProperties => ({
+const BUTTON_SIZE = 30;
+
+const buttonStyle = (checked: boolean, color: string): CSSProperties => ({
+  width: BUTTON_SIZE,
+  height: BUTTON_SIZE,
+  flex: "0 0 auto",
   display: "inline-flex",
   alignItems: "center",
-  gap: 5,
-  maxWidth: 150,
-  paddingInline: 8,
-  paddingBlock: 3,
-  borderRadius: 999,
-  border: `1.5px solid ${checked ? "var(--sw-accent)" : "var(--sw-line)"}`,
-  backgroundColor: checked
-    ? "color-mix(in srgb, var(--sw-accent) 14%, transparent)"
-    : "transparent",
-  color: checked ? "var(--sw-accent-2)" : "var(--sw-ink-2)",
+  justifyContent: "center",
+  borderRadius: "50%",
+  border: `1.5px solid ${checked ? color : "var(--sw-line)"}`,
+  backgroundColor: checked ? color : "transparent",
+  color: checked ? "var(--mantine-color-white)" : "var(--sw-ink-3)",
+  fontSize: 13,
+  fontWeight: 700,
+  lineHeight: 1,
   transition: "background-color 120ms ease, border-color 120ms ease",
 });
 
@@ -43,9 +46,15 @@ export const DayHabitRow = ({ day, dayLabel }: DayHabitRowProps) => {
   if (!weekId || active.length === 0) return null;
 
   return (
-    <Group gap={6} wrap="wrap" data-tour={TOUR_ANCHORS.habits} style={{ rowGap: 6 }}>
+    <Group
+      gap={6}
+      wrap="wrap"
+      data-tour={TOUR_ANCHORS.habits}
+      style={{ rowGap: 6 }}
+    >
       {active.map((habit) => {
         const checked = checks[habit.id]?.[String(day)] === true;
+        const color = trackerColorValue(habit.color);
         return (
           <UnstyledButton
             key={habit.id}
@@ -53,16 +62,17 @@ export const DayHabitRow = ({ day, dayLabel }: DayHabitRowProps) => {
             aria-label={t("check", { name: habit.name, day: dayLabel })}
             aria-pressed={checked}
             title={habit.name}
-            style={chipStyle(checked)}
+            style={buttonStyle(checked, color)}
           >
-            {checked ? (
-              <CheckGlyph size={12} color="var(--sw-accent-2)" />
-            ) : habit.icon ? (
-              <TrackerIcon icon={habit.icon} size={14} color="var(--sw-ink-3)" />
-            ) : null}
-            <Text fz="xs" fw={600} truncate style={{ minWidth: 0 }}>
-              {habit.name}
-            </Text>
+            {habit.icon ? (
+              <TrackerIcon
+                icon={habit.icon}
+                size={16}
+                color={checked ? "var(--mantine-color-white)" : "var(--sw-ink-3)"}
+              />
+            ) : (
+              <span aria-hidden>{habit.name.slice(0, 1).toUpperCase()}</span>
+            )}
           </UnstyledButton>
         );
       })}

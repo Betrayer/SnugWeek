@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { devtools } from "zustand/middleware";
 import { cheerStreak } from "../services/cheer/cheerService.ts";
 import { STREAK_MILESTONES } from "../services/cheer/cheerMessages.ts";
+import { TRACKER_SWATCHES } from "../data/trackerColors.ts";
 import { computeHabitStreaks } from "../services/habitStreaks.ts";
 import { ORDER_SPACING, orderForBottom } from "../services/ordering.ts";
 import {
@@ -23,7 +24,12 @@ interface HabitsState {
   add: (name: string, icon: string | null) => void;
   update: (
     id: string,
-    fields: { name: string; icon: string | null; days: number[] },
+    fields: {
+      name: string;
+      icon: string | null;
+      color: string;
+      days: number[];
+    },
   ) => void;
   setArchived: (id: string, archived: boolean) => void;
   restore: (id: string) => void;
@@ -61,8 +67,12 @@ export const useHabitsStore = create<HabitsState>()(
       add: (name, icon) => {
         const trimmed = name.trim();
         if (!activeUid || trimmed.length === 0) return;
-        const order = orderForBottom(get().habits);
-        createHabit(activeUid, trimmed, icon, order, [...ALL_WEEK_DAYS]);
+        const habits = get().habits;
+        const order = orderForBottom(habits);
+        const swatch =
+          TRACKER_SWATCHES[habits.length % TRACKER_SWATCHES.length];
+        const color = swatch ? swatch.id : "rose";
+        createHabit(activeUid, trimmed, icon, color, order, [...ALL_WEEK_DAYS]);
       },
       update: (id, fields) => {
         const name = fields.name.trim();
@@ -70,6 +80,7 @@ export const useHabitsStore = create<HabitsState>()(
         updateHabit(activeUid, id, {
           name,
           icon: fields.icon,
+          color: fields.color,
           days: fields.days,
         });
       },

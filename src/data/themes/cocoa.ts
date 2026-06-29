@@ -2,7 +2,10 @@ import type { ThemeSpec } from "./types.ts";
 
 export const cocoa: ThemeSpec = {
   id: "cocoa",
+  name: "Cocoa",
+  category: "light",
   kind: "light",
+  order: 2,
   vars: {
     "--sw-paper": "#f6efe6",
     "--sw-paper-2": "#ebdfcf",

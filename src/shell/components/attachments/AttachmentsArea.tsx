@@ -17,6 +17,7 @@ import { EmptyState } from "../common/EmptyState.tsx";
 import { SparkleDoodle } from "../common/doodles.tsx";
 import { AttachmentAdder } from "./AttachmentAdder.tsx";
 import { AttachmentGrid } from "./AttachmentGrid.tsx";
+import { PhotoCropChooser, type CropResult } from "./PhotoCropChooser.tsx";
 import type { UploadProgress } from "./useAttachmentUploads.ts";
 import { useAttachmentUploads } from "./useAttachmentUploads.ts";
 
@@ -71,7 +72,51 @@ const AttachmentsPanel = ({
   const subKey = retainTargetKey(retainTarget);
   const slice = useAttachmentsStore((state) => state.byKey[subKey]);
   const [dragOver, setDragOver] = useState(false);
+  const [crop, setCrop] = useState<{ queue: File[]; total: number }>({
+    queue: [],
+    total: 0,
+  });
   const { addImageFiles, addGenericFiles } = uploads;
+
+  const enqueueImages = useMemo(
+    () => (files: File[]) => {
+      const images = files.filter((file) => file.type.startsWith("image/"));
+      if (images.length === 0) return;
+      setCrop((prev) => ({
+        queue: [...prev.queue, ...images],
+        total:
+          prev.queue.length === 0 ? images.length : prev.total + images.length,
+      }));
+    },
+    [],
+  );
+
+  const cropHead = crop.queue[0] ?? null;
+  const cropUrl = useMemo(
+    () => (cropHead ? URL.createObjectURL(cropHead) : null),
+    [cropHead],
+  );
+
+  useEffect(() => {
+    if (!cropUrl) return undefined;
+    return () => URL.revokeObjectURL(cropUrl);
+  }, [cropUrl]);
+
+  const advanceCrop = () =>
+    setCrop((prev) => {
+      const queue = prev.queue.slice(1);
+      return { queue, total: queue.length === 0 ? 0 : prev.total };
+    });
+
+  const confirmCrop = (result: CropResult) => {
+    if (cropHead) addImageFiles([cropHead], result);
+    advanceCrop();
+  };
+
+  const skipCrop = () => {
+    if (cropHead) addImageFiles([cropHead]);
+    advanceCrop();
+  };
 
   useEffect(() => {
     if (!uid) return undefined;
@@ -86,11 +131,11 @@ const AttachmentsPanel = ({
       const files = Array.from(event.clipboardData?.files ?? []).filter(
         (file) => file.type.startsWith("image/"),
       );
-      if (files.length > 0) addImageFiles(files);
+      if (files.length > 0) enqueueImages(files);
     };
     window.addEventListener("paste", onPaste);
     return () => window.removeEventListener("paste", onPaste);
-  }, [scope, online, addImageFiles]);
+  }, [scope, online, enqueueImages]);
 
   const onDrop = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -100,7 +145,7 @@ const AttachmentsPanel = ({
     if (files.length === 0) return;
     const images = files.filter((file) => file.type.startsWith("image/"));
     const rest = files.filter((file) => !file.type.startsWith("image/"));
-    if (images.length > 0) addImageFiles(images);
+    if (images.length > 0) enqueueImages(images);
     if (rest.length > 0) addGenericFiles(rest);
   };
 
@@ -148,7 +193,7 @@ const AttachmentsPanel = ({
         <AttachmentAdder
           variant="panel"
           online={online}
-          onImages={uploads.addImageFiles}
+          onImages={enqueueImages}
           onAudioFiles={uploads.addAudioFiles}
           onVideoFiles={uploads.addVideoFiles}
           onFiles={uploads.addGenericFiles}
@@ -170,6 +215,16 @@ const AttachmentsPanel = ({
       {isEmpty && (
         <EmptyState icon={<SparkleDoodle size={40} />} label={t(`empty.${scope}`)} />
       )}
+
+      <PhotoCropChooser
+        opened={cropHead !== null}
+        src={cropUrl}
+        name={cropHead?.name ?? null}
+        total={crop.total}
+        index={crop.total - crop.queue.length}
+        onConfirm={confirmCrop}
+        onCancel={skipCrop}
+      />
     </Stack>
   );
 };

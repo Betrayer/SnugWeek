@@ -41,6 +41,9 @@ export interface Task extends TaskLocation {
   updatedAt: number;
   completedAt: number | null;
   carriedFrom: string | null;
+  carryCount: number;
+  carriedOut: boolean;
+  carrySourceId: string | null;
   tagIds: string[];
   subtaskCount: number;
   subtaskDone: number;
@@ -94,6 +97,9 @@ const normalizeTask = (id: string, data: DocumentData): Task => ({
   updatedAt: typeof data.updatedAt === "number" ? data.updatedAt : 0,
   completedAt: asNumberOrNull(data.completedAt),
   carriedFrom: asStringOrNull(data.carriedFrom),
+  carryCount: typeof data.carryCount === "number" ? data.carryCount : 0,
+  carriedOut: data.carriedOut === true,
+  carrySourceId: asStringOrNull(data.carrySourceId),
   tagIds: asStringArray(data.tagIds),
   subtaskCount: asCount(data.subtaskCount),
   subtaskDone: asCount(data.subtaskDone),
@@ -242,6 +248,9 @@ export const createTask = (uid: string, fields: NewTaskFields): void => {
     updatedAt: now,
     completedAt: null,
     carriedFrom: null,
+    carryCount: 0,
+    carriedOut: false,
+    carrySourceId: null,
     tagIds: fields.tagIds,
     subtaskCount: 0,
     subtaskDone: 0,
@@ -328,7 +337,6 @@ export const moveTask = (
     day: destination.day,
     listId: destination.listId,
     order: destination.order,
-    carriedFrom: null,
     ...(destination.bucket === "list"
       ? { time: null, remindOffsetMin: null, routineId: null }
       : {}),

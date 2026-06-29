@@ -95,7 +95,7 @@ const Scale5Control = ({ tracker, day, value, name }: ControlProps) => {
     else useWeekStore.getState().setTrackerValue(day, tracker.id, level);
   };
   return (
-    <Group gap={4} wrap="nowrap" style={{ opacity: current > 0 ? 1 : 0.55 }}>
+    <Group gap={4} wrap="nowrap" style={{ opacity: current > 0 ? 1 : 0.9 }}>
       <TrackerIcon icon={tracker.icon} size={15} color="var(--sw-ink-3)" />
       <Group gap={3} wrap="nowrap">
         {[1, 2, 3, 4, 5].map((level) => (
@@ -107,9 +107,9 @@ const Scale5Control = ({ tracker, day, value, name }: ControlProps) => {
               width: 12,
               height: 12,
               borderRadius: "50%",
-              border: `1.5px solid ${level <= current ? "var(--sw-accent)" : "var(--sw-line)"}`,
+              border: `1.5px solid ${level <= current ? "var(--sw-accent)" : "var(--sw-ink-3)"}`,
               backgroundColor:
-                level <= current ? "var(--sw-accent)" : "transparent",
+                level <= current ? "var(--sw-accent)" : "var(--sw-card)",
             }}
           />
         ))}

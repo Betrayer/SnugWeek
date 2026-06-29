@@ -1,6 +1,10 @@
 import { arrayMove } from "@dnd-kit/sortable";
 import { needsRenormalize, orderBetween, renormalize } from "./ordering.ts";
-import { parseContainerId } from "../shell/components/tasks/dndIds.ts";
+import {
+  dayContainerId,
+  parseContainerId,
+  parseDayColumnId,
+} from "../shell/components/tasks/dndIds.ts";
 import type { Task, TaskLocation } from "./repos/tasksRepo.ts";
 
 interface ResolveMoveArgs {
@@ -47,10 +51,14 @@ export const resolveMove = ({
   const sourceId = findContainerOf(containers, activeId);
   if (!sourceId) return null;
 
-  const overIsContainer = parseContainerId(overId) !== null;
+  const dayColumn = parseDayColumnId(overId);
+  const normalizedOverId =
+    dayColumn !== null ? dayContainerId(dayColumn) : overId;
+
+  const overIsContainer = parseContainerId(normalizedOverId) !== null;
   const destId = overIsContainer
-    ? overId
-    : (findContainerOf(containers, overId) ?? sourceId);
+    ? normalizedOverId
+    : (findContainerOf(containers, normalizedOverId) ?? sourceId);
 
   const location = locationForContainer(destId, weekId);
   if (!location) return null;
@@ -65,7 +73,7 @@ export const resolveMove = ({
     if (overIsContainer) {
       newIndex = source.length - 1;
     } else {
-      const overIndex = source.findIndex((task) => task.id === overId);
+      const overIndex = source.findIndex((task) => task.id === normalizedOverId);
       newIndex = overIndex < 0 ? source.length - 1 : overIndex;
     }
     if (oldIndex < 0 || oldIndex === newIndex) return null;
@@ -77,7 +85,7 @@ export const resolveMove = ({
     if (overIsContainer) {
       insertIndex = dest.length;
     } else {
-      const overIndex = dest.findIndex((task) => task.id === overId);
+      const overIndex = dest.findIndex((task) => task.id === normalizedOverId);
       insertIndex = overIndex < 0 ? dest.length : overIndex;
     }
     order = orderBetween(dest[insertIndex - 1], dest[insertIndex]);

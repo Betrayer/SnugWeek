@@ -138,9 +138,10 @@ export const useTaskDnd = () => {
     const isList = parseListDragId(String(args.active.id)) !== null;
     const containers = args.droppableContainers.filter((container) => {
       const id = String(container.id);
-      const listTarget =
-        parseDayColumnId(id) !== null || id === LIST_SIDEBAR_DROP_ID;
-      return isList ? listTarget : !listTarget;
+      if (isList) {
+        return parseDayColumnId(id) !== null || id === LIST_SIDEBAR_DROP_ID;
+      }
+      return id !== LIST_SIDEBAR_DROP_ID;
     });
     return closestCorners({ ...args, droppableContainers: containers });
   };

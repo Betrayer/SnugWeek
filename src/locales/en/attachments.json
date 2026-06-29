@@ -50,6 +50,17 @@
     "invalid": "Enter a valid web address",
     "action": "Add link"
   },
+  "crop": {
+    "title": "Choose the square",
+    "viewport": "Crop preview - drag to position",
+    "counter": "{{index}} of {{total}}",
+    "hint": "Drag to position, scroll or use the slider to zoom",
+    "zoom": "Zoom",
+    "skip": "Skip",
+    "confirm": "Use this",
+    "adjust": "Adjust crop",
+    "save": "Save crop"
+  },
   "play": "Play",
   "pause": "Pause"
 }

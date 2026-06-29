@@ -9,6 +9,7 @@ import {
   writeBatch,
 } from "firebase/firestore";
 import type { DocumentData } from "firebase/firestore";
+import { DEFAULT_TRACKER_COLOR } from "../../data/trackerColors.ts";
 import { db } from "../firebase.ts";
 import { notePendingWrite } from "../syncSignal.ts";
 import { reportReadError } from "./readError.ts";
@@ -20,6 +21,7 @@ export interface Habit {
   id: string;
   name: string;
   icon: string | null;
+  color: string;
   order: number;
   archived: boolean;
   createdAt: number;
@@ -42,7 +44,8 @@ const normalizeDays = (value: unknown): number[] => {
 const normalizeHabit = (id: string, data: DocumentData): Habit => ({
   id,
   name: typeof data.name === "string" ? data.name : "",
-  icon: typeof data.icon === "string" ? data.icon : null,
+  icon: typeof data.icon === "string" && data.icon.length > 0 ? data.icon : null,
+  color: typeof data.color === "string" ? data.color : DEFAULT_TRACKER_COLOR,
   order: typeof data.order === "number" ? data.order : 0,
   archived: typeof data.archived === "boolean" ? data.archived : false,
   createdAt: typeof data.createdAt === "number" ? data.createdAt : 0,
@@ -72,6 +75,7 @@ export const createHabit = (
   uid: string,
   name: string,
   icon: string | null,
+  color: string,
   order: number,
   days: number[],
 ): void => {
@@ -79,6 +83,7 @@ export const createHabit = (
   void addDoc(habitsCol(uid), {
     name,
     icon,
+    color,
     order,
     archived: false,
     createdAt: Date.now(),
@@ -89,12 +94,13 @@ export const createHabit = (
 export const updateHabit = (
   uid: string,
   habitId: string,
-  fields: { name: string; icon: string | null; days: number[] },
+  fields: { name: string; icon: string | null; color: string; days: number[] },
 ): void => {
   notePendingWrite();
   void updateDoc(habitRef(uid, habitId), {
     name: fields.name,
     icon: fields.icon,
+    color: fields.color,
     days: fields.days,
   }).catch(reportWriteError);
 };

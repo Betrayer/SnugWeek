@@ -10,6 +10,7 @@ service cloud.firestore {
       return d.keys().hasOnly([
           'title', 'emoji', 'status', 'bucket', 'weekId', 'day', 'listId',
           'order', 'createdAt', 'updatedAt', 'completedAt', 'carriedFrom',
+          'carryCount', 'carriedOut', 'carrySourceId',
           'tagIds', 'subtaskCount', 'subtaskDone', 'time', 'remindOffsetMin',
           'routineId', 'attachmentCount'
         ])
@@ -22,6 +23,11 @@ service cloud.firestore {
         && d.updatedAt is number
         && (d.completedAt == null || d.completedAt is number)
         && (d.carriedFrom == null || d.carriedFrom is string)
+        && (!('carryCount' in d)
+          || (d.carryCount is number && d.carryCount >= 0))
+        && (!('carriedOut' in d) || d.carriedOut is bool)
+        && (!('carrySourceId' in d)
+          || d.carrySourceId == null || d.carrySourceId is string)
         && (!('tagIds' in d) || (d.tagIds is list && d.tagIds.size() <= 20))
         && (!('subtaskCount' in d)
           || (d.subtaskCount is number && d.subtaskCount >= 0 && d.subtaskCount <= 200))
@@ -108,7 +114,7 @@ service cloud.firestore {
           'targetType', 'taskId', 'listId', 'weekId', 'day', 'kind',
           'order', 'createdAt', 'storagePath', 'url', 'name', 'mime',
           'size', 'thumbPath', 'thumbUrl', 'width', 'height', 'durationMs',
-          'href', 'title', 'previewImage'
+          'href', 'title', 'previewImage', 'cropX', 'cropY', 'cropZoom'
         ])
         && d.targetType in ['task', 'list', 'day']
         && d.kind in ['image', 'audio', 'video', 'file', 'link']
@@ -131,6 +137,9 @@ service cloud.firestore {
         && (d.href == null || (d.href is string && d.href.size() <= 2048))
         && (d.title == null || (d.title is string && d.title.size() <= 512))
         && (d.previewImage == null || d.previewImage is string)
+        && (d.cropX == null || (d.cropX is number && d.cropX >= 0 && d.cropX <= 100))
+        && (d.cropY == null || (d.cropY is number && d.cropY >= 0 && d.cropY <= 100))
+        && (d.cropZoom == null || (d.cropZoom is number && d.cropZoom >= 1 && d.cropZoom <= 5))
         && (
           (d.targetType == 'task' && d.taskId is string)
           || (d.targetType == 'list' && d.listId is string)
@@ -166,9 +175,13 @@ service cloud.firestore {
     }
 
     function validHabit(d) {
-      return d.keys().hasOnly(['name', 'icon', 'order', 'archived', 'createdAt', 'days'])
+      return d.keys().hasOnly([
+          'name', 'icon', 'color', 'order', 'archived', 'createdAt', 'days'
+        ])
         && d.name is string
         && (d.icon == null || d.icon is string)
+        && (!('color' in d) || d.color in ['rose', 'amber', 'teal', 'violet',
+          'fern', 'sky', 'coral', 'plum'])
         && d.order is number
         && d.archived is bool
         && d.createdAt is number

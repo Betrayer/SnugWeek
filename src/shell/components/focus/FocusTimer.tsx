@@ -62,7 +62,7 @@ export const FocusTimer = () => {
   }, [uid]);
 
   const openTasks = useMemo(
-    () => tasks.filter((task) => task.status === "open"),
+    () => tasks.filter((task) => task.status === "open" && !task.carriedOut),
     [tasks],
   );
 
