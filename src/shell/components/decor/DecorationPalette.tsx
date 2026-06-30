@@ -115,7 +115,11 @@ export const DecorationPalette = () => {
           placeholder={t("filterPlaceholder")}
           aria-label={t("filterPlaceholder")}
         />
-        <ScrollArea.Autosize type="never" mx="calc(var(--mantine-spacing-md) * -1)">
+        <ScrollArea.Autosize
+          type="hover"
+          scrollbarSize={8}
+          mx="calc(var(--mantine-spacing-md) * -1)"
+        >
           <Chip.Group
             value={category}
             onChange={(value) =>

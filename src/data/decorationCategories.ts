@@ -6,6 +6,7 @@ export type DecorationCategory =
   | "animals"
   | "food"
   | "seasonal"
+  | "summer"
   | "scene"
   | "misc"
   | "washi"
@@ -19,6 +20,7 @@ export const DECORATION_CATEGORIES: DecorationCategory[] = [
   "animals",
   "food",
   "seasonal",
+  "summer",
   "scene",
   "misc",
   "washi",
