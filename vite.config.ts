@@ -74,6 +74,21 @@ export default defineConfig({
               cacheableResponse: { statuses: [0, 200] },
             },
           },
+          {
+            urlPattern: ({ url, sameOrigin }) =>
+              sameOrigin &&
+              url.pathname.startsWith("/assets/") &&
+              url.pathname.endsWith(".png"),
+            handler: "CacheFirst",
+            options: {
+              cacheName: "snugweek-stickers",
+              expiration: {
+                maxEntries: 120,
+                maxAgeSeconds: 60 * 60 * 24 * 365,
+              },
+              cacheableResponse: { statuses: [0, 200] },
+            },
+          },
         ],
       },
     }),
